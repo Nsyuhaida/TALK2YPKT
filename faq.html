@@ -3,10 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin FAQ</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-body{background:#89CFF0;}
-.app{display:flex;min-height:100vh;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
+
+body{
+  background:#89CFF0;
+}
+
+.app{
+  display:flex;
+  min-height:100vh;
+}
 
 /* Sidebar */
 .sidebar{
@@ -15,7 +28,20 @@ body{background:#89CFF0;}
   color:white;
   padding:20px;
 }
-.brand{font-size:20px;font-weight:bold;margin-bottom:30px;text-align:center;}
+
+.logo{
+  width:60px;
+  display:block;
+  margin:0 auto 15px;
+}
+
+.brand{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:30px;
+  text-align:center;
+}
+
 .nav a{
   display:block;
   text-decoration:none;
@@ -25,13 +51,35 @@ body{background:#89CFF0;}
   margin-bottom:8px;
   transition:0.3s;
 }
-.nav a:hover,.nav a.active{background:#2563eb;}
+
+.nav a:hover,
+.nav a.active{
+  background:#2563eb;
+}
 
 /* Main */
-.main{flex:1;padding:25px;}
-.main h1{font-size:26px;margin-bottom:20px;}
-.card{background:white;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);}
-.faq-item{border-bottom:1px solid #eee;}
+.main{
+  flex:1;
+  padding:25px;
+}
+
+.main h1{
+  font-size:26px;
+  margin-bottom:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.1);
+}
+
+/* FAQ */
+.faq-item{
+  border-bottom:1px solid #eee;
+}
+
 .faq-question{
   padding:14px;
   cursor:pointer;
@@ -39,29 +87,32 @@ body{background:#89CFF0;}
   position:relative;
   font-size:16px;
 }
+
 .faq-question::after{
   content:'+';
   position:absolute;
-  right:12px;
+  right:15px;
   font-size:20px;
 }
-.faq-question.active::after{content:'-';}
+
+.faq-question.active::after{
+  content:'−';
+}
+
 .faq-answer{
   display:none;
   padding:14px;
   color:#555;
   line-height:1.6;
+  font-size:14px;
 }
 
-@media(max-width:800px){.sidebar{display:none;}}
-
-.logo{
-  width:60px;
-  display:block;
-  margin:0 auto 15px;
+@media(max-width:800px){
+  .sidebar{display:none;}
 }
 </style>
 </head>
+
 <body>
 
 <div class="app">
@@ -70,6 +121,7 @@ body{background:#89CFF0;}
   <aside class="sidebar">
     <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" class="logo">
     <div class="brand">Admin Panel</div>
+
     <nav class="nav">
       <a href="dashboard.html">Dashboard</a>
       <a href="complaints.html">Complaints</a>
@@ -81,79 +133,149 @@ body{background:#89CFF0;}
     </nav>
   </aside>
 
-  <!-- Main -->
+  <!-- Main Content -->
   <main class="main">
     <h1>Frequently Asked Questions (Admin)</h1>
 
     <div class="card">
 
+      <!-- FAQ 1 -->
       <div class="faq-item">
         <div class="faq-question">1. How does the complaint workflow operate?</div>
         <div class="faq-answer">
-          Complaints are submitted by users and stored in the system as pending. Admins review the details, update the status, and take action until the complaint is resolved.
+          The complaint workflow begins when a user submits a complaint into the system.
+          The complaint is recorded with an initial status and reviewed by an administrator.
+          Admins validate the information, update the status, and take action until the issue
+          is fully resolved. This process ensures structured handling and accountability.
         </div>
       </div>
 
+      <!-- FAQ 2 -->
       <div class="faq-item">
-        <div class="faq-question">2. What statuses can be assigned to a complaint?</div>
+        <div class="faq-question">2. What complaint statuses are available in the system?</div>
         <div class="faq-answer">
-          Complaints can be marked as Pending, Approved, In Progress, or Resolved. Status updates help track the current stage of each complaint.
+          The system provides multiple statuses including Pending, Approved, In Progress,
+          and Resolved. These statuses help administrators clearly track the progress
+          of each complaint and manage workflow efficiently.
         </div>
       </div>
 
+      <!-- FAQ 3 -->
       <div class="faq-item">
-        <div class="faq-question">3. Where can admins update complaint information?</div>
+        <div class="faq-question">3. Where can admins update or modify complaint details?</div>
         <div class="faq-answer">
-          Complaint details can be edited through the Data Entry page, including status updates, remarks, and assigned staff.
+          Admins can update complaint details through the Data Entry section. This includes
+          editing descriptions, updating statuses, adding remarks, or assigning staff.
+          All changes are saved in real time to ensure accurate records.
         </div>
       </div>
 
+      <!-- FAQ 4 -->
       <div class="faq-item">
-        <div class="faq-question">4. How is system performance measured?</div>
+        <div class="faq-question">4. How is system performance measured in the dashboard?</div>
         <div class="faq-answer">
-          System performance is calculated based on the number of resolved complaints compared to the total complaints recorded in the system.
+          System performance is calculated based on the percentage of resolved complaints
+          compared to the total number of complaints. This metric gives administrators
+          a quick overview of operational efficiency.
         </div>
       </div>
 
+      <!-- FAQ 5 -->
       <div class="faq-item">
-        <div class="faq-question">5. Can multiple admins work at the same time?</div>
+        <div class="faq-question">5. Can multiple administrators manage complaints at the same time?</div>
         <div class="faq-answer">
-          Yes. The system supports multiple admins accessing and managing complaints simultaneously with real-time data updates.
+          Yes, the system allows multiple administrators to access and manage complaints
+          simultaneously. All updates are synchronized in real time to ensure consistency.
         </div>
       </div>
 
+      <!-- FAQ 8 -->
       <div class="faq-item">
-        <div class="faq-question">6. How can admins identify urgent complaints?</div>
+        <div class="faq-question">6. Can admins generate and print complaint reports?</div>
         <div class="faq-answer">
-          Admins can use filtering and sorting features to prioritize complaints based on date submitted, device type, or current status.
+          Admins can generate and print reports through the Full Report section.
+          Reports can be filtered and used for documentation, audits, or management review.
         </div>
       </div>
 
+      <!-- FAQ 9 -->
       <div class="faq-item">
-        <div class="faq-question">7. Is complaint history stored in the system?</div>
+        <div class="faq-question">7. What should an admin do if incorrect data is entered?</div>
         <div class="faq-answer">
-          Yes. Every complaint keeps a record of previous updates, status changes, and actions taken for reference and auditing purposes.
+          If incorrect data is detected, admins should update the information immediately
+          using the Data Entry page to maintain data accuracy and system reliability.
         </div>
       </div>
 
+      <!-- FAQ 10 -->
       <div class="faq-item">
-        <div class="faq-question">8. Can admins generate reports from the system?</div>
+        <div class="faq-question">8. Are admin actions recorded in the system?</div>
         <div class="faq-answer">
-          Admins can generate and print reports from the Full Report page for documentation, meetings, or management review.
+          Yes, important administrative actions such as updates and approvals are recorded
+          to ensure transparency, accountability, and audit support.
         </div>
       </div>
 
+      <!-- FAQ 11 -->
       <div class="faq-item">
-        <div class="faq-question">9. What happens if incorrect data is entered?</div>
+        <div class="faq-question">9. How does the system support daily administrative operations?</div>
         <div class="faq-answer">
-          Admins can correct incorrect entries by editing the complaint details to ensure accurate and reliable system records.
+          The system provides real-time dashboards, complaint summaries, and performance indicators
+          to help admins manage daily tasks efficiently.
         </div>
       </div>
 
+      <!-- FAQ 13 -->
       <div class="faq-item">
-        <div class="faq-question">10. How should admins end a session properly?</div>
+        <div class="faq-question">10. How are resolved complaints handled in the system?</div>
         <div class="faq-answer">
-          Admins should always click the Sign Out button after completing tasks to protect system data and prevent unauthorized access.
+          Resolved complaints are marked accordingly and stored in the system for future reference,
+          reporting, and performance analysis.
+        </div>
+      </div>
+
+      <!-- FAQ 14 -->
+      <div class="faq-item">
+        <div class="faq-question">11. Can admins manually add complaints into the system?</div>
+        <div class="faq-answer">
+          Yes, admins can manually add complaints through the Data Entry page when users
+          are unable to submit them directly.
+        </div>
+      </div>
+
+      <!-- FAQ 15 -->
+      <div class="faq-item">
+        <div class="faq-question">12. What happens when a complaint is approved?</div>
+        <div class="faq-answer">
+          Once approved, the complaint is confirmed as valid and proceeds to the action
+          or resolution stage for further processing.
+        </div>
+      </div>
+
+      <!-- FAQ 18 -->
+      <div class="faq-item">
+        <div class="faq-question">13. Can admins review previous actions taken on a complaint?</div>
+        <div class="faq-answer">
+          Yes, admins can view the complete history of a complaint, including status changes
+          and administrative remarks.
+        </div>
+      </div>
+
+      <!-- FAQ 19 -->
+      <div class="faq-item">
+        <div class="faq-question">14. How does the system help reduce response time?</div>
+        <div class="faq-answer">
+          Real-time updates, clear status tracking, and filtering tools allow admins to
+          respond quickly and resolve complaints faster.
+        </div>
+      </div>
+
+      <!-- FAQ 20 -->
+      <div class="faq-item">
+        <div class="faq-question">15. How should admins properly end their session?</div>
+        <div class="faq-answer">
+          Admins should always sign out after completing tasks to prevent unauthorized access
+          and maintain system security.
         </div>
       </div>
 
@@ -163,18 +285,18 @@ body{background:#89CFF0;}
 
 <script>
 // Logout
-document.getElementById("logout").onclick = ()=>{
+document.getElementById("logout").addEventListener("click", ()=>{
   localStorage.removeItem("admin_logged_in");
-  window.location.href="index.html";
-};
+  window.location.href = "index.html";
+});
 
-// FAQ Toggle
+// FAQ toggle
 document.querySelectorAll(".faq-question").forEach(q=>{
-  q.onclick = ()=>{
+  q.addEventListener("click", ()=>{
     q.classList.toggle("active");
     const ans = q.nextElementSibling;
     ans.style.display = ans.style.display === "block" ? "none" : "block";
-  };
+  });
 });
 </script>
 
