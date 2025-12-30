@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Insight</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(-45deg,#020617,#0f172a,#1e3a8a,#0284c7);
+  background-size:400% 400%;
+  animation:bgMove 18s ease infinite;
+  color:#fff;
+  overflow-x:hidden;
+}
+
+/* GLOW ORBS */
+.orb{
+  position:fixed;
+  width:320px;
+  height:320px;
+  background:radial-gradient(circle,#38bdf8,transparent 70%);
+  filter:blur(90px);
+  opacity:.55;
+  animation:float 10s ease-in-out infinite;
+}
+.orb.one{top:8%;left:4%}
+.orb.two{bottom:6%;right:6%;animation-delay:4s}
+
+/* HERO */
+.hero{
+  padding:90px 10%;
+}
+.hero h1{
+  font-size:54px;
+  font-weight:700;
+  animation:fadeUp 1s ease forwards;
+}
+.hero p{
+  margin-top:14px;
+  max-width:520px;
+  opacity:.9;
+  animation:fadeUp 1s ease forwards;
+  animation-delay:.2s;
+}
+
+/* CARDS */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:32px;
+  margin-top:70px;
+}
+
+.card{
+  position:relative;
+  padding:38px;
+  border-radius:26px;
+  background:rgba(255,255,255,.12);
+  backdrop-filter:blur(20px);
+  box-shadow:0 35px 70px rgba(0,0,0,.4);
+  overflow:hidden;
+  animation:fadeUp .8s ease forwards;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);
+  animation:shine 3.5s infinite;
+}
+
+.card h2{
+  font-size:36px;
+  font-weight:700;
+}
+.card span{
+  font-size:13px;
+  opacity:.85;
+}
+
+.card:hover{
+  transform:translateY(-12px) scale(1.04);
+  transition:.45s;
+}
+
+/* WAVE BAR */
+.wave{
+  position:relative;
+  height:16px;
+  border-radius:20px;
+  background:rgba(255,255,255,.25);
+  overflow:hidden;
+}
+.wave::after{
+  content:"";
+  position:absolute;
+  width:200%;
+  height:100%;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    #22c55e,
+    #4ade80,
+    transparent
+  );
+  animation:waveMove 4s linear infinite;
+}
+
+/* CTA */
+.cta{
+  margin-top:90px;
+  text-align:center;
+  animation:fadeUp 1s ease forwards;
+  animation-delay:1s;
+}
+.cta a{
+  text-decoration:none;
+  background:#fff;
+  color:#020617;
+  padding:18px 46px;
+  border-radius:50px;
+  font-weight:700;
+  letter-spacing:.5px;
+  box-shadow:0 25px 50px rgba(0,0,0,.45);
+  transition:.3s;
+}
+.cta a:hover{
+  transform:translateY(-5px) scale(1.06);
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:30px;
+  font-size:13px;
+  opacity:.75;
+}
+
+/* ANIMATIONS */
+@keyframes bgMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(60px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes shine{
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(100%)}
+}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-45px)}
+}
+@keyframes waveMove{
+  from{left:-100%}
+  to{left:0}
+}
+</style>
+</head>
+
+<body>
+
+<div class="orb one"></div>
+<div class="orb two"></div>
+
+<section class="hero">
+  <h1>Admin Insight</h1>
+  <p>Real-time visual intelligence overview for system operations.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h2>99.8%</h2>
+      <span>System Stability Index</span>
+    </div>
+
+    <div class="card">
+      <h2>Secure</h2>
+      <span>Security Status</span>
+    </div>
+
+    <div class="card">
+      <h2>Adaptive</h2>
+      <span>Operational Mode</span>
+    </div>
+
+    <div class="card">
+      <h2>Live</h2>
+      <span>System Activity</span>
+    </div>
+  </div>
+
+  <div style="margin-top:70px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+      <span>System Load Flow</span>
+      <span>Dynamic</span>
+    </div>
+    <div class="wave"></div>
+  </div>
+
+  <div class="cta">
+    <a href="login.html">Enter Administration Panel</a>
+  </div>
+</section>
+
+<footer>
+  © 2025 Digital Administration System
+</footer>
+
+</body>
+</html>

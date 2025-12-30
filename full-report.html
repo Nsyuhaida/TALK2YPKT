@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Complaint Report</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#89CFF0;color:#333;}
+.app{display:flex;min-height:100vh;}
+
+/* ===== SIDEBAR (SAMA MACAM FAQ) ===== */
+.sidebar{
+  width:240px;
+  background:#1e3a8a;
+  color:white;
+  padding:20px;
+}
+.logo{
+  width:60px;
+  height:auto;
+  display:block;
+  margin:0 auto 15px;
+}
+.brand{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:30px;
+  text-align:center;
+}
+.nav a{
+  display:block;
+  text-decoration:none;
+  color:white;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:8px;
+  transition:0.3s;
+}
+.nav a:hover,
+.nav a.active{
+  background:#2563eb;
+}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:25px;}
+.main h1{margin-bottom:15px;color:#1e3a8a;}
+
+.search-container{margin-bottom:15px;}
+#searchInput{padding:8px;width:50%;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;}
+
+.table-card{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  margin-bottom:20px;
+}
+
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th,td{padding:8px;border-bottom:1px solid #ddd;}
+th{background:#1e3a8a;color:white;text-transform:uppercase;}
+tr:hover{background:#f1f5ff;cursor:pointer;}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+.card h3{
+  margin-top:15px;
+  color:#1e3a8a;
+  border-bottom:1px solid #ddd;
+  padding-bottom:5px;
+}
+ul{margin:10px 0 20px 20px;}
+li{margin-bottom:6px;}
+
+.btn{
+  padding:8px 16px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#2563eb;
+  color:white;
+}
+.btn:hover{background:#1d4ed8;}
+
+@media print{
+  body{background:white;}
+  .sidebar,.search-container,.table-card,.btn{display:none;}
+  .card{box-shadow:none;}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png"
+       alt="Logo YPKT"
+       class="logo">
+  <div class="brand">Admin Panel</div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="complaints.html">Complaints</a>
+    <a href="notifications.html">Notifications</a>
+    <a href="data-entry.html">Data Entry</a>
+    <a href="full-report.html" class="active">Full Report</a>
+    <a href="faq.html">FAQ</a>
+    <a href="#" id="logout">Sign Out</a>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+<h1>Full Complaint Report</h1>
+
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="Search by ID, User, Asset">
+</div>
+
+<div class="table-card">
+<table id="complaintTable">
+<thead>
+<tr>
+  <th>ID</th>
+  <th>User</th>
+  <th>Asset</th>
+  <th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr><td colspan="4">Loading...</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="card" id="reportCard" style="display:none;">
+<h2>Complaint ID: <span id="rid"></span></h2>
+
+<h3>Section 1 — Complaint Details</h3>
+<ul id="r_section1"></ul>
+
+<h3>Section 2 — User Recommendation</h3>
+<ul id="r_section2"></ul>
+
+<h3>Section 3 — Admin Assessment</h3>
+<ul id="r_section3"></ul>
+
+<h3>Section 4 — Approval</h3>
+<ul id="r_section4"></ul>
+
+<button class="btn" onclick="window.print()">Print This Report</button>
+</div>
+</main>
+</div>
+
+<script>
+const firebaseConfig={
+  apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
+  authDomain:"e-complaint-8nu9kp.firebaseapp.com",
+  projectId:"e-complaint-8nu9kp"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+document.getElementById("logout").addEventListener("click",()=>{
+  localStorage.removeItem("admin_logged_in");
+  window.location.href="index.html";
+});
+
+function dt(v){
+  return v && v.toDate ? v.toDate().toLocaleString("en-GB") : "-";
+}
+function renderList(id,items){
+  const ul=document.getElementById(id);
+  ul.innerHTML="";
+  items.forEach(i=>{
+    const li=document.createElement("li");
+    li.textContent=i;
+    ul.appendChild(li);
+  });
+}
+
+let complaints=[];
+
+async function loadComplaints(){
+  const snap=await db.collection("complaint")
+    .orderBy("reportdatesection1","desc")
+    .get();
+  complaints=snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderTable();
+}
+
+function renderTable(filter=""){
+  const tbody=document.querySelector("#complaintTable tbody");
+  tbody.innerHTML="";
+  const f=filter.toLowerCase();
+  const list=complaints.filter(c=>
+    c.id.toLowerCase().includes(f) ||
+    (c.lastUser||"").toLowerCase().includes(f) ||
+    (c.assettype||"").toLowerCase().includes(f)
+  );
+  if(list.length===0){
+    tbody.innerHTML='<tr><td colspan="4">No data found</td></tr>';
+    return;
+  }
+  list.forEach(c=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${c.id}</td>
+      <td>${c.lastUser||"-"}</td>
+      <td>${c.assettype||"-"}</td>
+      <td>${c.approvalstatus||"Pending"}</td>`;
+    tr.onclick=()=>showReport(c.id);
+    tbody.appendChild(tr);
+  });
+}
+
+function showReport(id){
+  const c=complaints.find(x=>x.id===id);
+  if(!c) return;
+  document.getElementById("reportCard").style.display="block";
+  document.getElementById("rid").textContent=c.id;
+
+  renderList("r_section1",[
+    `Asset Type: ${c.assettype||"-"}`,
+    `Serial Number: ${c.serialNumber||"-"}`,
+    `Last User: ${c.lastUser||"-"}`,
+    `Damage Date: ${dt(c.damagedate)}`,
+    `Damage Description: ${c.damagedescription||"-"}`,
+    `Report Date: ${dt(c.reportdatesection1)}`
+  ]);
+  renderList("r_section2",[
+    `Recommendation: ${c.recommendationsection2||"-"}`,
+    `Name & Position: ${c.section2nameposition||"-"}`,
+    `Date Submitted: ${dt(c.section2date)}`
+  ]);
+  renderList("r_section3",[
+    `Previous Maintenance Cost: RM ${c.previousmaintenancecost||0}`,
+    `Estimated Maintenance Cost: RM ${c.estimatedmaintenancecost||0}`,
+    `Admin Recommendation: ${c.recommendsection3||"-"}`,
+    `Admin Name & Position: ${c.section3nameposition||"-"}`,
+    `Assessment Date: ${dt(c.section3date)}`
+  ]);
+  renderList("r_section4",[
+    `Approval Status: ${c.approvalstatus||"-"}`,
+    `Approval Comment: ${c.approvalcomment||"-"}`,
+    `Approver Name: ${c.approvername||"-"}`,
+    `Approver Position: ${c.approverposition||"-"}`,
+    `Approval Date: ${dt(c.approvaldate)}`
+  ]);
+}
+
+document.getElementById("searchInput").addEventListener("input",e=>{
+  renderTable(e.target.value);
+});
+
+loadComplaints();
+</script>
+</body>
+</html>

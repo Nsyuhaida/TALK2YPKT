@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complaint Detail</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      background:#f4f6f9;
+    }
+
+    .app{
+      display:flex;
+      min-height:100vh;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar{
+      width:240px;
+      background:#1e3a8a;
+      color:white;
+      padding:20px;
+    }
+
+    .brand{
+      font-size:20px;
+      font-weight:bold;
+      margin-bottom:30px;
+      text-align:center;
+    }
+
+    .nav a{
+      display:block;
+      text-decoration:none;
+      color:white;
+      padding:12px;
+      border-radius:8px;
+      margin-bottom:8px;
+      transition:0.3s;
+    }
+
+    .nav a:hover{
+      background:#2563eb;
+    }
+
+    /* ===== MAIN ===== */
+    .main{
+      flex:1;
+      padding:25px;
+    }
+
+    .header{
+      margin-bottom:20px;
+    }
+
+    .header h1{
+      font-size:26px;
+    }
+
+    .card{
+      background:white;
+      padding:25px;
+      border-radius:12px;
+      box-shadow:0 6px 15px rgba(0,0,0,0.1);
+      max-width:800px;
+    }
+
+    .detail-row{
+      margin-bottom:12px;
+      font-size:15px;
+    }
+
+    .detail-row strong{
+      width:120px;
+      display:inline-block;
+    }
+
+    hr{
+      margin:20px 0;
+      border:none;
+      border-top:1px solid #ddd;
+    }
+
+    label{
+      font-weight:bold;
+      margin-top:12px;
+      display:block;
+    }
+
+    .input{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      margin-top:6px;
+    }
+
+    textarea.input{
+      resize:vertical;
+    }
+
+    .btn-row{
+      margin-top:16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      padding:10px 20px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      text-decoration:none;
+      font-size:14px;
+      display:inline-block;
+      text-align:center;
+    }
+
+    .btn-primary{
+      background:#2563eb;
+      color:white;
+    }
+
+    .btn-secondary{
+      background:#e5e7eb;
+      color:#111;
+    }
+
+    .btn-primary:hover{
+      background:#1d4ed8;
+    }
+
+    .btn-secondary:hover{
+      background:#d1d5db;
+    }
+
+    @media(max-width:800px){
+      .sidebar{display:none;}
+    }
+  </style>
+
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="brand">Admin Panel</div>
+
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="complaints.html">Complaints</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="data-entry.html">Data Entry</a>
+      <a href="full-report.html">Full Report</a>
+      <a href="faq.html">FAQ</a>
+      <a href="#" id="logout">Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <div class="header">
+      <h1>Complaint Detail</h1>
+    </div>
+
+    <div class="card">
+
+      <div class="detail-row">
+        <strong>Complaint ID:</strong> <span id="cid">ID 001</span>
+      </div>
+
+      <div class="detail-row">
+        <strong>User:</strong> <span id="cuser">Ahmad</span>
+      </div>
+
+      <div class="detail-row">
+        <strong>Asset:</strong> <span id="casset">Printer</span>
+      </div>
+
+      <hr>
+
+      <h3>Admin Section</h3>
+
+      <label>Estimated Maintenance Cost</label>
+      <input id="estCost" class="input" placeholder="RM 0.00">
+
+      <label>Admin Recommendation</label>
+      <textarea id="adminRec" class="input" rows="4" placeholder="Enter recommendation"></textarea>
+
+      <div class="btn-row">
+        <button id="saveBtn" class="btn btn-primary">Save</button>
+        <a href="full-report.html" class="btn btn-secondary">Preview Report</a>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+  // Security check
+  if(!localStorage.getItem("admin_logged_in")){
+    window.location.href = "index.html";
+  }
+
+  // Load complaint ID from URL
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id") || "001";
+  document.getElementById("cid").textContent = "ID " + id;
+
+  // Demo save
+  document.getElementById("saveBtn").addEventListener("click", function(){
+    alert("Saved successfully (Demo mode).");
+  });
+
+  document.getElementById("logout").addEventListener("click", function(){
+    localStorage.removeItem("admin_logged_in");
+    window.location.href = "index.html";
+  });
+</script>
+
+</body>
+</html>

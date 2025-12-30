@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin FAQ</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#89CFF0;}
+.app{display:flex;min-height:100vh;}
+
+/* Sidebar */
+.sidebar{
+  width:240px;
+  background:#1e3a8a;
+  color:white;
+  padding:20px;
+}
+.brand{font-size:20px;font-weight:bold;margin-bottom:30px;text-align:center;}
+.nav a{
+  display:block;
+  text-decoration:none;
+  color:white;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:8px;
+  transition:0.3s;
+}
+.nav a:hover,.nav a.active{background:#2563eb;}
+
+/* Main */
+.main{flex:1;padding:25px;}
+.main h1{font-size:26px;margin-bottom:20px;}
+.card{background:white;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);}
+.faq-item{border-bottom:1px solid #eee;}
+.faq-question{
+  padding:12px;
+  cursor:pointer;
+  font-weight:bold;
+  position:relative;
+  font-size:16px;
+}
+.faq-question::after{
+  content:'+';
+  position:absolute;
+  right:12px;
+  font-weight:bold;
+  font-size:18px;
+}
+.faq-question.active::after{
+  content:'-';
+}
+.faq-answer{
+  display:none;
+  padding:12px;
+  color:#555;
+  line-height:1.5;
+}
+@media(max-width:800px){.sidebar{display:none;}}
+/* LOGO SAMA MACAM DASHBOARD */
+.logo{
+  width:60px;      /* kecil, kemas */
+  height:auto;
+  display:block;
+  margin:0 auto 15px;
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+   <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" 
+       alt="Logo YPKT" 
+       class="logo">
+    <div class="brand">Admin Panel</div>
+    <nav class="nav">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="complaints.html">Complaints</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="data-entry.html">Data Entry</a>
+      <a href="full-report.html">Full Report</a>
+      <a href="faq.html" class="active">FAQ</a>
+      <a href="#" id="logout">Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <h1>Frequently Asked Questions (FAQ)</h1>
+
+    <div class="card">
+      <!-- 20 FAQ items -->
+      <div class="faq-item">
+        <div class="faq-question">1. How to submit a device complaint?</div>
+        <div class="faq-answer">Go to the Complaints page, fill in the required information about the device that is faulty, describe the problem in detail, and submit the complaint. Make sure to include accurate information so the resolution can be fast.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">2. How to edit an existing complaint?</div>
+        <div class="faq-answer">Admins can edit complaints via the Data Entry page. Locate the complaint by ID or user name, update the fields necessary such as status, description, or assigned staff, then save the changes. This ensures data remains accurate and up-to-date.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">3. How to approve a complaint?</div>
+        <div class="faq-answer">Approval is done by selecting the status in the Data Entry page for the complaint. You can mark it as approved, pending, or rejected, depending on the evaluation of the reported issue.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">4. How to print complaint reports?</div>
+        <div class="faq-answer">Navigate to the Full Report page. Here, you can view all complaints, filter by device type or status, and click the print button. The system generates a printable version suitable for documentation or meetings.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">5. Can admins add complaints on behalf of users?</div>
+        <div class="faq-answer">Yes. Admins can go to the Data Entry page and submit complaints directly, which is useful if users cannot access the system or for bulk reporting of multiple devices.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">6. How to search for complaints?</div>
+        <div class="faq-answer">Use the search bar on the Complaints page. You can search by complaint ID, user name, device type, or keywords in the description. This helps quickly locate specific complaints.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">7. How to track complaint status?</div>
+        <div class="faq-answer">Complaint status is displayed in the Complaints page under the status column. Admins can update the status, and users can see it if the system is linked for notifications.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">8. How to manage user accounts?</div>
+        <div class="faq-answer">Admin accounts can be created, updated, or removed from the Sign Up and dashboard settings. Ensure only authorized personnel have admin access to maintain security.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">9. How to reset a user password?</div>
+        <div class="faq-answer">Currently, password reset is manual. Contact the main admin account to reset a user's password. The system may send an email confirmation if configured for security.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">10. Can complaints be deleted?</div>
+        <div class="faq-answer">Yes, only admins can delete complaints. Navigate to the complaint, verify it should be removed, and confirm deletion. This is irreversible, so proceed with caution.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">11. How to filter complaints by device type?</div>
+        <div class="faq-answer">On the Complaints page, use the filter dropdown to select the device type such as Printer, AC, or Projector. Only complaints matching the selected device type will be displayed.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">12. Can admins export data?</div>
+        <div class="faq-answer">Admins can export complaint data through the Full Report page. Data can usually be downloaded in PDF or CSV format for record-keeping and reporting.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">13. How to sort complaints?</div>
+        <div class="faq-answer">Complaints can be sorted by ID, user name, device type, or date submitted by clicking the column headers. Sorting helps identify urgent complaints quickly.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">14. How to handle duplicate complaints?</div>
+        <div class="faq-answer">Check for duplicate entries by user name, device type, and issue description. Admins can merge or close duplicate complaints to keep the database clean.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">15. Can multiple admins manage complaints simultaneously?</div>
+        <div class="faq-answer">Yes, the system allows multiple admins to log in and manage complaints at the same time. Ensure changes are coordinated to prevent conflicting updates.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">16. How to view complaint history?</div>
+        <div class="faq-answer">Select a complaint and click to view detailed information. All previous updates, approvals, and status changes will be shown for reference.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">17. Can notifications be sent automatically?</div>
+        <div class="faq-answer">Currently, notifications are manual. Admins may use the Notifications page to inform users about updates, approvals, or actions taken on their complaints.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">18. How to ensure data accuracy?</div>
+        <div class="faq-answer">Admins must carefully check the information entered for each complaint, verify user details, and ensure device information is correct before submitting or approving complaints.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">19. How to logout safely?</div>
+        <div class="faq-answer">Click the "Sign Out" button on the sidebar. This will end your session and redirect to the login page. Always logout when finished to prevent unauthorized access.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">20. Who to contact for technical issues?</div>
+        <div class="faq-answer">For any technical problems with the admin panel, contact the main system administrator. This includes login issues, data errors, or unexpected system behavior.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+// Logout
+document.getElementById("logout").addEventListener("click", ()=>{
+  localStorage.removeItem("admin_logged_in");
+  window.location.href="index.html";
+});
+
+// FAQ toggle
+const questions = document.querySelectorAll(".faq-question");
+questions.forEach(q=>{
+  q.addEventListener("click", ()=>{
+    q.classList.toggle("active");
+    const ans = q.nextElementSibling;
+    ans.style.display = (ans.style.display === "block") ? "none" : "block";
+  });
+});
+</script>
+
+</body>
+</html>

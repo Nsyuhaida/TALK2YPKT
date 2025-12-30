@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Complaint Data Entry</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#89CFF0;}
+.app{display:flex;min-height:100vh;}
+.sidebar{width:240px;background:#1e3a8a;color:white;padding:20px;}
+.brand{font-size:20px;font-weight:bold;margin-bottom:30px;text-align:center;}
+.nav a{display:block;text-decoration:none;color:white;padding:12px;border-radius:8px;margin-bottom:8px;}
+.nav a.active,.nav a:hover{background:#2563eb;}
+.main{flex:1;padding:25px;}
+.main h1{font-size:26px;margin-bottom:20px;}
+.card{background:#fff;padding:25px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,.1);max-width:900px;margin-top:20px;}
+label{margin-top:12px;display:block;font-weight:bold;}
+input.input,textarea.input,select.input{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-top:6px;}
+textarea{resize:vertical;}
+.input[readonly]{background:#f1f5f9;}
+.btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;margin-top:20px;}
+.btn-primary{background:#2563eb;color:white;}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;}
+h3{margin-top:25px;color:#1e3a8a;border-bottom:1px solid #ddd;padding-bottom:6px;}
+table{width:100%;border-collapse:collapse;margin-top:15px;}
+th,td{padding:10px;border:1px solid #ccc;}
+th{background:#2563eb;color:white;}
+tr:nth-child(even){background:#f1f5f9;}
+tr:hover{background:#dbe4ff;cursor:pointer;}
+#complaintDetail{display:none;}
+#searchInput{padding:8px;width:50%;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;}
+
+/* Toast */
+.toast{
+  position:fixed;top:20px;right:20px;
+  background:#16a34a;color:white;
+  padding:12px 18px;border-radius:8px;
+  box-shadow:0 5px 15px rgba(0,0,0,.2);
+  opacity:0;transform:translateY(-20px);
+  transition:.3s;z-index:9999;
+}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.error{background:#dc2626;}
+/* LOGO SAMA MACAM DASHBOARD */
+.logo{
+  width:60px;      /* kecil, kemas */
+  height:auto;
+  display:block;
+  margin:0 auto 15px;
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" 
+       alt="Logo YPKT" 
+       class="logo">
+
+  <div class="brand">Admin Panel</div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="complaints.html">Complaints</a>
+    <a href="notifications.html">Notifications</a>
+    <a href="data-entry.html" class="active">Data Entry</a>
+    <a href="full-report.html">Full Report</a>
+    <a href="faq.html">FAQ</a>
+    <a href="#" id="logout">Sign Out</a>
+  </nav>
+</aside>
+
+<main class="main">
+<h1>Complaint Data Entry</h1>
+
+<input type="text" id="searchInput" placeholder="Search by Complaint ID or User">
+
+<div id="complaintList"></div>
+
+<div id="complaintDetail" class="card">
+
+<!-- SECTION 1 -->
+<h3>Section 1 – Complaint Details (User)</h3>
+
+<label>Asset Type</label>
+<input class="input" id="assettype" readonly>
+
+<label>Serial Number</label>
+<input class="input" id="SerialNumber" readonly>
+
+<label>Last User</label>
+<input class="input" id="lastUser" readonly>
+
+<label>Damage Date</label>
+<input class="input" type="datetime-local" id="damagedate" readonly>
+
+<label>Damage Description</label>
+<textarea class="input" id="damagedescription" readonly></textarea>
+
+<label>Report Date</label>
+<input class="input" type="datetime-local" id="reportdatesection1" readonly>
+
+<!-- SECTION 2 -->
+<h3>Section 2 – User Recommendation</h3>
+
+<label>Recommendation</label>
+<textarea class="input" id="recommendationsection2" readonly></textarea>
+
+<label>Name & Position</label>
+<input class="input" id="section2nameposition" readonly>
+
+<label>Date Submitted</label>
+<input class="input" type="datetime-local" id="section2date" readonly>
+
+<!-- SECTION 3 -->
+<h3>Section 3 – Admin Assessment</h3>
+
+<label>Previous Maintenance Cost</label>
+<input class="input" type="number" id="previousmaintenancecost">
+
+<label>Estimated Maintenance Cost</label>
+<input class="input" type="number" id="estimatedmaintenancecost">
+
+<label>Admin Recommendation / Action</label>
+<textarea class="input" id="recommendsection3"></textarea>
+
+<label>Admin Name & Position</label>
+<input class="input" id="section3nameposition">
+
+<label>Assessment Date</label>
+<input class="input" type="datetime-local" id="section3date">
+
+<!-- SECTION 4 -->
+<h3>Section 4 – Approval & Final Status</h3>
+
+<label>Approval Status</label>
+<select class="input" id="approvalstatus">
+  <option>Approve</option>
+  <option>Not approve</option>
+</select>
+
+<label>Approval Comment</label>
+<textarea class="input" id="approvalcomment"></textarea>
+
+<label>Approver Name</label>
+<input class="input" id="approvername">
+
+<label>Approver Position</label>
+<input class="input" id="approverposition">
+
+<label>Approval Date</label>
+<input class="input" type="datetime-local" id="approvaldate">
+
+<button class="btn btn-primary" id="saveComplaint">
+  Save / Update Complaint
+</button>
+
+</div>
+</main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const firebaseConfig={
+  apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
+  authDomain:"e-complaint-8nu9kp.firebaseapp.com",
+  projectId:"e-complaint-8nu9kp"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+const dt=t=>t&&t.toDate?t.toDate().toISOString().slice(0,16):"";
+
+function toast(msg,error=false){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.className="toast show"+(error?" error":"");
+  setTimeout(()=>t.classList.remove("show"),3000);
+}
+
+let complaints=[];
+
+async function loadComplaints(){
+  const s=await db.collection("complaint").get();
+  complaints=s.docs.map(d=>({id:d.id,...d.data()}));
+  renderTable(complaints);
+}
+
+function renderTable(list){
+  let h="<table><tr><th>ID</th><th>User</th><th>Status</th></tr>";
+  list.forEach(c=>{
+    h+=`<tr data-id="${c.id}">
+      <td>${c.id}</td>
+      <td>${c.lastUser||"-"}</td>
+      <td>${c.approvalstatus||"Pending"}</td>
+    </tr>`;
+  });
+  h+="</table>";
+  complaintList.innerHTML=h;
+  document.querySelectorAll("tr[data-id]").forEach(r=>{
+    r.onclick=()=>loadDetail(r.dataset.id);
+  });
+}
+
+searchInput.oninput=()=>{
+  const v=searchInput.value.toLowerCase();
+  renderTable(complaints.filter(c=>
+    c.id.toLowerCase().includes(v) ||
+    (c.lastUser||"").toLowerCase().includes(v)
+  ));
+};
+
+async function loadDetail(id){
+  const d=(await db.collection("complaint").doc(id).get()).data();
+  complaintDetail.style.display="block";
+  complaintDetail.dataset.id=id;
+
+  assettype.value=d.assettype||"";
+  SerialNumber.value=d.serialNumber||"";
+  lastUser.value=d.lastUser||"";
+  damagedate.value=dt(d.damagedate);
+  damagedescription.value=d.damagedescription||"";
+  reportdatesection1.value=dt(d.reportdatesection1);
+
+  recommendationsection2.value=d.recommendationsection2||"";
+  section2nameposition.value=d.section2nameposition||"";
+  section2date.value=dt(d.section2date);
+
+  previousmaintenancecost.value=d.previousmaintenancecost||"";
+  estimatedmaintenancecost.value=d.estimatedmaintenancecost||"";
+  recommendsection3.value=d.recommendsection3||"";
+  section3nameposition.value=d.section3nameposition||"";
+  section3date.value=dt(d.section3date);
+
+  approvalstatus.value=d.approvalstatus||"Pending";
+  approvalcomment.value=d.approvalcomment||"";
+  approvername.value=d.approvername||"";
+  approverposition.value=d.approverposition||"";
+  approvaldate.value=dt(d.approvaldate);
+}
+
+saveComplaint.onclick=async()=>{
+  const id=complaintDetail.dataset.id;
+  if(!id){toast("Please select a complaint first",true);return;}
+
+  saveComplaint.disabled=true;
+  saveComplaint.textContent="Saving...";
+
+  try{
+    await db.collection("complaint").doc(id).set({
+      previousmaintenancecost:+previousmaintenancecost.value||0,
+      estimatedmaintenancecost:+estimatedmaintenancecost.value||0,
+      recommendsection3:recommendsection3.value,
+      section3nameposition:section3nameposition.value,
+      section3date:section3date.value?firebase.firestore.Timestamp.fromDate(new Date(section3date.value)):null,
+      approvalstatus:approvalstatus.value,
+      approvalcomment:approvalcomment.value,
+      approvername:approvername.value,
+      approverposition:approverposition.value,
+      approvaldate:approvaldate.value?firebase.firestore.Timestamp.fromDate(new Date(approvaldate.value)):null,
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true});
+
+    toast("Complaint successfully updated");
+    loadComplaints();
+  }catch(e){
+    console.error(e);
+    toast("Failed to update complaint",true);
+  }
+
+  saveComplaint.disabled=false;
+  saveComplaint.textContent="Save / Update Complaint";
+};
+
+loadComplaints();
+</script>
+</body>
+</html>

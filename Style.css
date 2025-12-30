@@ -1,0 +1,65 @@
+/* css/styles.css - minimal, clean */
+:root{
+  --bg:#f4f6f8;
+  --card:#ffffff;
+  --accent:#2563eb;
+  --muted:#6b7280;
+  --shadow: 0 6px 18px rgba(16,24,40,0.06);
+  --radius:12px;
+  --gap:16px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:#0f172a; font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* layout */
+.app{
+  display:flex; min-height:100vh;
+}
+
+/* sidebar */
+.sidebar{
+  width:260px; background:linear-gradient(180deg,#0f172a 0%, #0b1220 100%);
+  color:#fff; padding:24px; display:flex; flex-direction:column; gap:16px;
+}
+.brand{font-weight:700; font-size:18px; color:white; margin-bottom:6px;}
+.nav a{display:block; color:rgba(255,255,255,0.9); padding:8px 10px; border-radius:8px; text-decoration:none;}
+.nav a:hover{background:rgba(255,255,255,0.06)}
+
+/* main content */
+.main{
+  flex:1; padding:24px;
+}
+.header{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;}
+.card{background:var(--card); border-radius:12px; padding:16px; box-shadow:var(--shadow)}
+
+/* sign-in centered */
+.signin-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px}
+.signin-card{width:380px; padding:28px; border-radius:12px; background:var(--card); box-shadow:var(--shadow)}
+.input{display:block; width:100%; padding:10px 12px; margin-top:8px; border-radius:8px; border:1px solid #e6e9ee}
+
+/* buttons */
+.btn{display:inline-block; padding:10px 14px; border-radius:10px; border:0; cursor:pointer;}
+.btn-primary{background:var(--accent); color:#fff}
+.btn-ghost{background:transparent; border:1px solid #e6e9ee}
+
+/* table simple */
+.table{width:100%; border-collapse:collapse}
+.table th,.table td{padding:10px 8px; border-bottom:1px solid #eef2f7; text-align:left}
+.search-row{display:flex; gap:10px; margin-bottom:12px; align-items:center}
+
+/* small helpers */
+.hidden{display:none}
+.badge{display:inline-block;padding:6px 8px;border-radius:999px;font-size:12px}
+.status-pending{background:#fff7ed;color:#92400e;border:1px solid #ffedd5}
+.status-complete{background:#ecfdf5;color:#065f46;border:1px solid #bbf7d0}
+
+/* responsive */
+@media(max-width:880px){
+  .sidebar{display:none}
+  .app{flex-direction:column}
+}
