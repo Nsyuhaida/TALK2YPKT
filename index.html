@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Admin Insight</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -41,16 +40,11 @@ body{
 /* HERO */
 .hero{
   padding:90px 10%;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center everything in hero for better login layout */
 }
 .hero h1{
   font-size:54px;
   font-weight:700;
   animation:fadeUp 1s ease forwards;
-  text-align: center;
-  width: 100%;
 }
 .hero p{
   margin-top:14px;
@@ -58,7 +52,6 @@ body{
   opacity:.9;
   animation:fadeUp 1s ease forwards;
   animation-delay:.2s;
-  text-align: center;
 }
 
 /* CARDS */
@@ -67,7 +60,6 @@ body{
   grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
   gap:32px;
   margin-top:70px;
-  width: 100%;
 }
 
 .card{
@@ -104,10 +96,6 @@ body{
 }
 
 /* WAVE BAR */
-.wave-container {
-    width: 100%;
-    margin-top: 70px;
-}
 .wave{
   position:relative;
   height:16px;
@@ -130,97 +118,26 @@ body{
   animation:waveMove 4s linear infinite;
 }
 
-/* CTA & LOGIN AREA */
+/* CTA */
 .cta{
-  margin-top:70px;
+  margin-top:90px;
   text-align:center;
   animation:fadeUp 1s ease forwards;
   animation-delay:1s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  background: rgba(0,0,0,0.2); /* Sedikit gelap background untuk area login */
-  padding: 40px;
-  border-radius: 30px;
-  backdrop-filter: blur(10px);
 }
-
-.login-form {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
+.cta a{
+  text-decoration:none;
+  background:#fff;
+  color:#020617;
+  padding:18px 46px;
+  border-radius:50px;
+  font-weight:700;
+  letter-spacing:.5px;
+  box-shadow:0 25px 50px rgba(0,0,0,.45);
+  transition:.3s;
 }
-
-/* Input Style */
-.pass-input {
-  padding: 14px 24px;
-  border-radius: 50px;
-  border: 1px solid rgba(255,255,255,0.3);
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  color: #fff;
-  font-size: 16px;
-  outline: none;
-  width: 260px;
-  transition: 0.3s;
-}
-
-.pass-input::placeholder {
-  color: rgba(255,255,255,0.6);
-}
-
-.pass-input:focus {
-  background: rgba(255,255,255,0.2);
-  border-color: rgba(255,255,255,0.8);
-}
-
-/* Login Button */
-.login-btn {
-  background: #fff;
-  color: #020617;
-  padding: 14px 30px;
-  border-radius: 50px;
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  transition: .3s;
-}
-
-.login-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-/* Separator "OR" */
-.separator {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    max-width: 300px;
-    color: rgba(255,255,255,0.5);
-    font-size: 12px;
-    margin: 5px 0;
-}
-
-.separator::before, .separator::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: rgba(255,255,255,0.2);
-}
-
-.separator span {
-    padding: 0 10px;
-}
-
-/* Google Button Styling Wrapper */
-.google-btn-wrapper {
-    /* Google button style handled by API, we just position it */
-    min-height: 40px;
+.cta a:hover{
+  transform:translateY(-5px) scale(1.06);
 }
 
 /* FOOTER */
@@ -287,7 +204,7 @@ footer{
     </div>
   </div>
 
-  <div class="wave-container">
+  <div style="margin-top:70px">
     <div style="display:flex;justify-content:space-between;margin-bottom:12px">
       <span>System Load Flow</span>
       <span>Dynamic</span>
@@ -296,38 +213,9 @@ footer{
   </div>
 
   <div class="cta">
-    
-    <form class="login-form" action="dashboard.html">
-        <input type="password" class="pass-input" placeholder="Enter Admin Key" required>
-        <button type="submit" class="login-btn">Login</button>
-    </form>
-
-    <div class="separator">
-        <span>OR</span>
-    </div>
-
-    <div class="google-btn-wrapper">
-        <div id="g_id_onload"
-             data-client_id="YOUR_GOOGLE_CLIENT_ID"
-             data-context="signin"
-             data-ux_mode="popup"
-             data-login_uri="http://localhost:3000/login-endpoint"
-             data-auto_prompt="false">
-        </div>
-
-        <div class="g_id_signin"
-             data-type="standard"
-             data-shape="pill"
-             data-theme="filled_blue"
-             data-text="signin_with"
-             data-size="large"
-             data-logo_alignment="left">
-        </div>
-    </div>
-
+    <a href="login.html">Enter Administration Panel</a>
   </div>
 </section>
-
 <footer>
   © 2025 Digital Administration System
 </footer>
