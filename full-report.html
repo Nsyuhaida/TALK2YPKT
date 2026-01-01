@@ -3,167 +3,231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Full Complaint Report</title>
+<title>Full Report Archive | System Core</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-body{background:#89CFF0;color:#333;}
-.app{display:flex;min-height:100vh;}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap');
 
-/* ===== SIDEBAR (SAMA MACAM FAQ) ===== */
-.sidebar{
-  width:240px;
-  background:#1e3a8a;
-  color:white;
-  padding:20px;
-}
-.logo{
-  width:60px;
-  height:auto;
-  display:block;
-  margin:0 auto 15px;
-}
-.brand{
-  font-size:20px;
-  font-weight:bold;
-  margin-bottom:30px;
-  text-align:center;
-}
-.nav a{
-  display:block;
-  text-decoration:none;
-  color:white;
-  padding:12px;
-  border-radius:8px;
-  margin-bottom:8px;
-  transition:0.3s;
-}
-.nav a:hover,
-.nav a.active{
-  background:#2563eb;
+:root {
+  --neon-blue: #00f3ff;
+  --neon-green: #00ff9d;
+  --bg-dark: #020617;
+  --glass: rgba(15, 23, 42, 0.85);
+  --border: rgba(0, 243, 255, 0.2);
 }
 
-/* ===== MAIN ===== */
-.main{flex:1;padding:25px;}
-.main h1{margin-bottom:15px;color:#1e3a8a;}
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior: smooth; }
 
-.search-container{margin-bottom:15px;}
-#searchInput{padding:8px;width:50%;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;}
-
-.table-card{
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
-  margin-bottom:20px;
+/* --- BACKGROUND --- */
+body {
+  background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
+  background-size: 400% 400%;
+  animation: bgMove 20s ease infinite;
+  color: #e2e8f0;
+  min-height: 100vh;
 }
 
-table{width:100%;border-collapse:collapse;font-size:14px;}
-th,td{padding:8px;border-bottom:1px solid #ddd;}
-th{background:#1e3a8a;color:white;text-transform:uppercase;}
-tr:hover{background:#f1f5ff;cursor:pointer;}
+body::before {
+  content: ""; position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px; pointer-events: none; z-index: 0;
+}
 
-.card{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
-}
-.card h3{
-  margin-top:15px;
-  color:#1e3a8a;
-  border-bottom:1px solid #ddd;
-  padding-bottom:5px;
-}
-ul{margin:10px 0 20px 20px;}
-li{margin-bottom:6px;}
+.app { display:flex; min-height:100vh; position: relative; z-index: 1; }
 
-.btn{
-  padding:8px 16px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  background:#2563eb;
-  color:white;
+/* --- SIDEBAR --- */
+.sidebar {
+  width: 260px; background: var(--glass); backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border); padding: 30px 20px;
+  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
 }
-.btn:hover{background:#1d4ed8;}
+.logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
+.brand {
+  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
+  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
+}
+.nav a {
+  display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
+  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
+  font-size: 14px; border: 1px solid transparent;
+}
+.nav a:hover, .nav a.active {
+  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+}
+.nav a i { width: 20px; text-align: center; }
+#logout { margin-top: auto; color: #ff4d4d; border-color: rgba(255, 77, 77, 0.2); }
 
-@media print{
-  body{background:white;}
-  .sidebar,.search-container,.table-card,.btn{display:none;}
-  .card{box-shadow:none;}
+/* --- MAIN --- */
+.main { flex:1; padding:30px; overflow-x: hidden; }
+
+h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
+
+/* SEARCH */
+.search-container { margin-bottom: 25px; }
+#searchInput {
+  width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border); border-radius: 50px; color: #fff;
+  outline: none; transition: 0.3s;
 }
+#searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+
+/* TABLE CARD */
+.table-card {
+  background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
+  border-radius: 16px; border: 1px solid var(--border);
+  padding: 0; overflow: hidden; margin-bottom: 30px;
+  max-height: 400px; overflow-y: auto;
+}
+
+table { width:100%; border-collapse: collapse; }
+th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; }
+td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; }
+tr:hover { background: rgba(0, 243, 255, 0.05); cursor: pointer; color: #fff; }
+
+/* REPORT CARD (DOSSIER) */
+.card {
+  background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px);
+  padding: 40px; border-radius: 16px; border: 1px solid var(--border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+  display: none; animation: fadeIn 0.5s ease;
+  position: relative;
+}
+
+.card h2 {
+    font-family: 'Orbitron'; color: #fff; margin-bottom: 20px; font-size: 22px;
+    border-bottom: 2px solid var(--neon-blue); padding-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+
+.card h3 {
+  font-family: 'Orbitron'; color: var(--neon-green); margin-top: 25px; 
+  margin-bottom: 10px; font-size: 14px; letter-spacing: 1px;
+  border-left: 3px solid var(--neon-green); padding-left: 10px;
+}
+
+ul { list-style: none; margin-left: 0; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; }
+li { margin-bottom: 8px; font-size: 14px; color: rgba(255,255,255,0.8); display: flex; }
+li strong { color: #fff; width: 180px; display: inline-block; flex-shrink: 0; }
+
+.btn {
+  padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer;
+  background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold;
+  margin-top: 30px; display: inline-flex; align-items: center; gap: 10px;
+  transition: 0.3s;
+}
+.btn:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); }
+
+/* BACK TO TOP */
+#backToTop {
+  position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+  background: var(--neon-blue); color: #000; border-radius: 50%; border: none; 
+  cursor: pointer; display: flex; justify-content: center; align-items: center;
+  font-size: 20px; box-shadow: 0 0 20px var(--neon-blue);
+  opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 100;
+}
+#backToTop:hover { transform: translateY(-5px); background: #fff; }
+#backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* PRINT STYLES (CLEAN PAPER LOOK) */
+@media print {
+  body { background: white; color: black; animation: none; }
+  body::before, .sidebar, .search-container, .table-card, .btn, #backToTop { display: none !important; }
+  .app { display: block; }
+  .main { padding: 0; }
+  .card { 
+      box-shadow: none; border: 2px solid #000; background: white; color: black; 
+      display: block !important; padding: 20px; margin: 0;
+  }
+  .card h2 { color: black; border-bottom: 2px solid black; }
+  .card h3 { color: black; border-left: 3px solid black; }
+  ul { background: none; padding: 0; }
+  li { color: black; border-bottom: 1px solid #eee; padding: 5px 0; }
+  li strong { color: black; }
+}
+
+@keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
-  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png"
-       alt="Logo YPKT"
-       class="logo">
-  <div class="brand">Admin Panel</div>
+  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
+  <div class="brand">SYSTEM CORE</div>
   <nav class="nav">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="complaints.html">Complaints</a>
-    <a href="notifications.html">Notifications</a>
-    <a href="data-entry.html">Data Entry</a>
-    <a href="full-report.html" class="active">Full Report</a>
-    <a href="faq.html">FAQ</a>
-    <a href="#" id="logout">Sign Out</a>
+    <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+    <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
+    <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
+    <a href="full-report.html" class="active"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
+    <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+    <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
   </nav>
 </aside>
 
-<!-- MAIN -->
 <main class="main">
-<h1>Full Complaint Report</h1>
+<h1><i class="fa-solid fa-folder-open"></i> FULL REPORT ARCHIVE</h1>
 
 <div class="search-container">
-  <input type="text" id="searchInput" placeholder="Search by ID, User, Asset">
+  <input type="text" id="searchInput" placeholder="Search Database (ID, User, Asset Type)...">
 </div>
 
 <div class="table-card">
 <table id="complaintTable">
 <thead>
 <tr>
-  <th>ID</th>
-  <th>User</th>
-  <th>Asset</th>
-  <th>Status</th>
+  <th>ID REF</th>
+  <th>REPORTED BY</th>
+  <th>ASSET TYPE</th>
+  <th>STATUS</th>
 </tr>
 </thead>
 <tbody>
-<tr><td colspan="4">Loading...</td></tr>
+<tr><td colspan="4" style="text-align:center; padding:20px;">Connecting to database...</td></tr>
 </tbody>
 </table>
 </div>
 
-<div class="card" id="reportCard" style="display:none;">
-<h2>Complaint ID: <span id="rid"></span></h2>
+<div class="card" id="reportCard">
+    <h2>
+        <span><i class="fa-solid fa-file-contract"></i> REPORT ID: <span id="rid" style="color:var(--neon-blue)"></span></span>
+        <i class="fa-solid fa-fingerprint" style="opacity:0.3; font-size:40px;"></i>
+    </h2>
 
-<h3>Section 1 — Complaint Details</h3>
-<ul id="r_section1"></ul>
+    <h3><i class="fa-solid fa-circle-info"></i> SECTION 1: COMPLAINT DETAILS</h3>
+    <ul id="r_section1"></ul>
 
-<h3>Section 2 — User Recommendation</h3>
-<ul id="r_section2"></ul>
+    <h3><i class="fa-solid fa-user-pen"></i> SECTION 2: USER RECOMMENDATION</h3>
+    <ul id="r_section2"></ul>
 
-<h3>Section 3 — Admin Assessment</h3>
-<ul id="r_section3"></ul>
+    <h3><i class="fa-solid fa-screwdriver-wrench"></i> SECTION 3: ADMIN ASSESSMENT</h3>
+    <ul id="r_section3"></ul>
 
-<h3>Section 4 — Approval</h3>
-<ul id="r_section4"></ul>
+    <h3><i class="fa-solid fa-stamp"></i> SECTION 4: FINAL APPROVAL</h3>
+    <ul id="r_section4"></ul>
 
-<button class="btn" onclick="window.print()">Print This Report</button>
+    <button class="btn" onclick="window.print()">
+        <i class="fa-solid fa-print"></i> PRINT DOCUMENT
+    </button>
 </div>
 </main>
 </div>
 
+<button id="backToTop" title="Return to Top">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
 <script>
+// --- FIREBASE CONFIG ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -172,64 +236,86 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 
+// --- LOGOUT LOGIC ---
 document.getElementById("logout").addEventListener("click",()=>{
   localStorage.removeItem("admin_logged_in");
-  window.location.href="index.html";
+  window.location.href="login.html";
 });
 
+// --- HELPER FUNCTIONS ---
 function dt(v){
   return v && v.toDate ? v.toDate().toLocaleString("en-GB") : "-";
 }
-function renderList(id,items){
-  const ul=document.getElementById(id);
-  ul.innerHTML="";
-  items.forEach(i=>{
-    const li=document.createElement("li");
-    li.textContent=i;
+
+function renderList(id, items){
+  const ul = document.getElementById(id);
+  ul.innerHTML = "";
+  items.forEach(i => {
+    // Split text for bolding (e.g., "Asset Type: Laptop")
+    let parts = i.split(": ");
+    let label = parts[0];
+    let value = parts.slice(1).join(": ");
+    
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${label}:</strong> <span>${value}</span>`;
     ul.appendChild(li);
   });
 }
 
+// --- MAIN DATA LOGIC ---
 let complaints=[];
 
 async function loadComplaints(){
-  const snap=await db.collection("complaint")
-    .orderBy("reportdatesection1","desc")
-    .get();
-  complaints=snap.docs.map(d=>({id:d.id,...d.data()}));
-  renderTable();
+  try {
+      const snap = await db.collection("complaint").orderBy("reportdatesection1","desc").get();
+      complaints = snap.docs.map(d => ({id:d.id, ...d.data()}));
+      renderTable();
+  } catch (e) {
+      console.error(e);
+      document.querySelector("#complaintTable tbody").innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ff4d4d;">Error loading data.</td></tr>';
+  }
 }
 
 function renderTable(filter=""){
-  const tbody=document.querySelector("#complaintTable tbody");
-  tbody.innerHTML="";
-  const f=filter.toLowerCase();
-  const list=complaints.filter(c=>
+  const tbody = document.querySelector("#complaintTable tbody");
+  tbody.innerHTML = "";
+  const f = filter.toLowerCase();
+  
+  const list = complaints.filter(c =>
     c.id.toLowerCase().includes(f) ||
     (c.lastUser||"").toLowerCase().includes(f) ||
     (c.assettype||"").toLowerCase().includes(f)
   );
-  if(list.length===0){
-    tbody.innerHTML='<tr><td colspan="4">No data found</td></tr>';
+
+  if(list.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px;">No matching records found</td></tr>';
     return;
   }
-  list.forEach(c=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${c.id}</td>
+
+  list.forEach(c => {
+    const tr = document.createElement("tr");
+    
+    // Status Color Logic
+    let statusColor = c.approvalstatus === 'Approve' ? '#00ff9d' : (c.approvalstatus === 'Not approve' ? '#ff4d4d' : '#ccc');
+
+    tr.innerHTML = `
+      <td style="font-family:'Orbitron'; color:var(--neon-blue);">${c.id}</td>
       <td>${c.lastUser||"-"}</td>
       <td>${c.assettype||"-"}</td>
-      <td>${c.approvalstatus||"Pending"}</td>`;
-    tr.onclick=()=>showReport(c.id);
+      <td style="color:${statusColor}; font-weight:bold;">${c.approvalstatus||"Pending"}</td>`;
+    
+    tr.onclick = () => showReport(c.id);
     tbody.appendChild(tr);
   });
 }
 
 function showReport(id){
-  const c=complaints.find(x=>x.id===id);
+  const c = complaints.find(x => x.id === id);
   if(!c) return;
-  document.getElementById("reportCard").style.display="block";
-  document.getElementById("rid").textContent=c.id;
+  
+  const card = document.getElementById("reportCard");
+  card.style.display = "block";
+  document.getElementById("rid").textContent = c.id;
 
   renderList("r_section1",[
     `Asset Type: ${c.assettype||"-"}`,
@@ -245,10 +331,10 @@ function showReport(id){
     `Date Submitted: ${dt(c.section2date)}`
   ]);
   renderList("r_section3",[
-    `Previous Maintenance Cost: RM ${c.previousmaintenancecost||0}`,
-    `Estimated Maintenance Cost: RM ${c.estimatedmaintenancecost||0}`,
+    `Previous Cost: RM ${c.previousmaintenancecost||0}`,
+    `Estimated Cost: RM ${c.estimatedmaintenancecost||0}`,
     `Admin Recommendation: ${c.recommendsection3||"-"}`,
-    `Admin Name & Position: ${c.section3nameposition||"-"}`,
+    `Admin Name: ${c.section3nameposition||"-"}`,
     `Assessment Date: ${dt(c.section3date)}`
   ]);
   renderList("r_section4",[
@@ -258,12 +344,29 @@ function showReport(id){
     `Approver Position: ${c.approverposition||"-"}`,
     `Approval Date: ${dt(c.approvaldate)}`
   ]);
+
+  // Scroll to report card
+  card.scrollIntoView({behavior: "smooth", block: "start"});
 }
 
-document.getElementById("searchInput").addEventListener("input",e=>{
+document.getElementById("searchInput").addEventListener("input", e => {
   renderTable(e.target.value);
 });
 
+// --- BACK TO TOP LOGIC ---
+const backToTopBtn = document.getElementById("backToTop");
+window.onscroll = function() {
+  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+    backToTopBtn.classList.add("show");
+  } else {
+    backToTopBtn.classList.remove("show");
+  }
+};
+backToTopBtn.onclick = function() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+};
+
+// INITIALIZE
 loadComplaints();
 </script>
 </body>
