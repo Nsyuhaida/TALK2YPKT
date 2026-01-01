@@ -3,43 +3,241 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Complaint List</title>
+<title>Complaint Database | System Core</title>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-body{background:#89CFF0;}
-.app{display:flex;min-height:100vh;}
-.sidebar{width:240px;background:#1e3a8a;color:white;padding:20px;}
-.brand{font-size:20px;font-weight:bold;margin-bottom:30px;text-align:center;}
-.nav a{display:block;text-decoration:none;color:white;padding:12px;border-radius:8px;margin-bottom:8px;}
-.nav a:hover{background:#2563eb;}
-.nav a.active{background:#2563eb;}
-.main{flex:1;padding:25px;}
-h1{font-size:26px;margin-bottom:20px;}
-.card{background:white;padding:20px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);}
-table{width:100%;border-collapse:collapse;margin-top:15px;}
-th,td{padding:10px;text-align:left;border-bottom:1px solid #ddd;}
-th{background:#1e3a8a;color:white;}
-tr:hover{background:#f0f4ff;cursor:pointer;}
-#searchInput{padding:8px;width:50%;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;}
-input{padding:8px;border-radius:6px;border:1px solid #ccc;}
-.loading{text-align:center;margin-top:50px;color:#555;}
-.error{color:red;font-weight:bold;text-align:center;margin-top:50px;}
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;}
-.modal-content{background:#fff;padding:25px;border-radius:12px;width:90%;max-width:700px;max-height:90%;overflow-y:auto;}
-.close{float:right;font-size:20px;cursor:pointer;}
-h3{color:#1e3a8a;margin-top:15px;border-bottom:1px solid #ddd;padding-bottom:5px;}
-/* LOGO SAMA MACAM DASHBOARD */
-.logo{
-  width:60px;      /* kecil, kemas */
-  height:auto;
-  display:block;
-  margin:0 auto 15px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap');
+
+:root {
+  --neon-blue: #00f3ff;
+  --neon-purple: #bc13fe;
+  --bg-dark: #020617;
+  --glass: rgba(15, 23, 42, 0.85);
+  --border: rgba(0, 243, 255, 0.2);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior: smooth; }
+
+/* --- BACKGROUND --- */
+body {
+  background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
+  background-size: 400% 400%;
+  animation: bgMove 20s ease infinite;
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Grid Overlay */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app { display:flex; min-height:100vh; position: relative; z-index: 1; }
+
+/* --- SIDEBAR --- */
+.sidebar {
+  width: 260px;
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border);
+  padding: 30px 20px;
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh;
+}
+
+.logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
+.brand {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px; font-weight: 700;
+  text-align: center; color: var(--neon-blue);
+  letter-spacing: 2px; margin-bottom: 40px;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+}
+
+.nav a {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; color: rgba(255,255,255,0.7);
+  padding: 14px 18px; border-radius: 12px;
+  margin-bottom: 10px; transition: 0.3s;
+  font-size: 14px; border: 1px solid transparent;
+}
+.nav a:hover, .nav a.active {
+  background: rgba(0, 243, 255, 0.1);
+  color: #fff; border-color: var(--border);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+}
+.nav a i { width: 20px; text-align: center; }
+
+#logout { margin-top: auto; color: #ff4d4d; border-color: rgba(255, 77, 77, 0.2); }
+#logout:hover { background: rgba(255, 77, 77, 0.1); border-color: #ff4d4d; color: #fff; }
+
+/* --- MAIN CONTENT --- */
+.main { flex:1; padding: 30px; overflow-x: hidden; }
+
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px; color: #fff;
+  margin-bottom: 25px;
+  text-shadow: 0 0 15px rgba(255,255,255,0.2);
+}
+
+/* SEARCH BAR */
+.search-filter { margin-bottom: 25px; position: relative; max-width: 500px; }
+.search-filter input {
+  width: 100%; padding: 15px 20px; padding-left: 45px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  color: #fff; font-size: 14px; outline: none;
+  transition: 0.3s;
+}
+.search-filter::before {
+  content: '\f002'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+  position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+  color: var(--neon-blue); pointer-events: none;
+}
+.search-filter input:focus {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+  background: rgba(0,0,0,0.6);
+}
+
+/* TABLE CARD */
+.card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 5px; /* Minimal padding for border effect */
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 18px 25px; text-align: left; }
+
+th {
+  background: rgba(0, 243, 255, 0.05);
+  color: var(--neon-blue);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px; letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 14px; color: rgba(255,255,255,0.9);
+  transition: 0.2s;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover { background: rgba(0, 243, 255, 0.08); cursor: pointer; }
+tr:hover td { color: #fff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+
+/* DATA ID BADGE STYLE */
+td:first-child {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--neon-blue);
+  font-weight: bold;
+}
+
+/* LOADING & ERROR */
+.loading {
+  padding: 40px; text-align: center;
+  color: var(--neon-blue); font-family: 'Orbitron', sans-serif;
+  animation: pulse 1.5s infinite;
+}
+.error { color: #ff4d4d; text-align: center; padding: 40px; }
+
+/* --- MODAL (HOLOGRAPHIC STYLE) --- */
+.modal {
+  display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+  justify-content:center; align-items:center; z-index: 999;
+}
+
+.modal-content {
+  background: rgba(2, 6, 23, 0.95);
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid var(--neon-blue);
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+  width: 90%; max-width: 600px; max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  animation: modalEnter 0.3s ease-out;
+  color: #fff;
+}
+
+.close {
+  position: absolute; right: 20px; top: 15px;
+  font-size: 24px; color: #ff4d4d; cursor: pointer;
+  transition: 0.3s;
+}
+.close:hover { transform: scale(1.2); text-shadow: 0 0 10px #ff4d4d; }
+
+/* Content inside modal */
+#modalBody h3 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--neon-blue);
+  margin-bottom: 20px; padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 22px;
+}
+#modalBody p {
+  margin-bottom: 12px; font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 8px;
+  display: flex; justify-content: space-between;
+}
+#modalBody b { color: rgba(255,255,255,0.6); font-weight: 500; margin-right: 10px; }
+
+/* --- BACK TO TOP BUTTON --- */
+#backToTop {
+  position: fixed; bottom: 30px; right: 30px;
+  width: 50px; height: 50px;
+  background: var(--neon-blue);
+  color: #000; border-radius: 50%;
+  border: none; cursor: pointer;
+  display: flex; justify-content: center; align-items: center;
+  font-size: 20px;
+  box-shadow: 0 0 20px var(--neon-blue);
+  opacity: 0; visibility: hidden;
+  transform: translateY(20px); transition: 0.4s; z-index: 100;
+}
+#backToTop:hover { transform: translateY(-5px); box-shadow: 0 0 40px var(--neon-blue); background: #fff; }
+#backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* Keyframes */
+@keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes pulse { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
+@keyframes modalEnter { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+/* Mobile Responsive */
+@media(max-width: 768px){
+    .app { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; padding: 20px; }
+    .nav { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; }
+    .nav a { margin: 0; white-space: nowrap; }
+    .search-filter { max-width: 100%; }
+    th, td { padding: 12px 15px; font-size: 12px; }
+    /* Table scroll on mobile */
+    .card { overflow-x: auto; }
 }
 </style>
 </head>
@@ -47,51 +245,51 @@ h3{color:#1e3a8a;margin-top:15px;border-bottom:1px solid #ddd;padding-bottom:5px
 
 <div class="app">
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
-  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" 
-       alt="Logo YPKT" 
-       class="logo">
-  <div class="brand">Admin Panel</div>
+  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
+  <div class="brand">SYSTEM CORE</div>
   <nav class="nav">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="complaints.html" class="active">Complaints</a>
-    <a href="notifications.html">Notifications</a>
-    <a href="data-entry.html">Data Entry</a>
-    <a href="full-report.html">Full Report</a>
-    <a href="faq.html">FAQ</a>
-    <a href="#" id="logout">Sign Out</a>
+    <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+    <a href="complaints.html" class="active"><i class="fa-solid fa-file-shield"></i> Complaints</a>
+    <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
+    <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
+    <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+    <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
   </nav>
 </aside>
 
-<!-- MAIN -->
 <main class="main">
-  <h1>Complaint List</h1>
+  <h1>COMPLAINT DATABASE</h1>
 
   <div class="search-filter">
-    <input type="text" id="searchInput" placeholder="Search by Name, ID, or Asset Type">
+    <input type="text" id="searchInput" placeholder="Search ID, Asset, Serial No. or User...">
   </div>
 
   <div class="card">
-    <div id="loading" class="loading">Loading complaints...</div>
-    <table id="complaintTable" style="display:none;">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Asset Type</th>
-          <th>Serial Number</th>
-          <th>Last User</th>
-          <th>Reporter Name & Position</th>
-          <th>Report Date</th>
-        </tr>
-      </thead>
-      <tbody id="complaintBody"></tbody>
-    </table>
+    <div id="loading" class="loading">
+       <i class="fa-solid fa-spinner fa-spin"></i> ACCESSING DATABASE...
+    </div>
+    
+    <div style="overflow-x: auto;">
+      <table id="complaintTable" style="display:none;">
+        <thead>
+          <tr>
+            <th>REF ID</th>
+            <th>ASSET TYPE</th>
+            <th>SERIAL NO.</th>
+            <th>LAST USER</th>
+            <th>REPORTER / POS</th>
+            <th>TIMESTAMP</th>
+          </tr>
+        </thead>
+        <tbody id="complaintBody"></tbody>
+      </table>
+    </div>
   </div>
 </main>
 </div>
 
-<!-- Modal -->
 <div id="detailModal" class="modal">
   <div class="modal-content">
     <span class="close" id="closeModal">&times;</span>
@@ -99,8 +297,12 @@ h3{color:#1e3a8a;margin-top:15px;border-bottom:1px solid #ddd;padding-bottom:5px
   </div>
 </div>
 
+<button id="backToTop" title="Return to Top">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
 <script>
-// FIREBASE CONFIG
+// --- FIREBASE CONFIG (Kekal) ---
 const firebaseConfig = {
   apiKey: "AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain: "e-complaint-8nu9kp.firebaseapp.com",
@@ -112,21 +314,25 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// LOGOUT
+// --- LOGOUT LOGIC ---
 document.getElementById("logout").onclick = () => {
   firebase.auth().signOut().finally(() => {
     localStorage.removeItem("admin_logged_in");
-    window.location.href = "index.html";
+    window.location.href = "login.html"; // Pastikan redirect ke login.html
   });
 };
 
-// HELPER
+// HELPER DATE
 function formatDate(ts){
   if(!ts || !ts.toDate) return "-";
-  return ts.toDate().toLocaleDateString("ms-MY") + " " + ts.toDate().toLocaleTimeString("ms-MY");
+  // Format standard Malaysia
+  return ts.toDate().toLocaleDateString("ms-MY", { 
+    day: '2-digit', month: '2-digit', year: 'numeric' 
+  }) + " <span style='color:rgba(255,255,255,0.5); font-size:12px;'>" + 
+  ts.toDate().toLocaleTimeString("ms-MY", { hour: '2-digit', minute:'2-digit' }) + "</span>";
 }
 
-// LOAD COMPLAINTS
+// --- LOAD DATA ---
 let complaintsData = [];
 
 async function loadComplaints(){
@@ -147,7 +353,7 @@ async function loadComplaints(){
     });
 
     if(complaintsData.length===0){
-      loading.textContent = "No complaints found.";
+      loading.textContent = "NO RECORDS FOUND IN SYSTEM.";
       return;
     }
 
@@ -156,7 +362,7 @@ async function loadComplaints(){
   catch(err){
     console.error(err);
     loading.className="error";
-    loading.textContent="Error loading complaints from Firebase.";
+    loading.innerHTML="SYSTEM ERROR: Connection to Firebase failed.";
   }
 }
 
@@ -179,9 +385,9 @@ function renderTable(){
   filtered.forEach(d=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${d._code}</td>
-      <td>${d.assettype??"-"}</td>
-      <td>${d.serialNumber??"-"}</td>
+      <td>#${d._code}</td>
+      <td style="color:#fff; font-weight:500;">${d.assettype??"-"}</td>
+      <td style="font-family:'Courier New';">${d.serialNumber??"-"}</td>
       <td>${d.lastUser??"-"}</td>
       <td>${d.reporternamaposition??"-"}</td>
       <td>${formatDate(d.reportdatesection1)}</td>
@@ -194,23 +400,27 @@ function renderTable(){
   table.style.display = "table";
 }
 
-// SHOW MODAL WITH FULL DETAILS
+// --- SHOW MODAL ---
 function showDetails(d){
   const modal = document.getElementById("detailModal");
   const body = document.getElementById("modalBody");
 
   body.innerHTML = `
-    <h3>Complaint ID: ${d._code}</h3>
-    <p><b>Asset Type:</b> ${d.assettype??"-"}</p>
-    <p><b>Serial Number:</b> ${d.serialNumber??"-"}</p>
-    <p><b>Last User:</b> ${d.lastUser??"-"}</p>
-    <p><b>Damage Date:</b> ${formatDate(d.damagedate)}</p>
-    <p><b>Damage Description:</b> ${d.damagedescription??"-"}</p>
-    <p><b>Reporter Name & Position:</b> ${d.reporternamaposition??"-"}</p>
-    <p><b>Report Date Section 1:</b> ${formatDate(d.reportdatesection1)}</p>
-    <p><b>Recommendation Section 2:</b> ${d.recommendationsection2??"-"}</p>
-    <p><b>Section 2 Name & Position:</b> ${d.section2nameposition??"-"}</p>
-    <p><b>Section 2 Date:</b> ${formatDate(d.section2date)}</p>
+    <h3><i class="fa-solid fa-file-invoice"></i> RECORD #${d._code}</h3>
+    <p><b>Asset Type:</b> <span>${d.assettype??"-"}</span></p>
+    <p><b>Serial Number:</b> <span>${d.serialNumber??"-"}</span></p>
+    <p><b>Last User:</b> <span>${d.lastUser??"-"}</span></p>
+    <p><b>Damage Date:</b> <span>${formatDate(d.damagedate)}</span></p>
+    <div style="margin: 15px 0; background:rgba(255,255,255,0.05); padding:10px; border-radius:5px;">
+        <b style="display:block; margin-bottom:5px; color:var(--neon-blue);">Damage Description:</b>
+        <span style="font-size:13px; line-height:1.5;">${d.damagedescription??"-"}</span>
+    </div>
+    <p><b>Reporter:</b> <span>${d.reporternamaposition??"-"}</span></p>
+    <p><b>Date Reported:</b> <span>${formatDate(d.reportdatesection1)}</span></p>
+    <hr style="border-color:rgba(255,255,255,0.1); margin:10px 0;">
+    <p><b>Recommendation:</b> <span>${d.recommendationsection2??"-"}</span></p>
+    <p><b>Section 2 Officer:</b> <span>${d.section2nameposition??"-"}</span></p>
+    <p><b>Date Processed:</b> <span>${formatDate(d.section2date)}</span></p>
   `;
 
   modal.style.display="flex";
@@ -220,8 +430,30 @@ document.getElementById("closeModal").onclick = ()=>{
   document.getElementById("detailModal").style.display="none";
 };
 
+// Close modal if clicking outside content
+window.onclick = function(event) {
+  const modal = document.getElementById("detailModal");
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
 document.getElementById("searchInput").oninput = renderTable;
 
+// --- BACK TO TOP LOGIC ---
+const backToTopBtn = document.getElementById("backToTop");
+window.onscroll = function() {
+  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+    backToTopBtn.classList.add("show");
+  } else {
+    backToTopBtn.classList.remove("show");
+  }
+};
+backToTopBtn.onclick = function() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+};
+
+// INITIAL RUN
 loadComplaints();
 </script>
 
