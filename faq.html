@@ -13,6 +13,7 @@
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
+  --neon-red: #ff4d4d; /* Added Red for Logout */
   --bg-dark: #020617;
   --glass-panel: rgba(15, 23, 42, 0.7);
   --glass-border: rgba(0, 243, 255, 0.2);
@@ -57,6 +58,13 @@ body {
   letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
 
+/* Nav Container Fix */
+.nav {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Ini penting supaya nav memenuhi ruang kosong sidebar */
+}
+
 .nav a {
   display: flex; align-items: center; gap: 12px;
   padding: 14px 15px; margin-bottom: 10px;
@@ -72,6 +80,20 @@ body {
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
 }
 
+/* --- LOGOUT BUTTON SPECIFIC STYLE --- */
+#logout {
+  margin-top: auto; /* Tolak button ke paling bawah */
+  color: var(--neon-red);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+}
+
+#logout:hover {
+  background: rgba(255, 77, 77, 0.1);
+  box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
+  border-color: var(--neon-red);
+  color: #fff;
+}
+
 /* --- MAIN CONTENT --- */
 .main { flex:1; padding: 40px; overflow-y: auto; position: relative; }
 
@@ -83,15 +105,16 @@ h1 {
   display: flex; align-items: center; gap: 15px;
 }
 
-/* FAQ CARD */
+/* FAQ CARD - FULL WIDTH FIX */
 .card {
   background: var(--glass-panel);
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(15px);
-  padding: 10px; /* Padding small for list */
+  padding: 10px; 
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  max-width: 900px;
+  /* SAYA BUANG max-width: 900px DARI SINI */
+  width: 100%; /* Paksa lebar penuh */
   animation: slideUp 0.6s ease;
 }
 
@@ -118,7 +141,7 @@ h1 {
 
 .faq-question:hover {
   background: rgba(0, 243, 255, 0.05);
-  padding-left: 25px; /* Slight movement effect */
+  padding-left: 25px; 
   color: var(--neon-blue);
 }
 
@@ -171,6 +194,7 @@ h1 {
 @media(max-width:800px){
   .app{ flex-direction: column; }
   .sidebar{ width:100%; height:auto; padding:15px; position: relative; }
+  .nav { flex-direction: column; } /* Keep simple on mobile */
   .main{ padding: 20px; }
 }
 </style>
@@ -191,6 +215,7 @@ h1 {
       <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
       <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
       <a href="faq.html" class="active"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+      
       <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
     </nav>
   </aside>
@@ -368,14 +393,6 @@ document.getElementById("logout").addEventListener("click", ()=>{
 // --- FAQ TOGGLE LOGIC ---
 document.querySelectorAll(".faq-question").forEach(q=>{
   q.addEventListener("click", ()=>{
-    // Optional: Close others when one is opened (Accordion style)
-    // document.querySelectorAll('.faq-question').forEach(el => {
-    //    if(el !== q) {
-    //       el.classList.remove('active');
-    //       el.nextElementSibling.style.display = 'none';
-    //    }
-    // });
-
     q.classList.toggle("active");
     const ans = q.nextElementSibling;
     
