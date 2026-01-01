@@ -23,7 +23,7 @@
 
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior: smooth; }
 
-/* --- BACKGROUND --- */
+/* --- BACKGROUND (SCREEN ONLY) --- */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
   background-size: 400% 400%;
@@ -135,25 +135,95 @@ li strong { color: #fff; width: 180px; display: inline-block; flex-shrink: 0; }
 #backToTop:hover { transform: translateY(-5px); background: #fff; }
 #backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
-/* PRINT STYLES (CLEAN PAPER LOOK) */
-@media print {
-  body { background: white; color: black; animation: none; }
-  body::before, .sidebar, .search-container, .table-card, .btn, #backToTop { display: none !important; }
-  .app { display: block; }
-  .main { padding: 0; }
-  .card { 
-      box-shadow: none; border: 2px solid #000; background: white; color: black; 
-      display: block !important; padding: 20px; margin: 0;
-  }
-  .card h2 { color: black; border-bottom: 2px solid black; }
-  .card h3 { color: black; border-left: 3px solid black; }
-  ul { background: none; padding: 0; }
-  li { color: black; border-bottom: 1px solid #eee; padding: 5px 0; }
-  li strong { color: black; }
-}
-
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
+
+/* ============================
+   PRINT SETTINGS (ONE PAGE)
+   ============================ */
+@media print {
+  @page { margin: 1cm; size: A4 portrait; }
+
+  /* Hide UI elements */
+  body::before, .sidebar, .search-container, .table-card, .btn, #backToTop, h1 {
+    display: none !important;
+  }
+
+  /* Reset Body for Paper */
+  body, .app, .main {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Report Card Styles */
+  .card { 
+      display: block !important;
+      position: relative !important;
+      box-shadow: none !important;
+      border: 2px solid #000 !important;
+      background: white !important;
+      color: black !important;
+      padding: 20px !important;
+      margin: 0 !important;
+      width: 100% !important;
+  }
+
+  /* Header */
+  .card h2 { 
+      color: black !important; 
+      border-bottom: 2px solid black !important;
+      font-size: 18pt !important;
+      margin-bottom: 15px !important;
+  }
+  .card h2 i { display: none !important; } /* Hide icons in header */
+
+  /* GRID LAYOUT FOR PRINT (2 COLUMNS) - This forces 1 page */
+  .print-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr; /* Split into Left & Right */
+      gap: 20px;
+      align-items: start;
+  }
+  
+  /* Section Headers */
+  .card h3 { 
+      color: black !important; 
+      border-left: none !important;
+      border-bottom: 1px solid #999 !important;
+      background: #eee !important;
+      padding: 5px 10px !important;
+      margin-top: 0 !important;
+      margin-bottom: 8px !important;
+      font-size: 11pt !important;
+      -webkit-print-color-adjust: exact; /* Force grey background print */
+  }
+
+  /* Lists */
+  ul { 
+      background: none !important; 
+      padding: 0 !important; 
+      margin-bottom: 15px !important;
+  }
+  
+  li { 
+      color: black !important; 
+      border-bottom: 1px solid #ddd !important; 
+      padding: 3px 0 !important;
+      font-size: 9pt !important; /* Smaller font to fit */
+      display: flex;
+  }
+  
+  li strong { 
+      color: #333 !important; 
+      width: 130px !important; /* Smaller width for label */
+      font-weight: bold !important;
+  }
+}
 </style>
 </head>
 
@@ -203,17 +273,25 @@ li strong { color: #fff; width: 180px; display: inline-block; flex-shrink: 0; }
         <i class="fa-solid fa-fingerprint" style="opacity:0.3; font-size:40px;"></i>
     </h2>
 
-    <h3><i class="fa-solid fa-circle-info"></i> SECTION 1: COMPLAINT DETAILS</h3>
-    <ul id="r_section1"></ul>
+    <div class="print-grid">
+        
+        <div class="print-col-left">
+            <h3><i class="fa-solid fa-circle-info"></i> SECTION 1: COMPLAINT DETAILS</h3>
+            <ul id="r_section1"></ul>
 
-    <h3><i class="fa-solid fa-user-pen"></i> SECTION 2: USER RECOMMENDATION</h3>
-    <ul id="r_section2"></ul>
+            <h3><i class="fa-solid fa-user-pen"></i> SECTION 2: USER RECOMMENDATION</h3>
+            <ul id="r_section2"></ul>
+        </div>
 
-    <h3><i class="fa-solid fa-screwdriver-wrench"></i> SECTION 3: ADMIN ASSESSMENT</h3>
-    <ul id="r_section3"></ul>
+        <div class="print-col-right">
+            <h3><i class="fa-solid fa-screwdriver-wrench"></i> SECTION 3: ADMIN ASSESSMENT</h3>
+            <ul id="r_section3"></ul>
 
-    <h3><i class="fa-solid fa-stamp"></i> SECTION 4: FINAL APPROVAL</h3>
-    <ul id="r_section4"></ul>
+            <h3><i class="fa-solid fa-stamp"></i> SECTION 4: FINAL APPROVAL</h3>
+            <ul id="r_section4"></ul>
+        </div>
+
+    </div>
 
     <button class="btn" onclick="window.print()">
         <i class="fa-solid fa-print"></i> PRINT DOCUMENT
@@ -251,7 +329,7 @@ function renderList(id, items){
   const ul = document.getElementById(id);
   ul.innerHTML = "";
   items.forEach(i => {
-    // Split text for bolding (e.g., "Asset Type: Laptop")
+    // Split text for bolding
     let parts = i.split(": ");
     let label = parts[0];
     let value = parts.slice(1).join(": ");
@@ -294,8 +372,6 @@ function renderTable(filter=""){
 
   list.forEach(c => {
     const tr = document.createElement("tr");
-    
-    // Status Color Logic
     let statusColor = c.approvalstatus === 'Approve' ? '#00ff9d' : (c.approvalstatus === 'Not approve' ? '#ff4d4d' : '#ccc');
 
     tr.innerHTML = `
@@ -333,7 +409,7 @@ function showReport(id){
   renderList("r_section3",[
     `Previous Cost: RM ${c.previousmaintenancecost||0}`,
     `Estimated Cost: RM ${c.estimatedmaintenancecost||0}`,
-    `Admin Recommendation: ${c.recommendsection3||"-"}`,
+    `Admin Rec: ${c.recommendsection3||"-"}`,
     `Admin Name: ${c.section3nameposition||"-"}`,
     `Assessment Date: ${dt(c.section3date)}`
   ]);
