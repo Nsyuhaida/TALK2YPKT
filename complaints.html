@@ -82,8 +82,22 @@ body::before {
 }
 .nav a i { width: 20px; text-align: center; }
 
-#logout { margin-top: auto; color: #ff4d4d; border-color: rgba(255, 77, 77, 0.2); }
-#logout:hover { background: rgba(255, 77, 77, 0.1); border-color: #ff4d4d; color: #fff; }
+/* --- SIGN OUT STYLE (Updated with Separator) --- */
+#logout {
+  margin-top: 20px; /* Jarak dari item atas */
+  color: #ff4d4d;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garisan Sempadan */
+  padding-top: 20px; /* Jarak teks dari garisan */
+  border-radius: 0;
+  /* Reset border lain */
+  border-bottom: 0; border-left: 0; border-right: 0; 
+}
+
+#logout:hover {
+  background: rgba(255, 77, 77, 0.1);
+  color: #fff;
+  border-top-color: rgba(255, 255, 255, 0.3);
+}
 
 /* --- MAIN CONTENT --- */
 .main { flex:1; padding: 30px; overflow-x: hidden; }
@@ -255,6 +269,7 @@ td:first-child {
     <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
     <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
     <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+    
     <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
   </nav>
 </aside>
