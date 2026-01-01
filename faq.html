@@ -13,7 +13,7 @@
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
-  --neon-red: #ff4d4d; /* Added Red for Logout */
+  --neon-red: #ff4d4d;
   --bg-dark: #020617;
   --glass-panel: rgba(15, 23, 42, 0.7);
   --glass-border: rgba(0, 243, 255, 0.2);
@@ -62,7 +62,7 @@ body {
 .nav {
   display: flex;
   flex-direction: column;
-  flex: 1; /* Ini penting supaya nav memenuhi ruang kosong sidebar */
+  flex: 1; 
 }
 
 .nav a {
@@ -80,18 +80,22 @@ body {
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
 }
 
-/* --- LOGOUT BUTTON SPECIFIC STYLE --- */
+/* --- SIGN OUT STYLE (UPDATED) --- */
 #logout {
-  margin-top: auto; /* Tolak button ke paling bawah */
-  color: var(--neon-red);
-  border: 1px solid rgba(255, 77, 77, 0.2);
+  margin-top: 20px; /* Jarak dari item atas */
+  color: #ff4d4d;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garisan Sempadan */
+  padding-top: 20px; /* Jarak teks dari garisan */
+  border-radius: 0;
+  /* Reset border lain */
+  border-bottom: 0; border-left: 0; border-right: 0; 
 }
 
 #logout:hover {
   background: rgba(255, 77, 77, 0.1);
-  box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
-  border-color: var(--neon-red);
   color: #fff;
+  border-top-color: rgba(255, 255, 255, 0.3);
+  box-shadow: none; /* Reset specific shadow if needed, or keep consistent */
 }
 
 /* --- MAIN CONTENT --- */
@@ -105,7 +109,7 @@ h1 {
   display: flex; align-items: center; gap: 15px;
 }
 
-/* FAQ CARD - FULL WIDTH FIX */
+/* FAQ CARD */
 .card {
   background: var(--glass-panel);
   border: 1px solid var(--glass-border);
@@ -113,8 +117,7 @@ h1 {
   padding: 10px; 
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-  /* SAYA BUANG max-width: 900px DARI SINI */
-  width: 100%; /* Paksa lebar penuh */
+  width: 100%; 
   animation: slideUp 0.6s ease;
 }
 
@@ -194,7 +197,7 @@ h1 {
 @media(max-width:800px){
   .app{ flex-direction: column; }
   .sidebar{ width:100%; height:auto; padding:15px; position: relative; }
-  .nav { flex-direction: column; } /* Keep simple on mobile */
+  .nav { flex-direction: column; } 
   .main{ padding: 20px; }
 }
 </style>
@@ -383,7 +386,7 @@ h1 {
 <button id="btnUp" title="Back to Top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>
-// --- LOGOUT LOGIC ---
+// --- LOGOUT LOGIC (Unchanged Functionality) ---
 document.getElementById("logout").addEventListener("click", ()=>{
   // Add authentication handling here if needed
   localStorage.removeItem("admin_logged_in");
@@ -422,4 +425,3 @@ btnUp.onclick = function() {
 
 </body>
 </html>
-
