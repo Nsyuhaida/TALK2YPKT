@@ -2,223 +2,379 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Insight</title>
+<title>Admin Insight | System Status</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Space+Mono:wght@400;700&display=swap');
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-}
-
-body{
-  min-height:100vh;
-  background:linear-gradient(-45deg,#020617,#0f172a,#1e3a8a,#0284c7);
-  background-size:400% 400%;
-  animation:bgMove 18s ease infinite;
-  color:#fff;
-  overflow-x:hidden;
+:root {
+  --primary: #0ea5e9;
+  --accent: #6366f1;
+  --glass: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.15);
 }
 
-/* GLOW ORBS */
-.orb{
-  position:fixed;
-  width:320px;
-  height:320px;
-  background:radial-gradient(circle,#38bdf8,transparent 70%);
-  filter:blur(90px);
-  opacity:.55;
-  animation:float 10s ease-in-out infinite;
-}
-.orb.one{top:8%;left:4%}
-.orb.two{bottom:6%;right:6%;animation-delay:4s}
-
-/* HERO */
-.hero{
-  padding:90px 10%;
-}
-.hero h1{
-  font-size:54px;
-  font-weight:700;
-  animation:fadeUp 1s ease forwards;
-}
-.hero p{
-  margin-top:14px;
-  max-width:520px;
-  opacity:.9;
-  animation:fadeUp 1s ease forwards;
-  animation-delay:.2s;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* CARDS */
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:32px;
-  margin-top:70px;
+body {
+  min-height: 100vh;
+  background-color: #020617;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.3) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.3) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.3) 0px, transparent 50%);
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+  position: relative;
 }
 
-.card{
-  position:relative;
-  padding:38px;
-  border-radius:26px;
-  background:rgba(255,255,255,.12);
-  backdrop-filter:blur(20px);
-  box-shadow:0 35px 70px rgba(0,0,0,.4);
-  overflow:hidden;
-  animation:fadeUp .8s ease forwards;
+/* GRID OVERLAY - Bagi nampak teknikal */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: -1;
 }
 
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);
-  animation:shine 3.5s infinite;
+/* ORBS ANIMATION */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.6;
+  z-index: -2;
+  animation: floatOrb 10s ease-in-out infinite;
+}
+.orb-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; left: -100px; }
+.orb-2 { width: 300px; height: 300px; background: var(--accent); bottom: -50px; right: -50px; animation-delay: -5s; }
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, 50px); }
 }
 
-.card h2{
-  font-size:36px;
-  font-weight:700;
-}
-.card span{
-  font-size:13px;
-  opacity:.85;
+/* HERO SECTION */
+.hero {
+  padding: 80px 10%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.card:hover{
-  transform:translateY(-12px) scale(1.04);
-  transition:.45s;
+.hero h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+  animation: slideDown 0.8s ease-out;
 }
 
-/* WAVE BAR */
-.wave{
-  position:relative;
-  height:16px;
-  border-radius:20px;
-  background:rgba(255,255,255,.25);
-  overflow:hidden;
+.hero p {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  max-width: 500px;
+  margin-bottom: 3rem;
+  animation: slideDown 0.8s ease-out 0.2s backwards;
 }
-.wave::after{
-  content:"";
-  position:absolute;
-  width:200%;
-  height:100%;
-  background:linear-gradient(
-    90deg,
-    transparent,
-    #22c55e,
-    #4ade80,
+
+/* DASHBOARD CARDS */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 4rem;
+}
+
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  padding: 30px;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: fadeInUp 0.8s ease-out backwards;
+}
+
+/* Stagger Animation untuk kad */
+.card:nth-child(1) { animation-delay: 0.3s; }
+.card:nth-child(2) { animation-delay: 0.4s; }
+.card:nth-child(3) { animation-delay: 0.5s; }
+.card:nth-child(4) { animation-delay: 0.6s; }
+
+/* Card Hover Effect - WOW Factor */
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 40px -10px rgba(14, 165, 233, 0.3);
+}
+
+.card:hover::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.card-icon {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  background: rgba(14, 165, 233, 0.1);
+  width: 50px; height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.card h2 {
+  font-family: 'Space Mono', monospace;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  letter-spacing: -1px;
+}
+
+.card span {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* PROGRESS BAR */
+.status-container {
+  background: var(--glass);
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  animation: fadeInUp 0.8s ease-out 0.7s backwards;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.wave-bg {
+  width: 100%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.wave-fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  width: 85%; /* Target Width */
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: 20px;
+  box-shadow: 0 0 20px var(--primary);
+  animation: loadBar 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  width: 0%; /* Start at 0 for animation */
+}
+
+/* Striped Animation on Bar */
+.wave-fill::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
     transparent
   );
-  animation:waveMove 4s linear infinite;
+  background-size: 20px 20px;
+  animation: moveStripes 1s linear infinite;
 }
 
-/* CTA */
-.cta{
-  margin-top:90px;
-  text-align:center;
-  animation:fadeUp 1s ease forwards;
-  animation-delay:1s;
+/* CTA BUTTON */
+.cta {
+  margin-top: 60px;
+  text-align: center;
+  animation: fadeInUp 0.8s ease-out 0.9s backwards;
 }
-.cta a{
-  text-decoration:none;
-  background:#fff;
-  color:#020617;
-  padding:18px 46px;
-  border-radius:50px;
-  font-weight:700;
-  letter-spacing:.5px;
-  box-shadow:0 25px 50px rgba(0,0,0,.45);
-  transition:.3s;
+
+.btn-glow {
+  text-decoration: none;
+  display: inline-block;
+  padding: 18px 48px;
+  background: #fff;
+  color: #020617;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
 }
-.cta a:hover{
-  transform:translateY(-5px) scale(1.06);
+
+.btn-glow::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  z-index: -1;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.btn-glow:hover {
+  transform: translateY(-5px);
+  color: #fff;
+  box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
+}
+
+.btn-glow:hover::before {
+  opacity: 1;
 }
 
 /* FOOTER */
-footer{
-  text-align:center;
-  padding:30px;
-  font-size:13px;
-  opacity:.75;
+footer {
+  text-align: center;
+  padding: 40px;
+  color: #64748b;
+  font-size: 0.9rem;
 }
 
-/* ANIMATIONS */
-@keyframes bgMove{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
+/* KEYFRAMES */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(60px)}
-  to{opacity:1;transform:translateY(0)}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-@keyframes shine{
-  0%{transform:translateX(-100%)}
-  100%{transform:translateX(100%)}
+@keyframes loadBar {
+  to { width: 85%; }
 }
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-45px)}
+@keyframes moveStripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 20px; }
 }
-@keyframes waveMove{
-  from{left:-100%}
-  to{left:0}
-}
+
 </style>
 </head>
 
 <body>
 
-<div class="orb one"></div>
-<div class="orb two"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
 <section class="hero">
   <h1>Admin Insight</h1>
-  <p>Real-time visual intelligence overview for system operations.</p>
+  <p>Real-time visual intelligence & operational analytics.</p>
 
   <div class="cards">
-    <div class="card">
-      <h2>99.8%</h2>
-      <span>System Stability Index</span>
+    <div class="card" onmousemove="cardEffect(event, this)">
+      <div class="card-icon"><i class="fa-solid fa-server"></i></div>
+      <h2 class="counter" data-target="99.8">0</h2>
+      <span>System Stability Index (%)</span>
     </div>
 
-    <div class="card">
-      <h2>Secure</h2>
-      <span>Security Status</span>
+    <div class="card" onmousemove="cardEffect(event, this)">
+      <div class="card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+      <h2 style="font-size: 2rem;">SECURE</h2>
+      <span>Firewall Status</span>
     </div>
 
-    <div class="card">
-      <h2>Adaptive</h2>
+    <div class="card" onmousemove="cardEffect(event, this)">
+      <div class="card-icon"><i class="fa-solid fa-bolt"></i></div>
+      <h2 style="font-size: 2rem;">ADAPTIVE</h2>
       <span>Operational Mode</span>
     </div>
 
-    <div class="card">
-      <h2>Live</h2>
-      <span>System Activity</span>
+    <div class="card" onmousemove="cardEffect(event, this)">
+      <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+      <h2 class="counter" data-target="2450">0</h2>
+      <span>Live Active Sessions</span>
     </div>
   </div>
 
-  <div style="margin-top:70px">
-    <div style="display:flex;justify-content:space-between;margin-bottom:12px">
-      <span>System Load Flow</span>
-      <span>Dynamic</span>
+  <div class="status-container">
+    <div class="status-header">
+      <span><i class="fa-solid fa-microchip" style="margin-right:8px"></i> System Load Flow</span>
+      <span style="color:var(--primary)">Dynamic Optimization</span>
     </div>
-    <div class="wave"></div>
+    <div class="wave-bg">
+      <div class="wave-fill"></div>
+    </div>
   </div>
 
   <div class="cta">
-    <a href="login.html">Enter Administration Panel</a>
+    <a href="login.html" class="btn-glow">Access Control Panel <i class="fa-solid fa-arrow-right" style="margin-left:8px"></i></a>
   </div>
 </section>
+
 <footer>
-  © 2025 Digital Administration System
+  © 2025 Digital Administration System | Secured by Quantum Shield
 </footer>
+
+<script>
+  // 1. Counter Animation (Nombor naik dari 0)
+  const counters = document.querySelectorAll('.counter');
+  
+  counters.forEach(counter => {
+    counter.innerText = '0';
+    
+    const updateCounter = () => {
+      const target = +counter.getAttribute('data-target');
+      const c = +counter.innerText;
+      
+      const increment = target / 100; // Kelajuan
+
+      if(c < target) {
+        counter.innerText = Math.ceil(c + increment);
+        setTimeout(updateCounter, 20);
+      } else {
+        counter.innerText = target;
+        // Tambah % jika target adalah 99.8
+        if(target === 99.8) counter.innerText += "%";
+      }
+    };
+    updateCounter();
+  });
+
+  // 2. Mouse Glow Effect pada Kad
+  function cardEffect(e, card) {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    card.style.setProperty('--x', x + 'px');
+    card.style.setProperty('--y', y + 'px');
+  }
+</script>
 
 </body>
 </html>
