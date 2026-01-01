@@ -11,19 +11,35 @@
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 
-/* --- BACKGROUND ASAL YANG LAWA TU --- */
+/* --- BACKGROUND: WARNA ASAL + EFEK GRID --- */
 body{
   min-height:100vh;
-  /* Warna asal yang anda suka */
-  background:linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #0284c7);
-  background-size:400% 400%;
-  animation:bgMove 18s ease infinite;
-  color:#fff;
-  overflow-x:hidden; /* Elak scroll tepi masa animasi masuk */
+  /* 1. Warna Asal (Gradient Bergerak) */
+  background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #0284c7);
+  background-size: 400% 400%;
+  animation: bgMove 18s ease infinite;
+  
+  color: #fff;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative; /* Penting untuk grid overlay */
+}
+
+/* 2. Grid Overlay (Ini yang buat nampak macam System Nexus) */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Garis grid halus separa telus */
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px; /* Saiz kotak grid */
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Glow Orbs (Bola cahaya samar-samar di belakang) */
@@ -33,7 +49,7 @@ body{
   background:radial-gradient(circle, #38bdf8, transparent 70%);
   filter:blur(80px);
   opacity:.4;
-  z-index: -1;
+  z-index: 0; /* Duduk sama level dengan grid */
   animation: float 10s ease-in-out infinite;
 }
 .orb.one{top:10%; left:10%;}
@@ -44,9 +60,10 @@ body{
   text-align: center;
   margin-bottom: 60px;
   animation: fadeIn 1.5s ease;
+  z-index: 2; /* Atas grid */
 }
 .hero h1 {
-  font-family: 'Orbitron', sans-serif; /* Font sci-fi sikit untuk tajuk */
+  font-family: 'Orbitron', sans-serif;
   font-size: 3.5rem;
   font-weight: 700;
   text-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
@@ -61,20 +78,21 @@ body{
 /* --- GRID 4 KAD SEBARIS --- */
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 Column Tetap */
+  grid-template-columns: repeat(4, 1fr);
   gap: 25px;
   width: 90%;
   max-width: 1400px;
   margin: 0 auto;
+  z-index: 2; /* Atas grid */
 }
 
 /* --- KAD DENGAN CAHAYA BERGERAK (MAGIC BORDER) --- */
 .magic-card {
   position: relative;
   height: 220px;
-  background: rgba(255, 255, 255, 0.05); /* Base samar */
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
-  overflow: hidden; /* Penting untuk cahaya */
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,15 +101,15 @@ body{
   opacity: 0;
   transform: translateX(50px);
   animation: slideInRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  backdrop-filter: blur(5px); /* Bagi nampak kaca sikit */
 }
 
-/* Delay supaya masuk satu-satu */
 .magic-card:nth-child(1) { animation-delay: 0.1s; }
 .magic-card:nth-child(2) { animation-delay: 0.2s; }
 .magic-card:nth-child(3) { animation-delay: 0.3s; }
 .magic-card:nth-child(4) { animation-delay: 0.4s; }
 
-/* LAYER CAHAYA BERPUSING (Behind content) */
+/* LAYER CAHAYA BERPUSING */
 .magic-card::before {
   content: '';
   position: absolute;
@@ -101,16 +119,16 @@ body{
     transparent, 
     transparent, 
     transparent, 
-    var(--glow-color) /* Warna ikut jenis kad */
+    var(--glow-color)
   );
-  animation: rotateBorder 4s linear infinite; /* Pusingan tanpa henti */
+  animation: rotateBorder 4s linear infinite;
 }
 
-/* CONTENT KAD (Duduk atas cahaya) */
+/* CONTENT KAD */
 .card-content {
   position: absolute;
-  inset: 3px; /* Jarak 3px dari tepi untuk nampak border */
-  background: rgba(15, 23, 42, 0.95); /* Gelap sikit dari background body */
+  inset: 3px;
+  background: rgba(2, 6, 23, 0.9); /* Gelap sikit supaya tulisan jelas */
   border-radius: 18px;
   z-index: 10;
   display: flex;
@@ -119,9 +137,9 @@ body{
   align-items: center;
   text-align: center;
   padding: 20px;
+  transition: 0.3s;
 }
 
-/* Style dalam kad */
 .icon-box {
   font-size: 2.2rem;
   margin-bottom: 15px;
@@ -149,9 +167,8 @@ body{
 .magic-card.green { --glow-color: #00ff9d; }
 .magic-card.orange { --glow-color: #ffaa00; }
 
-/* Hover Effect - Zoom sikit */
 .magic-card:hover .card-content {
-  background: rgba(15, 23, 42, 0.85); /* Lebih cerah bila hover */
+  background: rgba(15, 23, 42, 0.8);
 }
 
 /* CTA Button */
@@ -168,6 +185,7 @@ body{
   transition: 0.3s;
   animation: fadeIn 1s ease forwards 1s;
   opacity: 0;
+  z-index: 2;
 }
 .cta-btn:hover {
   transform: translateY(-5px);
@@ -180,27 +198,23 @@ body{
   50%{background-position:100% 50%}
   100%{background-position:0% 50%}
 }
-
 @keyframes rotateBorder {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
 @keyframes slideInRight {
   to { opacity: 1; transform: translateX(0); }
 }
-
 @keyframes float {
   0%,100%{transform:translateY(0)}
   50%{transform:translateY(-30px)}
 }
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Mobile Responsive: Kalau screen kecik sangat, baru turun baris */
+/* Mobile Responsive */
 @media (max-width: 1000px) {
   .cards-container { grid-template-columns: repeat(2, 1fr); }
 }
@@ -248,9 +262,9 @@ body{
 
   <div class="magic-card orange">
     <div class="card-content">
-      <div class="icon-box"><i class="fa-solid fa-users"></i></div>
-      <h2 class="counter" data-target="2450">0</h2>
-      <span>Live Users</span>
+      <div class="icon-box"><i class="fa-solid fa-user-shield"></i></div>
+      <h2 class="counter" data-target="6">0</h2>
+      <span>Total Admins</span>
     </div>
   </div>
 
@@ -268,11 +282,14 @@ body{
     const updateCounter = () => {
       const target = +counter.getAttribute('data-target');
       const c = +counter.innerText;
-      const increment = target / 100;
+      
+      // Kalau nombor kecil (macam 6), naik 1 per 1. Kalau besar, laju sikit.
+      const increment = target < 20 ? 1 : Math.ceil(target / 100);
 
       if(c < target) {
-        counter.innerText = Math.ceil(c + increment);
-        setTimeout(updateCounter, 25);
+        counter.innerText = parseInt(c) + increment;
+        // Delay lambat sikit kalau nombor kecil supaya tak terlalu laju
+        setTimeout(updateCounter, target < 20 ? 150 : 25);
       } else {
         counter.innerText = target;
         if(target === 99.8) counter.innerText += "%";
