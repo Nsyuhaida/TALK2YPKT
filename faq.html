@@ -2,113 +2,176 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin FAQ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Admin | FAQ Archives</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
+/* --- NEXUS THEME VARIABLES --- */
+:root {
+  --neon-blue: #00f3ff;
+  --neon-green: #00ff9d;
+  --bg-dark: #020617;
+  --glass-panel: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(0, 243, 255, 0.2);
+  --text-main: #e2e8f0;
+  --text-muted: #94a3b8;
 }
 
-body{
-  background:#89CFF0;
+* { margin:0; padding:0; box-sizing:border-box; scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-dark);
+  background-image: 
+      radial-gradient(circle at 50% 0%, rgba(0, 243, 255, 0.1) 0%, transparent 50%),
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+  color: var(--text-main);
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
 }
 
-.app{
-  display:flex;
-  min-height:100vh;
+.app { display:flex; min-height:100vh; }
+
+/* --- SIDEBAR --- */
+.sidebar {
+  width: 260px;
+  background: rgba(10, 15, 30, 0.95);
+  border-right: 1px solid var(--glass-border);
+  padding: 25px;
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh;
+  backdrop-filter: blur(10px);
 }
 
-/* Sidebar */
-.sidebar{
-  width:240px;
-  background:#1e3a8a;
-  color:white;
-  padding:20px;
+.logo { width: 70px; display: block; margin: 0 auto 20px; filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.5)); }
+
+.brand {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--neon-blue);
+  text-align: center; margin-bottom: 40px;
+  letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
 
-.logo{
-  width:60px;
-  display:block;
-  margin:0 auto 15px;
+.nav a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 15px; margin-bottom: 10px;
+  color: var(--text-muted); text-decoration: none;
+  border-radius: 8px; transition: 0.3s;
+  border: 1px solid transparent; font-size: 14px;
+}
+.nav a i { width: 20px; text-align: center; }
+
+.nav a:hover, .nav a.active {
+  background: rgba(0, 243, 255, 0.1);
+  color: #fff; border-color: var(--glass-border);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
 }
 
-.brand{
-  font-size:20px;
-  font-weight:bold;
-  margin-bottom:30px;
-  text-align:center;
+/* --- MAIN CONTENT --- */
+.main { flex:1; padding: 40px; overflow-y: auto; position: relative; }
+
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px; color: #fff;
+  margin-bottom: 30px;
+  text-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+  display: flex; align-items: center; gap: 15px;
 }
 
-.nav a{
-  display:block;
-  text-decoration:none;
-  color:white;
-  padding:12px;
-  border-radius:8px;
-  margin-bottom:8px;
-  transition:0.3s;
+/* FAQ CARD */
+.card {
+  background: var(--glass-panel);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(15px);
+  padding: 10px; /* Padding small for list */
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  max-width: 900px;
+  animation: slideUp 0.6s ease;
 }
 
-.nav a:hover,
-.nav a.active{
-  background:#2563eb;
+/* FAQ ITEM STYLING */
+.faq-item {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 5px;
+}
+.faq-item:last-child { border-bottom: none; }
+
+.faq-question {
+  padding: 20px;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px;
+  color: #fff;
+  background: rgba(255,255,255,0.02);
+  transition: 0.3s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
 }
 
-/* Main */
-.main{
-  flex:1;
-  padding:25px;
+.faq-question:hover {
+  background: rgba(0, 243, 255, 0.05);
+  padding-left: 25px; /* Slight movement effect */
+  color: var(--neon-blue);
 }
 
-.main h1{
-  font-size:26px;
-  margin-bottom:20px;
+.faq-question.active {
+  background: rgba(0, 243, 255, 0.1);
+  color: var(--neon-blue);
+  border-left: 4px solid var(--neon-blue);
 }
 
-.card{
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 6px 15px rgba(0,0,0,0.1);
+.faq-question i {
+  transition: transform 0.3s ease;
+  color: var(--text-muted);
+}
+.faq-question.active i {
+  transform: rotate(180deg);
+  color: var(--neon-blue);
 }
 
-/* FAQ */
-.faq-item{
-  border-bottom:1px solid #eee;
+.faq-answer {
+  display: none;
+  padding: 20px 25px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.8;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  margin-left: 20px;
+  background: rgba(0,0,0,0.2);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  animation: fadeIn 0.4s ease;
 }
 
-.faq-question{
-  padding:14px;
-  cursor:pointer;
-  font-weight:bold;
-  position:relative;
-  font-size:16px;
+/* BUTTON UP */
+#btnUp {
+  position: fixed; bottom: 30px; right: 30px;
+  width: 50px; height: 50px; border-radius: 50%;
+  background: var(--neon-blue); color: #000; border: none;
+  font-size: 20px; cursor: pointer; display: none;
+  align-items: center; justify-content: center;
+  box-shadow: 0 0 20px var(--neon-blue); z-index: 100;
+  transition: 0.3s;
 }
+#btnUp:hover { transform: translateY(-5px); background: #fff; }
 
-.faq-question::after{
-  content:'+';
-  position:absolute;
-  right:15px;
-  font-size:20px;
-}
+/* ANIMATIONS */
+@keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-.faq-question.active::after{
-  content:'−';
-}
-
-.faq-answer{
-  display:none;
-  padding:14px;
-  color:#555;
-  line-height:1.7;
-  font-size:14px;
-}
-
+/* RESPONSIVE */
 @media(max-width:800px){
-  .sidebar{display:none;}
+  .app{ flex-direction: column; }
+  .sidebar{ width:100%; height:auto; padding:15px; position: relative; }
+  .main{ padding: 20px; }
 }
 </style>
 </head>
@@ -117,30 +180,28 @@ body{
 
 <div class="app">
 
-  <!-- Sidebar -->
   <aside class="sidebar">
-    <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" class="logo">
-    <div class="brand">Admin Panel</div>
+    <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
+    <div class="brand">SYSTEM CORE</div>
 
     <nav class="nav">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="complaints.html">Complaints</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="data-entry.html">Data Entry</a>
-      <a href="full-report.html">Full Report</a>
-      <a href="faq.html" class="active">FAQ</a>
-      <a href="#" id="logout">Sign Out</a>
+      <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+      <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
+      <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
+      <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
+      <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
+      <a href="faq.html" class="active"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+      <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
     </nav>
   </aside>
 
-  <!-- Main -->
   <main class="main">
-    <h1>Frequently Asked Questions (Admin)</h1>
+    <h1><i class="fa-solid fa-folder-open"></i> FAQ ARCHIVES</h1>
 
     <div class="card">
 
       <div class="faq-item">
-        <div class="faq-question">1. How does the complaint workflow operate?</div>
+        <div class="faq-question">1. How does the complaint workflow operate? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           The complaint workflow begins when a user submits a complaint through the system.
           The complaint is automatically recorded and assigned an initial status.
@@ -152,19 +213,19 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">2. What complaint statuses are available in the system?</div>
+        <div class="faq-question">2. What complaint statuses are available? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           The system provides several complaint statuses to reflect the progress of each case.
-          These include Pending for newly submitted complaints, Approved for validated cases,
-          In Progress for complaints currently being handled, and Resolved for completed cases.
+          These include <strong>Pending</strong> for newly submitted complaints, <strong>Approved</strong> for validated cases,
+          <strong>In Progress</strong> for complaints currently being handled, and <strong>Resolved</strong> for completed cases.
           These statuses help administrators track progress clearly and maintain an organized workflow.
         </div>
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">3. Where can admins update or modify complaint details?</div>
+        <div class="faq-question">3. Where can admins update complaint details? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
-          Admins can update or modify complaint details through the Data Entry section of the system.
+          Admins can update or modify complaint details through the <strong>Data Entry</strong> section of the system.
           This includes editing descriptions, updating complaint status, adding administrative remarks,
           or assigning staff for action. Any updates made are saved immediately to ensure the most
           accurate and up-to-date information is available at all times.
@@ -172,7 +233,7 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">4. How is system performance measured in the dashboard?</div>
+        <div class="faq-question">4. How is system performance measured? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           System performance is measured by analyzing the ratio of resolved complaints compared
           to the total number of complaints recorded. This performance indicator provides admins
@@ -182,7 +243,7 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">5. Can multiple administrators manage complaints at the same time?</div>
+        <div class="faq-question">5. Can multiple admins manage complaints simultaneously? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           Yes, the system supports multiple administrators accessing and managing complaints
           simultaneously. All updates are synchronized in real time, allowing admins to work
@@ -192,9 +253,9 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">6. Can admins generate and print complaint reports?</div>
+        <div class="faq-question">6. Can admins generate and print reports? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
-          Admins can generate detailed complaint reports from the Full Report section.
+          Admins can generate detailed complaint reports from the <strong>Full Report</strong> section.
           These reports can be filtered by date, status, or device type, and then printed
           or exported for documentation, audits, or management meetings.
           This feature supports transparent reporting and informed decision-making.
@@ -202,17 +263,17 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">7. What should an admin do if incorrect data is entered?</div>
+        <div class="faq-question">7. What if incorrect data is entered? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           If incorrect data is identified, admins should promptly update and correct the
-          information using the Data Entry page. Maintaining accurate records is critical
+          information using the <strong>Data Entry</strong> page. Maintaining accurate records is critical
           for reliable reporting, proper decision-making, and system integrity.
           All corrections should be verified before saving to prevent recurring errors.
         </div>
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">8. Are admin actions recorded in the system?</div>
+        <div class="faq-question">8. Are admin actions recorded in the system? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           Yes, the system records key administrative actions such as status updates,
           approvals, and modifications. These logs provide accountability and allow
@@ -222,7 +283,7 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">9. How does the system support daily administrative operations?</div>
+        <div class="faq-question">9. How does the system support daily operations? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           The system supports daily operations by providing a centralized dashboard with
           real-time data, complaint summaries, and performance indicators.
@@ -232,9 +293,9 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">10. How are resolved complaints handled in the system?</div>
+        <div class="faq-question">10. How are resolved complaints handled? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
-          Once a complaint has been resolved, it is marked as Resolved and remains stored
+          Once a complaint has been resolved, it is marked as <strong>Resolved</strong> and remains stored
           in the system for future reference. Resolved complaints can still be viewed
           in reports and historical records, allowing admins to analyze trends
           and improve future service quality.
@@ -242,9 +303,9 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">11. Can admins manually add complaints into the system?</div>
+        <div class="faq-question">11. Can admins manually add complaints? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
-          Yes, admins are able to manually add complaints through the Data Entry section.
+          Yes, admins are able to manually add complaints through the <strong>Data Entry</strong> section.
           This is particularly useful when users are unable to submit complaints themselves
           or when complaints are received through alternative channels such as phone calls
           or in-person reports.
@@ -252,7 +313,7 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">12. What happens when a complaint is approved?</div>
+        <div class="faq-question">12. What happens when a complaint is approved? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           When a complaint is approved, it confirms that the reported issue has been verified
           and accepted for action. The complaint then moves to the processing stage,
@@ -262,7 +323,7 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">13. Can admins review previous actions taken on a complaint?</div>
+        <div class="faq-question">13. Can admins review previous actions? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           Yes, admins can review the complete history of a complaint, including all previous
           updates, status changes, and remarks. This detailed record helps admins understand
@@ -271,7 +332,7 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">14. How does the system help reduce response time?</div>
+        <div class="faq-question">14. How does the system help reduce response time? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
           The system reduces response time by offering real-time updates, clear status tracking,
           and filtering tools. These features enable admins to quickly identify new or urgent
@@ -281,9 +342,9 @@ body{
       </div>
 
       <div class="faq-item">
-        <div class="faq-question">15. How should admins properly end their session?</div>
+        <div class="faq-question">15. How should admins properly end their session? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
-          Admins should always sign out using the Sign Out option after completing their tasks.
+          Admins should always sign out using the <strong>Sign Out</strong> option after completing their tasks.
           This prevents unauthorized access and helps maintain system security.
           Logging out is especially important when accessing the system
           from shared or public devices.
@@ -294,21 +355,52 @@ body{
   </main>
 </div>
 
+<button id="btnUp" title="Back to Top"><i class="fa-solid fa-arrow-up"></i></button>
+
 <script>
-// Logout
+// --- LOGOUT LOGIC ---
 document.getElementById("logout").addEventListener("click", ()=>{
+  // Add authentication handling here if needed
   localStorage.removeItem("admin_logged_in");
-  window.location.href="index.html";
+  window.location.href="login.html";
 });
 
-// FAQ Toggle
+// --- FAQ TOGGLE LOGIC ---
 document.querySelectorAll(".faq-question").forEach(q=>{
   q.addEventListener("click", ()=>{
+    // Optional: Close others when one is opened (Accordion style)
+    // document.querySelectorAll('.faq-question').forEach(el => {
+    //    if(el !== q) {
+    //       el.classList.remove('active');
+    //       el.nextElementSibling.style.display = 'none';
+    //    }
+    // });
+
     q.classList.toggle("active");
     const ans = q.nextElementSibling;
-    ans.style.display = ans.style.display === "block" ? "none" : "block";
+    
+    if (ans.style.display === "block") {
+        ans.style.display = "none";
+    } else {
+        ans.style.display = "block";
+    }
   });
 });
+
+// --- BUTTON UP LOGIC ---
+const btnUp = document.getElementById("btnUp");
+
+window.onscroll = function() {
+  if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+    btnUp.style.display = "flex";
+  } else {
+    btnUp.style.display = "none";
+  }
+};
+
+btnUp.onclick = function() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+};
 </script>
 
 </body>
