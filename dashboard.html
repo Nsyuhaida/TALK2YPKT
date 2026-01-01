@@ -16,6 +16,7 @@
 
 :root {
   --neon-blue: #00f3ff;
+  --neon-red: #ff4d4d; /* Tambah warna merah neon */
   --bg-dark: #020617;
   --glass: rgba(15, 23, 42, 0.75);
   --border: rgba(0, 243, 255, 0.2);
@@ -99,8 +100,21 @@ body::before {
 
 .nav a i { width: 20px; text-align: center; }
 
-#logout { margin-top: auto; color: #ff4d4d; border-color: rgba(255, 77, 77, 0.2); }
-#logout:hover { background: rgba(255, 77, 77, 0.1); border-color: #ff4d4d; color: #fff; }
+/* SIGN OUT BUTTON (Dengan Sempadan/Separator) */
+#logout {
+  margin-top: 20px; /* Jarak dari item atas (FAQ) */
+  color: var(--neon-red);
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garisan Sempadan */
+  padding-top: 20px; /* Jarak teks dari garisan */
+  border-radius: 0; /* Hilangkan curve atas supaya rata dengan line */
+}
+
+#logout:hover {
+  background: rgba(255, 77, 77, 0.1);
+  border-color: rgba(255, 77, 77, 0.5); /* Warna border bila hover */
+  color: #fff;
+}
+
 
 /* MAIN CONTENT */
 .main { flex: 1; padding: 30px; overflow-x: hidden; }
@@ -275,6 +289,7 @@ tr:hover td {
       <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
       <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
       <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+      
       <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
     </nav>
   </aside>
@@ -334,8 +349,8 @@ tr:hover td {
           
           <div class="summary-kpi">
             <div class="summary-kpi-inner">
-               <h2 id="todayCount">0</h2>
-               <span>LOGGED TODAY</span>
+                <h2 id="todayCount">0</h2>
+                <span>LOGGED TODAY</span>
             </div>
           </div>
         </div>
@@ -400,7 +415,7 @@ async function loadComplaints(){
   renderDonut();
 }
 
-// --- RENDER TABLE (Sedikit ubah HTML string untuk fit style baru) ---
+// --- RENDER TABLE ---
 function renderTable(){
   const tb = document.querySelector("#dashboardTable tbody");
   const search = searchInput.value.toLowerCase();
@@ -436,9 +451,9 @@ function renderTable(){
 
 function renderStats(){
   totalComplaints.textContent = complaintsData.length;
-  approveCount.textContent =
+  approveCount.textContent = 
     complaintsData.filter(c=>c.approvalstatus==="Approve").length;
-  notApproveCount.textContent =
+  notApproveCount.textContent = 
     complaintsData.filter(c=>c.approvalstatus!=="Approve").length;
 }
 
@@ -474,8 +489,8 @@ function renderDonut(){
   });
 
   const today = new Date().toLocaleDateString("ms-MY");
-  todayCount.textContent = complaintsData.filter(c =>
-    c.reportdatesection1?.toDate &&
+  todayCount.textContent = complaintsData.filter(c => 
+    c.reportdatesection1?.toDate && 
     c.reportdatesection1.toDate().toLocaleDateString("ms-MY") === today
   ).length;
 }
