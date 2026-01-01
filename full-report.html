@@ -53,8 +53,6 @@ body::before {
   text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
 
-.nav { display: flex; flex-direction: column; flex: 1; }
-
 .nav a {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
   padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
@@ -66,14 +64,19 @@ body::before {
 }
 .nav a i { width: 20px; text-align: center; }
 
+/* SIGN OUT BUTTON STYLE (With Separator) */
 #logout {
-  margin-top: auto; 
   color: var(--neon-red);
-  border: 1px solid rgba(255, 77, 77, 0.2);
+  margin-top: 20px; /* Jarak dari FAQ */
+  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garisan Sempadan */
+  padding-top: 20px; /* Jarak dalam dari garisan */
+  border-radius: 0; /* Hilangkan curve atas supaya nampak rata dengan line */
 }
 #logout:hover {
-  background: rgba(255, 77, 77, 0.1); border-color: var(--neon-red); color: #fff;
-  box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
+  background: rgba(255, 77, 77, 0.1); 
+  border-color: rgba(255, 77, 77, 0.5); /* Tukar warna border bila hover */
+  color: #fff;
+  box-shadow: none;
 }
 
 /* --- MAIN CONTENT --- */
@@ -150,53 +153,53 @@ li strong { color: #fff; width: 180px; display: inline-block; flex-shrink: 0; }
    ============================ */
 @media print {
   @page { 
-      margin: 5mm; /* Margin Sangat Kecil (0.5cm) */
+      margin: 5mm; /* Margin 5mm supaya muat banyak */
       size: A4 portrait; 
   }
 
-  /* Reset & Hide */
+  /* Reset & Hide UI */
   body { background: white !important; -webkit-print-color-adjust: exact; }
   body::before, .sidebar, .search-container, .table-card, .btn, #backToTop, h1 { display: none !important; }
   .app, .main { display: block !important; padding: 0 !important; margin: 0 !important; width: 100% !important; height: auto !important; }
 
-  /* Main Card (Bingkai) */
+  /* Main Card */
   .card { 
       display: block !important;
       border: 2px solid #000 !important;
       background: white !important;
       color: black !important;
-      padding: 10px !important; /* Kurangkan padding dalam */
+      padding: 10px !important; 
       width: 100% !important;
       margin: 0 !important;
       box-shadow: none !important;
   }
 
-  /* HEADER (Compact) */
+  /* HEADER */
   .card h2 { 
       color: black !important; 
       border-bottom: 2px solid black !important;
-      font-size: 16pt !important; /* Font Tajuk Kecil Sikit */
+      font-size: 16pt !important;
       text-align: center;
       margin-bottom: 10px !important;
       padding-bottom: 5px !important;
   }
   .card h2 i { display: none !important; }
 
-  /* SECTION HEADER (Compact) */
+  /* SECTION HEADERS (Compact) */
   .card h3 { 
       color: white !important; 
       background: #000 !important; 
-      padding: 4px 8px !important; /* Nipiskan header section */
-      margin-top: 10px !important; /* Rapatkan gap atas section */
+      padding: 3px 5px !important; /* Kurangkan padding */
+      margin-top: 8px !important; /* Rapatkan gap atas section */
       margin-bottom: 0 !important;
-      font-size: 10pt !important; /* Font section kecil */
+      font-size: 10pt !important; 
       font-weight: bold !important;
       border: 1px solid #000 !important;
       -webkit-print-color-adjust: exact; 
       text-transform: uppercase;
   }
 
-  /* LIST ITEMS (Compact & Dense) */
+  /* LIST ITEMS (Tight Vertical) */
   ul { 
       padding: 0 !important; 
       margin: 0 !important;
@@ -206,19 +209,19 @@ li strong { color: #fff; width: 180px; display: inline-block; flex-shrink: 0; }
   
   li { 
       color: black !important; 
-      border-bottom: 1px solid #ccc !important; /* Garis kelabu halus */
-      padding: 4px 8px !important; /* Sangat Rapat (4px) */
-      font-size: 9pt !important; /* Font 9pt (Standard Compact) */
+      border-bottom: 1px solid #ccc !important;
+      padding: 2px 5px !important; /* Padding baris sangat nipis */
+      font-size: 9pt !important;
       display: flex !important;
       justify-content: space-between !important;
       align-items: center !important;
       width: 100% !important;
-      line-height: 1.2 !important;
+      line-height: 1.1 !important; /* Line height rapat */
   }
   
   li:last-child { border-bottom: none !important; }
 
-  /* Text Alignment */
+  /* Label & Value */
   li strong { 
       color: #000 !important; 
       width: 35% !important; 
@@ -232,6 +235,10 @@ li strong { color: #fff; width: 180px; display: inline-block; flex-shrink: 0; }
       text-align: right; 
       font-size: 9pt !important;
   }
+  
+  /* Layout Grid Block */
+  .print-grid { display: block !important; width: 100% !important; }
+  .print-col-left, .print-col-right { width: 100% !important; margin: 0 !important; }
 }
 </style>
 </head>
