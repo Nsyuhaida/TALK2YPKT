@@ -2,381 +2,305 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Insight | Deep Analytics</title>
+<title>System Core | Admin Insight</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
-/* Import Font Moden 'Inter' */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;700&display=swap');
 
 :root {
-    --bg-deep: #030014;
-    --accent-cyan: #00E5FF;
-    --accent-purple: #7C4DFF;
-    --text-primary: #ffffff;
-    --text-secondary: #A0AEC0;
-    --card-bg: rgba(255, 255, 255, 0.03);
+  --bg: #050505;
+  --card-bg: #101010;
+  --neon-blue: #00f3ff;
+  --neon-green: #00ff41;
+  --neon-purple: #bc13fe;
+  --text-main: #fff;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+  margin: 0; padding: 0; box-sizing: border-box;
 }
 
 body {
-    min-height: 100vh;
-    background-color: var(--bg-deep);
-    color: var(--text-primary);
-    overflow-x: hidden;
-    perspective: 1000px; /* Penting untuk efek 3D */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  min-height: 100vh;
+  background: var(--bg);
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  font-family: 'Rajdhani', sans-serif;
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
 }
 
-/* --- DYNAMIC AURORA BACKGROUND --- */
-/* Ini adalah 'wow' factor utama untuk background */
-.background-aurora {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -2;
-    background: var(--bg-deep);
-    overflow: hidden;
+/* BACKGROUND GLOW CENTER */
+body::before {
+  content: '';
+  position: absolute;
+  width: 100%; height: 60%;
+  background: radial-gradient(circle, rgba(0, 243, 255, 0.15), transparent 70%);
+  top: 20%;
+  z-index: -1;
+  animation: pulseGlow 5s ease-in-out infinite;
 }
 
-.background-aurora::before {
-    content: '';
-    position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: conic-gradient(
-        from 0deg at 50% 50%,
-        var(--bg-deep) 0deg,
-        var(--accent-purple) 60deg,
-        var(--bg-deep) 120deg,
-        var(--accent-cyan) 180deg,
-        var(--bg-deep) 240deg,
-        var(--accent-purple) 300deg,
-        var(--bg-deep) 360deg
-    );
-    opacity: 0.4;
-    filter: blur(80px);
-    animation: rotateAurora 30s linear infinite;
-}
-
-@keyframes rotateAurora {
-    100% { transform: rotate(360deg); }
-}
-
-/* --- HERO SECTION --- */
+/* HERO TEXT */
 .hero {
-    padding: 60px 10%;
-    max-width: 1300px;
-    margin: 0 auto;
-    text-align: center;
-    z-index: 1;
+  text-align: center;
+  margin-bottom: 60px;
+  z-index: 2;
 }
-
 .hero h1 {
-    font-size: 4.5rem;
-    font-weight: 900;
-    letter-spacing: -2px;
-    margin-bottom: 1rem;
-    /* Gradient Text */
-    background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: fadeUp 1s ease forwards;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 4rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+  margin-bottom: 10px;
 }
-
 .hero p {
-    font-size: 1.2rem;
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto 4rem auto;
-    line-height: 1.6;
-    animation: fadeUp 1s ease forwards 0.2s;
-    opacity: 0;
+  color: var(--neon-blue);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.8;
 }
 
-/* --- 3D TILT CARDS --- */
-/* Ini adalah bahagian paling teknikal dan mengagumkan */
-.cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 30px;
-    perspective: 1000px;
-    margin-bottom: 4rem;
+/* --- GRID CONTAINER (4 IN 1 LINE) --- */
+.dashboard-grid {
+  display: grid;
+  /* KUNCI: 4 Column sama besar */
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 30px;
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+  perspective: 1000px;
 }
 
-.tilt-card-wrap {
-    position: relative;
-    height: 220px;
-    transform-style: preserve-3d;
-    animation: fadeUp 0.8s ease forwards;
-    opacity: 0;
-}
-/* Staggered Animation */
-.tilt-card-wrap:nth-child(1) { animation-delay: 0.3s; }
-.tilt-card-wrap:nth-child(2) { animation-delay: 0.4s; }
-.tilt-card-wrap:nth-child(3) { animation-delay: 0.5s; }
-.tilt-card-wrap:nth-child(4) { animation-delay: 0.6s; }
-
-.tilt-card {
-    position: absolute;
-    inset: 0;
-    background: var(--card-bg);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
-    /* Kunci untuk efek 3D yang licin */
-    transition: transform 0.2s ease-out, border-color 0.3s ease;
-    transform: translateZ(0); /* Hardware acceleration */
+/* --- NEON BORDER CARD (THE WOW FACTOR) --- */
+.neon-card {
+  position: relative;
+  background: rgba(10, 10, 10, 0.8); /* Gelap sikit */
+  border-radius: 15px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden; /* Supaya cahaya tak keluar dari border radius */
+  transition: 0.5s;
+  
+  /* Animasi Masuk dari Kanan */
+  opacity: 0;
+  transform: translateX(100px); 
+  animation: slideInRight 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
 }
 
-/* Efek cahaya dalam kad */
-.tilt-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at center, rgba(0,229,255,0.15) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.tilt-card:hover::before { opacity: 1; }
-.tilt-card:hover {
-    border-color: var(--accent-cyan);
+/* Delay untuk setiap kad supaya nampak berturutan */
+.neon-card:nth-child(1) { animation-delay: 0.1s; border: 1px solid rgba(0, 243, 255, 0.1); }
+.neon-card:nth-child(2) { animation-delay: 0.2s; border: 1px solid rgba(188, 19, 254, 0.1); }
+.neon-card:nth-child(3) { animation-delay: 0.3s; border: 1px solid rgba(0, 255, 65, 0.1); }
+.neon-card:nth-child(4) { animation-delay: 0.4s; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+/* CONTENT DALAM KAD (Supaya duduk atas cahaya) */
+.card-content {
+  position: absolute;
+  inset: 4px; /* Jarak sikit dari tepi untuk nampak border */
+  background: #111;
+  border-radius: 12px;
+  z-index: 10; /* Duduk atas cahaya */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-.card-icon {
-    font-size: 2rem;
-    margin-bottom: 15px;
-    color: var(--accent-cyan);
+/* --- EFEK CAHAYA BERGERAK (ROTATING BORDER) --- */
+/* Kita guna ::before untuk buat beam cahaya pusing */
+.neon-card::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 150%; height: 150%;
+  background: conic-gradient(
+    transparent, 
+    transparent, 
+    transparent, 
+    var(--color-glow)
+  );
+  transform: translate(-50%, -50%);
+  animation: rotateBorder 4s linear infinite;
+  z-index: 1; /* Duduk belakang content */
 }
 
-.card h2 {
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-/* Gaya khas untuk teks status */
-.status-text { font-size: 1.8rem !important; text-transform: uppercase; letter-spacing: 1px; }
+/* Warna cahaya spesifik untuk setiap kad */
+.neon-card.blue { --color-glow: var(--neon-blue); }
+.neon-card.purple { --color-glow: var(--neon-purple); }
+.neon-card.green { --color-glow: var(--neon-green); }
+.neon-card.white { --color-glow: white; }
 
-.card span {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    font-weight: 500;
-}
-
-/* --- ENERGY BAR --- */
-.energy-bar-container {
-    background: var(--card-bg);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 25px 30px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    animation: fadeUp 1s ease forwards 0.7s;
-    opacity: 0;
-    max-width: 800px;
-    margin: 0 auto 3rem auto;
+/* TEXT STYLING */
+.icon-box {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: var(--color-glow);
+  filter: drop-shadow(0 0 10px var(--color-glow));
 }
 
-.energy-label { font-weight: 600; display: flex; align-items: center; gap: 10px; }
-.energy-status { color: var(--accent-cyan); font-weight: 700; }
-
-.energy-track {
-    flex-grow: 1;
-    height: 8px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-    margin: 0 20px;
-    overflow: hidden;
-    position: relative;
-}
-.energy-beam {
-    position: absolute;
-    left: 0; top: 0; height: 100%;
-    width: 0%; /* Mula dari 0% */
-    background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
-    box-shadow: 0 0 15px var(--accent-cyan);
-    border-radius: 10px;
-    animation: chargeEnergy 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards 1s;
+h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 5px 0;
+  color: #fff;
 }
 
-/* --- CTA BUTTON --- */
-.cta-container {
-    animation: fadeUp 1s ease forwards 0.9s;
-    opacity: 0;
-    margin-bottom: 2rem;
+span {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  color: #888;
 }
-.btn-cyber {
-    position: relative;
-    display: inline-block;
-    padding: 18px 50px;
-    background: transparent;
-    color: var(--accent-cyan);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    border: 2px solid var(--accent-cyan);
-    border-radius: 4px;
-    overflow: hidden;
-    transition: 0.4s;
-    z-index: 1;
-}
-.btn-cyber::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: var(--accent-cyan);
-    transition: 0.4s;
-    z-index: -1;
-}
-.btn-cyber:hover {
-    color: var(--bg-deep);
-    box-shadow: 0 0 30px rgba(0,229,255,0.4);
-}
-.btn-cyber:hover::before { left: 0; }
 
-footer { text-align: center; color: var(--text-secondary); font-size: 0.9rem; padding-bottom: 20px;}
-
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Hover Effect */
+.neon-card:hover .card-content {
+  background: rgba(20, 20, 20, 0.95);
 }
-@keyframes chargeEnergy { to { width: 85%; } }
+.neon-card:hover h2 {
+  text-shadow: 0 0 15px var(--color-glow);
+}
 
-/* Responsiveness */
-@media (max-width: 768px) {
-    .hero h1 { font-size: 3rem; }
-    .cards-container { grid-template-columns: 1fr; }
-    .tilt-card-wrap { height: 200px; }
-    .energy-bar-container { flex-direction: column; gap: 15px; align-items: flex-start;}
-    .energy-track { width: 100%; margin: 0; }
+/* CTA BUTTON */
+.btn-container {
+  margin-top: 60px;
+  z-index: 2;
+  animation: fadeIn 1s ease forwards 1s;
+  opacity: 0;
+}
+.btn-hologram {
+  text-decoration: none;
+  padding: 15px 50px;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: 0.3s;
+  background: rgba(0, 243, 255, 0.05);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
+}
+.btn-hologram:hover {
+  background: var(--neon-blue);
+  color: #000;
+  box-shadow: 0 0 40px var(--neon-blue);
+}
+
+/* ANIMATIONS KEYFRAMES */
+@keyframes rotateBorder {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes slideInRight {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* Responsiveness: Kalau skrin kecik sangat, pecah jadi 2 baris, tapi laptop 4 sebaris */
+@media (max-width: 1024px) {
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 2.5rem; }
 }
 </style>
 </head>
 
 <body>
-<div class="background-aurora"></div>
 
 <section class="hero">
-    <h1>ADMIN INSIGHT</h1>
-    <p>Real-time visual intelligence overview for system operations. Monitoring critical infrastructure.</p>
-
-    <div class="cards-container">
-        <div class="tilt-card-wrap">
-            <div class="tilt-card">
-                <i class="fa-solid fa-server card-icon"></i>
-                <h2 class="counter" data-target="99.8">0</h2>
-                <span>System Stability Index (%)</span>
-            </div>
-        </div>
-
-        <div class="tilt-card-wrap">
-            <div class="tilt-card">
-                <i class="fa-solid fa-shield-halved card-icon"></i>
-                <h2 class="status-text">SECURE</h2>
-                <span>Security Status</span>
-            </div>
-        </div>
-
-        <div class="tilt-card-wrap">
-            <div class="tilt-card">
-                <i class="fa-solid fa-network-wired card-icon"></i>
-                <h2 class="status-text" style="color: var(--accent-purple)">ADAPTIVE</h2>
-                <span>Operational Mode</span>
-            </div>
-        </div>
-
-        <div class="tilt-card-wrap">
-            <div class="tilt-card">
-                <i class="fa-solid fa-bolt card-icon"></i>
-                 <h2 class="counter" data-target="2450">0</h2>
-                <span>Live System Activity</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="energy-bar-container">
-        <div class="energy-label">
-            <i class="fa-solid fa-microchip"></i> System Load Flow
-        </div>
-        <div class="energy-track">
-            <div class="energy-beam"></div>
-        </div>
-        <div class="energy-status">Dynamic</div>
-    </div>
-
-    <div class="cta-container">
-        <a href="login.html" class="btn-cyber">INITIALIZE PANEL</a>
-    </div>
+  <h1>System Nexus</h1>
+  <p>Live Monitoring Dashboard</p>
 </section>
 
-<footer>
-    © 2025 Digital Administration System. All rights reserved.
-</footer>
+<div class="dashboard-grid">
+
+  <div class="neon-card blue">
+    <div class="card-content">
+      <div class="icon-box" style="color:var(--neon-blue)"><i class="fa-solid fa-microchip"></i></div>
+      <h2 class="counter" data-target="99.8">0</h2>
+      <span>Stability Index</span>
+    </div>
+  </div>
+
+  <div class="neon-card purple">
+    <div class="card-content">
+      <div class="icon-box" style="color:var(--neon-purple)"><i class="fa-solid fa-shield-virus"></i></div>
+      <h2>SECURE</h2>
+      <span>Firewall Status</span>
+    </div>
+  </div>
+
+  <div class="neon-card green">
+    <div class="card-content">
+      <div class="icon-box" style="color:var(--neon-green)"><i class="fa-solid fa-bolt"></i></div>
+      <h2 class="counter" data-target="100">0</h2>
+      <span>Uptime (%)</span>
+    </div>
+  </div>
+
+  <div class="neon-card white">
+    <div class="card-content">
+      <div class="icon-box" style="color:white"><i class="fa-solid fa-users-viewfinder"></i></div>
+      <h2 class="counter" data-target="2450">0</h2>
+      <span>Active Sessions</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="btn-container">
+  <a href="login.html" class="btn-hologram">INITIALIZE SYSTEM</a>
+</div>
 
 <script>
-    // 1. SCRIPT UNTUK EFEK 3D TILT PADA KAD
-    const cards = document.querySelectorAll('.tilt-card-wrap');
+  // Script untuk Animasi Nombor
+  const counters = document.querySelectorAll('.counter');
+  
+  counters.forEach(counter => {
+    counter.innerText = '0';
+    
+    const updateCounter = () => {
+      const target = +counter.getAttribute('data-target');
+      const c = +counter.innerText;
+      const increment = target / 100;
 
-    cards.forEach(cardWrap => {
-        const card = cardWrap.querySelector('.tilt-card');
-
-        cardWrap.addEventListener('mousemove', (e) => {
-            const rect = cardWrap.getBoundingClientRect();
-            const x = e.clientX - rect.left; // Posisi X mouse dalam kad
-            const y = e.clientY - rect.top;  // Posisi Y mouse dalam kad
-            
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            
-            // Kira sudut putaran (maksimum 20 darjah)
-            const rotateX = ((y - centerY) / centerY) * -20;
-            const rotateY = ((x - centerX) / centerX) * 20;
-
-            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
-        });
-
-        // Reset kad bila mouse keluar
-        cardWrap.addEventListener('mouseleave', () => {
-            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-        });
-    });
-
-    // 2. SCRIPT UNTUK ANIMASI NOMBOR (COUNTER)
-    const counters = document.querySelectorAll('.counter');
-    counters.forEach(counter => {
-        counter.innerText = '0';
-        const target = +counter.getAttribute('data-target');
-        const duration = 2000; // 2 saat
-        const stepTime = Math.abs(Math.floor(duration / target));
-        
-        let current = 0;
-        const timer = setInterval(() => {
-            current += target / 100; // Naik sikit demi sikit
-            if(current >= target) {
-                counter.innerText = target;
-                if(target === 99.8) counter.innerText += "%";
-                clearInterval(timer);
-            } else {
-                counter.innerText = Math.ceil(current);
-            }
-        }, 20);
-    });
+      if(c < target) {
+        counter.innerText = Math.ceil(c + increment);
+        setTimeout(updateCounter, 25);
+      } else {
+        counter.innerText = target;
+        if(target === 99.8) counter.innerText += "%";
+        if(target === 100) counter.innerText += "%";
+      }
+    };
+    updateCounter();
+  });
 </script>
 
 </body>
