@@ -2,109 +2,282 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Notifications</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notification Center | System Core</title>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-body{background:#89CFF0;}
-.app{display:flex;min-height:100vh;}
-.sidebar{width:240px;background:#1e3a8a;color:white;padding:20px;}
-.brand{font-size:20px;font-weight:bold;margin-bottom:30px;text-align:center;}
-.nav a{display:block;text-decoration:none;color:white;padding:12px;border-radius:8px;margin-bottom:8px;}
-.nav a:hover,.nav a.active{background:#2563eb;}
-.main{flex:1;padding:25px;}
-.header h1{font-size:26px;margin-bottom:20px;}
-.card{background:white;padding:25px;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,0.1);max-width:700px;}
-label{font-weight:bold;margin-top:14px;display:block;font-size:14px;}
-.input{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-top:6px;}
-textarea.input{resize:vertical;}
-.btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;}
-.btn-primary{background:#2563eb;color:white;}
-.btn-primary:hover{background:#1d4ed8;}
-.btn-row{margin-top:18px;}
-h3{margin-top:20px;color:#1e3a8a;border-bottom:1px solid #ddd;padding-bottom:6px;}
-/* LOGO SAMA MACAM DASHBOARD */
-.logo{
-  width:60px;      /* kecil, kemas */
-  height:auto;
-  display:block;
-  margin:0 auto 15px;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap');
+
+:root {
+  --neon-blue: #00f3ff;
+  --neon-green: #00ff9d;
+  --bg-dark: #020617;
+  --glass: rgba(15, 23, 42, 0.85);
+  --border: rgba(0, 243, 255, 0.2);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+
+/* --- BACKGROUND --- */
+body {
+  background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
+  background-size: 400% 400%;
+  animation: bgMove 20s ease infinite;
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Grid Overlay */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+
+/* --- SIDEBAR --- */
+.sidebar {
+  width: 260px;
+  background: var(--glass);
+  backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border);
+  padding: 30px 20px;
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh;
+}
+
+.logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
+.brand {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px; font-weight: 700;
+  text-align: center; color: var(--neon-blue);
+  letter-spacing: 2px; margin-bottom: 40px;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+}
+
+.nav a {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; color: rgba(255,255,255,0.7);
+  padding: 14px 18px; border-radius: 12px;
+  margin-bottom: 10px; transition: 0.3s;
+  font-size: 14px; border: 1px solid transparent;
+}
+.nav a:hover, .nav a.active {
+  background: rgba(0, 243, 255, 0.1);
+  color: #fff; border-color: var(--border);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+}
+.nav a i { width: 20px; text-align: center; }
+#logout { margin-top: auto; color: #ff4d4d; border-color: rgba(255, 77, 77, 0.2); }
+#logout:hover { background: rgba(255, 77, 77, 0.1); border-color: #ff4d4d; color: #fff; }
+
+/* --- MAIN CONTENT --- */
+.main { flex: 1; padding: 30px; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; }
+
+.header { width: 100%; max-width: 800px; margin-bottom: 20px; }
+.header h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px; color: #fff;
+  text-shadow: 0 0 15px rgba(255,255,255,0.2);
+}
+
+/* FORM CARD */
+.card {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(15px);
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  width: 100%; max-width: 800px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative Line on Card */
+.card::top { content: ''; position: absolute; top:0; left:0; width:100%; height:2px; background: linear-gradient(90deg, transparent, var(--neon-blue), transparent); }
+
+h3 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--neon-blue);
+  margin-top: 30px; margin-bottom: 15px;
+  font-size: 16px; letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+h3 i { font-size: 14px; }
+
+/* FORM GRID SYSTEM */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.full-width { grid-column: span 2; }
+
+label {
+  color: rgba(255,255,255,0.8);
+  font-size: 12px; margin-bottom: 8px; display: block;
+  font-weight: 500; letter-spacing: 0.5px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(0, 6, 20, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: #fff; font-size: 14px;
+  outline: none; transition: 0.3s;
+}
+
+.input:focus {
+  border-color: var(--neon-blue);
+  background: rgba(0, 6, 20, 0.9);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+textarea.input { resize: vertical; min-height: 100px; }
+
+select.input option { background: #020617; color: #fff; }
+
+/* BUTTON */
+.btn-row { margin-top: 30px; text-align: right; }
+
+.btn {
+  padding: 15px 35px;
+  border: none; border-radius: 50px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700; font-size: 14px;
+  cursor: pointer; transition: 0.3s;
+  letter-spacing: 1px;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #1e3a8a, #2563eb);
+  color: #fff;
+  border: 1px solid var(--neon-blue);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
+  background: var(--neon-blue);
+  color: #000;
+}
+
+/* Animations */
+@keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+/* Mobile */
+@media(max-width: 768px){
+  .app { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; padding: 20px; }
+  .nav { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; }
+  .nav a { margin: 0; white-space: nowrap; }
+  .form-grid { grid-template-columns: 1fr; }
+  .full-width { grid-column: span 1; }
+}
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
-  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" 
-       alt="Logo YPKT" 
-       class="logo">
+  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
 
-  <div class="brand">Admin Panel</div>
+  <div class="brand">SYSTEM CORE</div>
   <nav class="nav">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="complaints.html">Complaints</a>
-    <a href="notifications.html" class="active">Notifications</a>
-    <a href="data-entry.html">Data Entry</a>
-    <a href="full-report.html">Full Report</a>
-    <a href="faq.html">FAQ</a>
-    <a href="#" id="logout">Sign Out</a>
+    <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+    <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
+    <a href="notifications.html" class="active"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
+    <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
+    <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+    <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
   </nav>
 </aside>
 
-<!-- MAIN -->
 <main class="main">
   <div class="header">
-    <h1>Send Notification to User</h1>
+    <h1>NOTIFICATION CENTER</h1>
   </div>
 
   <div class="card">
+    
+    <h3 style="margin-top:0"><i class="fa-solid fa-bullseye"></i> TARGET INFORMATION</h3>
+    <div class="form-grid">
+        <div>
+            <label>User Email (Target)</label>
+            <input id="userEmail" class="input" placeholder="user@email.com" />
+        </div>
+        <div>
+            <label>Complaint Reference ID</label>
+            <input id="complaintId" class="input" placeholder="#001" />
+        </div>
+    </div>
 
-    <label>User Email</label>
-    <input id="userEmail" class="input" />
+    <h3><i class="fa-solid fa-list-check"></i> STATUS PROTOCOL</h3>
+    <div class="form-grid">
+        <div>
+            <label>Current Status</label>
+            <select id="status" class="input">
+              <option value="">-- Initiate Status --</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+        </div>
+        <div>
+            <label>Estimated Completion</label>
+            <input id="willCompleteWhen" class="input" placeholder="e.g. 24 Hours" />
+        </div>
+        <div>
+            <label>Officer In Charge</label>
+            <input id="handledBy" class="input" />
+        </div>
+        <div>
+            <label>Contact Line</label>
+            <input id="contactNumber" class="input" placeholder="+60..." />
+        </div>
+        <div class="full-width">
+            <label>Remarks / Comments</label>
+            <textarea id="comment" class="input" placeholder="Enter system remarks here..."></textarea>
+        </div>
+    </div>
 
-    <label>Complaint ID</label>
-    <input id="complaintId" class="input" />
-
-    <h3>Complaint Status</h3>
-
-    <label>Status</label>
-    <select id="status" class="input">
-      <option value="">-- Select Status --</option>
-      <option value="Pending">Pending</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Completed">Completed</option>
-    </select>
-
-    <label>Will Complete When</label>
-    <input id="willCompleteWhen" class="input" />
-
-    <label>Handled By</label>
-    <input id="handledBy" class="input" />
-
-    <label>Contact Number</label>
-    <input id="contactNumber" class="input" />
-
-    <label>Comment</label>
-    <textarea id="comment" class="input"></textarea>
-
-    <h3>Update Info</h3>
-
-    <label>Last Updated By</label>
-    <input id="lastuser" class="input" placeholder="Nama last user" />
-
-    <label>Datetime</label>
-    <input id="Datetime" class="input" placeholder="Contoh: 12.12.2025 9 pagi" />
+    <h3><i class="fa-solid fa-pen-to-square"></i> UPDATE LOG</h3>
+    <div class="form-grid">
+        <div>
+            <label>Logged By (Admin)</label>
+            <input id="lastuser" class="input" placeholder="Admin Name" />
+        </div>
+        <div>
+            <label>Timestamp</label>
+            <input id="Datetime" class="input" placeholder="DD.MM.YYYY 00:00" />
+        </div>
+    </div>
 
     <div class="btn-row">
       <button id="sendNotif" class="btn btn-primary">
-        Send Notification
+        <i class="fa-solid fa-paper-plane"></i> BROADCAST NOTIFICATION
       </button>
     </div>
 
@@ -143,7 +316,7 @@ auth.onAuthStateChanged(user => {
 document.getElementById("logout").onclick = () => {
   auth.signOut().then(() => {
     localStorage.removeItem("admin_logged_in");
-    location.href = "index.html";
+    location.href = "login.html"; // Pastikan redirect betul
   });
 };
 
@@ -159,18 +332,19 @@ document.getElementById("sendNotif").onclick = async () => {
   const lastuser = document.getElementById("lastuser");
   const Datetime = document.getElementById("Datetime");
 
+  // Validasi Mudah
   if (!status.value) {
-    alert("Sila pilih status complaint");
+    alert("SYSTEM ALERT: Please select a status protocol.");
     return;
   }
 
   if (!Datetime.value.trim()) {
-    alert("Sila isi Datetime");
+    alert("SYSTEM ALERT: Timestamp is required.");
     return;
   }
 
   if (!lastuser.value.trim()) {
-    alert("Sila isi last updated by");
+    alert("SYSTEM ALERT: Admin identity is required.");
     return;
   }
 
@@ -189,22 +363,33 @@ document.getElementById("sendNotif").onclick = async () => {
   console.log("Payload to save:", payload);
 
   try {
+    // Animasi button loading (optional visual feedback)
+    const btn = document.getElementById("sendNotif");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> TRANSMITTING...';
+    
     await db.collection("notifications").add(payload);
-    alert("Notification berjaya dihantar ✅");
+    
+    setTimeout(() => {
+        alert("SUCCESS: Notification Broadcasted Successfully ✅");
+        btn.innerHTML = originalText;
+        
+        // Kosongkan input selepas berjaya submit
+        userEmail.value = "";
+        complaintId.value = "";
+        status.value = "";
+        willCompleteWhen.value = "";
+        handledBy.value = "";
+        contactNumber.value = "";
+        comment.value = "";
+        lastuser.value = "";
+        Datetime.value = "";
+    }, 500);
 
-    // Kosongkan input selepas berjaya submit
-    userEmail.value = "";
-    complaintId.value = "";
-    status.value = "";
-    willCompleteWhen.value = "";
-    handledBy.value = "";
-    contactNumber.value = "";
-    comment.value = "";
-    lastuser.value = "";
-    Datetime.value = "";
   } catch (e) {
     console.error("Firestore error:", e);
-    alert("Gagal simpan data ❌ " + e.message);
+    alert("SYSTEM ERROR: Transmission Failed ❌ " + e.message);
+    document.getElementById("sendNotif").innerHTML = '<i class="fa-solid fa-paper-plane"></i> BROADCAST NOTIFICATION';
   }
 };
 </script>
