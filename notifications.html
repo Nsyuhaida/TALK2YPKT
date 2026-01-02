@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Notification Center | System Core</title>
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,11 +18,11 @@
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
   --bg-dark: #020617;
-  --glass: rgba(15, 23, 42, 0.85);
+  --glass: rgba(15, 23, 42, 0.95);
   --border: rgba(0, 243, 255, 0.2);
 }
 
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior: smooth; }
 
 /* --- BACKGROUND --- */
 body {
@@ -31,79 +31,74 @@ body {
   animation: bgMove 20s ease infinite;
   color: #e2e8f0;
   min-height: 100vh;
-  position: relative;
+  overflow-x: hidden;
 }
 
-/* Grid Overlay */
 body::before {
-  content: "";
-  position: fixed; inset: 0;
+  content: ""; position: fixed; inset: 0;
   background-image: 
     linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
+  background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
-.app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+.app { display:flex; min-height:100vh; position: relative; z-index: 1; }
 
-/* --- SIDEBAR --- */
+/* --- SIDEBAR (CONSISTENT STYLE) --- */
 .sidebar {
-  width: 260px;
-  background: var(--glass);
+  width: 260px; 
+  background: var(--glass); 
   backdrop-filter: blur(15px);
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--border); 
   padding: 30px 20px;
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; 
   position: sticky; top: 0; height: 100vh;
+  z-index: 100;
+  transition: transform 0.3s ease;
 }
 
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
 .brand {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 18px; font-weight: 700;
-  text-align: center; color: var(--neon-blue);
-  letter-spacing: 2px; margin-bottom: 40px;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
+  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
 
+/* Nav Wrapper (Tolak Logout ke Bawah) */
+.nav-links { flex: 1; display: flex; flex-direction: column; }
+
 .nav a {
-  display: flex; align-items: center; gap: 12px;
-  text-decoration: none; color: rgba(255,255,255,0.7);
-  padding: 14px 18px; border-radius: 12px;
-  margin-bottom: 10px; transition: 0.3s;
+  display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
+  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
   font-size: 14px; border: 1px solid transparent;
 }
 .nav a:hover, .nav a.active {
-  background: rgba(0, 243, 255, 0.1);
-  color: #fff; border-color: var(--border);
+  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
 }
 .nav a i { width: 20px; text-align: center; }
 
-/* --- SIGN OUT STYLE (UPDATED) --- */
 #logout {
-  margin-top: 20px; /* Jarak dari item atas */
+  margin-top: auto; 
   color: #ff4d4d;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garisan Sempadan */
-  padding-top: 20px; /* Jarak teks dari garisan */
-  border-radius: 0;
-  /* Reset border lain */
-  border-bottom: 0; border-left: 0; border-right: 0; 
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px; border-radius: 0;
 }
-
-#logout:hover {
-  background: rgba(255, 77, 77, 0.1);
-  color: #fff;
-  border-top-color: rgba(255, 255, 255, 0.3);
-}
+#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; border-top-color: rgba(255, 255, 255, 0.3); }
 
 /* --- MAIN CONTENT --- */
-.main { flex: 1; padding: 30px; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; }
+.main { flex: 1; padding: 30px; overflow-x: hidden; width: 100%; display: flex; flex-direction: column; align-items: center; }
 
-.header { width: 100%; max-width: 800px; margin-bottom: 20px; }
-.header h1 {
+/* MOBILE HEADER */
+.mobile-header {
+    width: 100%;
+    display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
+}
+.mobile-toggle {
+    background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px;
+}
+
+.header-title { width: 100%; max-width: 800px; margin-bottom: 20px; }
+.header-title h1 {
   font-family: 'Orbitron', sans-serif;
   font-size: 28px; color: #fff;
   text-shadow: 0 0 15px rgba(255,255,255,0.2);
@@ -120,10 +115,8 @@ body::before {
   width: 100%; max-width: 800px;
   position: relative;
   overflow: hidden;
+  animation: fadeIn 0.5s ease;
 }
-
-/* Decorative Line on Card */
-.card::top { content: ''; position: absolute; top:0; left:0; width:100%; height:2px; background: linear-gradient(90deg, transparent, var(--neon-blue), transparent); }
 
 h3 {
   font-family: 'Orbitron', sans-serif;
@@ -134,14 +127,10 @@ h3 {
   padding-bottom: 8px;
   display: flex; align-items: center; gap: 10px;
 }
-h3 i { font-size: 14px; }
+h3:first-child { margin-top: 0; }
 
-/* FORM GRID SYSTEM */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
+/* FORM GRID */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .full-width { grid-column: span 2; }
 
 label {
@@ -151,94 +140,120 @@ label {
 }
 
 .input {
-  width: 100%;
-  padding: 12px 15px;
+  width: 100%; padding: 12px 15px;
   background: rgba(0, 6, 20, 0.6);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: #fff; font-size: 14px;
   outline: none; transition: 0.3s;
 }
-
 .input:focus {
   border-color: var(--neon-blue);
   background: rgba(0, 6, 20, 0.9);
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
 }
-
-textarea.input { resize: vertical; min-height: 100px; }
-
 select.input option { background: #020617; color: #fff; }
+textarea.input { resize: vertical; min-height: 100px; }
 
 /* BUTTON */
 .btn-row { margin-top: 30px; text-align: right; }
-
 .btn {
-  padding: 15px 35px;
-  border: none; border-radius: 50px;
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700; font-size: 14px;
-  cursor: pointer; transition: 0.3s;
-  letter-spacing: 1px;
+  padding: 15px 35px; border: none; border-radius: 50px;
+  font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 14px;
+  cursor: pointer; transition: 0.3s; letter-spacing: 1px;
   display: inline-flex; align-items: center; gap: 10px;
 }
-
 .btn-primary {
   background: linear-gradient(90deg, #1e3a8a, #2563eb);
-  color: #fff;
-  border: 1px solid var(--neon-blue);
+  color: #fff; border: 1px solid var(--neon-blue);
   box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
-
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
-  background: var(--neon-blue);
-  color: #000;
+  transform: translateY(-3px); box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
+  background: var(--neon-blue); color: #000;
 }
 
-/* Animations */
+/* TOAST */
+.toast {
+  position: fixed; top: 20px; right: 20px;
+  background: rgba(0, 255, 157, 0.1); color: var(--neon-green); border: 1px solid var(--neon-green);
+  padding: 15px 25px; border-radius: 8px; backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+  opacity: 0; transform: translateY(-20px); transition: 0.3s; z-index: 9999;
+  font-family: 'Orbitron';
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.error { border-color: #ff4d4d; color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
+
+/* --- MOBILE RESPONSIVE CSS --- */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed; left: -100%; top: 0; bottom: 0;
+        width: 80%; max-width: 300px;
+        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+    }
+    .sidebar.active { left: 0; }
+    
+    .sidebar-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+        z-index: 90; display: none; backdrop-filter: blur(3px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    .main { padding: 20px; }
+    .mobile-header { display: flex; }
+    
+    h1 { font-size: 22px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
+    .card { padding: 25px; width: 100%; }
+    .btn { width: 100%; justify-content: center; }
+}
+
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-
-/* Mobile */
-@media(max-width: 768px){
-  .app { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; position: relative; padding: 20px; }
-  .nav { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; }
-  .nav a { margin: 0; white-space: nowrap; }
-  .form-grid { grid-template-columns: 1fr; }
-  .full-width { grid-column: span 1; }
-}
+@keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<aside class="sidebar">
-  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
+<aside class="sidebar" id="sidebar">
+  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
   <div class="brand">SYSTEM CORE</div>
-  <nav class="nav">
+  
+  <div class="nav nav-links">
     <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
     <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
     <a href="notifications.html" class="active"><i class="fa-solid fa-bell"></i> Notifications</a>
     <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
     <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
     <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
-    
+  </div>
+
+  <div class="nav">
     <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
-  </nav>
+  </div>
 </aside>
 
 <main class="main">
-  <div class="header">
+  <div class="mobile-header">
+      <button class="mobile-toggle" onclick="toggleSidebar()">
+          <i class="fa-solid fa-bars"></i>
+      </button>
+      <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">NOTIFY</div>
+      <div style="width:24px;"></div>
+  </div>
+
+  <div class="header-title">
     <h1>NOTIFICATION CENTER</h1>
   </div>
 
   <div class="card">
     
-    <h3 style="margin-top:0"><i class="fa-solid fa-bullseye"></i> TARGET INFORMATION</h3>
+    <h3><i class="fa-solid fa-bullseye"></i> TARGET INFORMATION</h3>
     <div class="form-grid">
         <div>
             <label>User Email (Target)</label>
@@ -301,7 +316,15 @@ select.input option { background: #020617; color: #fff; }
 </main>
 </div>
 
+<div id="toast" class="toast"></div>
+
 <script>
+// --- TOGGLE SIDEBAR MOBILE ---
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
 /* =========================
    FIREBASE CONFIG
 ========================= */
@@ -319,22 +342,29 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* AUTH (ANONYMOUS) */
+/* AUTH CHECK */
 auth.onAuthStateChanged(user => {
   if (!user) {
-    auth.signInAnonymously()
-      .then(() => console.log("Anonymous login OK"))
-      .catch(console.error);
+    // Optional: Auto login anonymously or redirect
+    auth.signInAnonymously().catch(console.error);
   }
 });
 
-/* LOGOUT */
+/* LOGOUT (FIXED) */
 document.getElementById("logout").onclick = () => {
   auth.signOut().then(() => {
     localStorage.removeItem("admin_logged_in");
-    location.href = "login.html"; // Pastikan redirect betul
+    window.location.href = "login.html";
   });
 };
+
+/* TOAST NOTIFICATION */
+function toast(msg, error=false){
+  const t = document.getElementById("toast");
+  t.innerHTML = error ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`;
+  t.className = "toast show" + (error ? " error" : "");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
 
 /* SEND NOTIFICATION */
 document.getElementById("sendNotif").onclick = async () => {
@@ -348,21 +378,10 @@ document.getElementById("sendNotif").onclick = async () => {
   const lastuser = document.getElementById("lastuser");
   const Datetime = document.getElementById("Datetime");
 
-  // Validasi Mudah
-  if (!status.value) {
-    alert("SYSTEM ALERT: Please select a status protocol.");
-    return;
-  }
-
-  if (!Datetime.value.trim()) {
-    alert("SYSTEM ALERT: Timestamp is required.");
-    return;
-  }
-
-  if (!lastuser.value.trim()) {
-    alert("SYSTEM ALERT: Admin identity is required.");
-    return;
-  }
+  // Validasi
+  if (!status.value) { toast("Please select a status protocol", true); return; }
+  if (!Datetime.value.trim()) { toast("Timestamp is required", true); return; }
+  if (!lastuser.value.trim()) { toast("Admin identity is required", true); return; }
 
   const payload = {
     userEmail: userEmail.value.trim() || "",
@@ -373,40 +392,36 @@ document.getElementById("sendNotif").onclick = async () => {
     contactNumber: contactNumber.value.trim() || "",
     comment: comment.value.trim() || "",
     lastuser: lastuser.value.trim(),
-    Datetime: Datetime.value.trim()
+    Datetime: Datetime.value.trim(),
+    createdAt: firebase.firestore.FieldValue.serverTimestamp() // Tambahan untuk sorting
   };
 
-  console.log("Payload to save:", payload);
+  const btn = document.getElementById("sendNotif");
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> TRANSMITTING...';
 
   try {
-    // Animasi button loading (optional visual feedback)
-    const btn = document.getElementById("sendNotif");
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> TRANSMITTING...';
-    
     await db.collection("notifications").add(payload);
     
-    setTimeout(() => {
-        alert("SUCCESS: Notification Broadcasted Successfully ✅");
-        btn.innerHTML = originalText;
-        
-        // Kosongkan input selepas berjaya submit
-        userEmail.value = "";
-        complaintId.value = "";
-        status.value = "";
-        willCompleteWhen.value = "";
-        handledBy.value = "";
-        contactNumber.value = "";
-        comment.value = "";
-        lastuser.value = "";
-        Datetime.value = "";
-    }, 500);
-
+    toast("Notification Broadcasted Successfully");
+    
+    // Clear Input
+    userEmail.value = "";
+    complaintId.value = "";
+    status.value = "";
+    willCompleteWhen.value = "";
+    handledBy.value = "";
+    contactNumber.value = "";
+    comment.value = "";
+    
   } catch (e) {
     console.error("Firestore error:", e);
-    alert("SYSTEM ERROR: Transmission Failed ❌ " + e.message);
-    document.getElementById("sendNotif").innerHTML = '<i class="fa-solid fa-paper-plane"></i> BROADCAST NOTIFICATION';
+    toast("Transmission Failed: " + e.message, true);
   }
+
+  btn.disabled = false;
+  btn.innerHTML = originalText;
 };
 </script>
 
