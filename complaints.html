@@ -16,9 +16,9 @@
 
 :root {
   --neon-blue: #00f3ff;
-  --neon-purple: #bc13fe;
+  --neon-green: #00ff9d;
   --bg-dark: #020617;
-  --glass: rgba(15, 23, 42, 0.85);
+  --glass: rgba(15, 23, 42, 0.95);
   --border: rgba(0, 243, 255, 0.2);
 }
 
@@ -31,76 +31,70 @@ body {
   animation: bgMove 20s ease infinite;
   color: #e2e8f0;
   min-height: 100vh;
-  position: relative;
+  overflow-x: hidden;
 }
 
-/* Grid Overlay */
 body::before {
-  content: "";
-  position: fixed; inset: 0;
+  content: ""; position: fixed; inset: 0;
   background-image: 
     linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
+  background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
 .app { display:flex; min-height:100vh; position: relative; z-index: 1; }
 
-/* --- SIDEBAR --- */
+/* --- SIDEBAR (SAMA DENGAN DATA ENTRY) --- */
 .sidebar {
-  width: 260px;
-  background: var(--glass);
+  width: 260px; 
+  background: var(--glass); 
   backdrop-filter: blur(15px);
-  border-right: 1px solid var(--border);
+  border-right: 1px solid var(--border); 
   padding: 30px 20px;
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; 
   position: sticky; top: 0; height: 100vh;
+  z-index: 100;
+  transition: transform 0.3s ease;
 }
 
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
 .brand {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 18px; font-weight: 700;
-  text-align: center; color: var(--neon-blue);
-  letter-spacing: 2px; margin-bottom: 40px;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
+  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
 
+/* Nav Wrapper (Tolak Logout ke Bawah) */
+.nav-links { flex: 1; display: flex; flex-direction: column; }
+
 .nav a {
-  display: flex; align-items: center; gap: 12px;
-  text-decoration: none; color: rgba(255,255,255,0.7);
-  padding: 14px 18px; border-radius: 12px;
-  margin-bottom: 10px; transition: 0.3s;
+  display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
+  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
   font-size: 14px; border: 1px solid transparent;
 }
 .nav a:hover, .nav a.active {
-  background: rgba(0, 243, 255, 0.1);
-  color: #fff; border-color: var(--border);
+  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
 }
 .nav a i { width: 20px; text-align: center; }
 
-/* --- SIGN OUT STYLE (Updated with Separator) --- */
 #logout {
-  margin-top: 20px; /* Jarak dari item atas */
+  margin-top: auto; 
   color: #ff4d4d;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garisan Sempadan */
-  padding-top: 20px; /* Jarak teks dari garisan */
-  border-radius: 0;
-  /* Reset border lain */
-  border-bottom: 0; border-left: 0; border-right: 0; 
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px; border-radius: 0;
 }
-
-#logout:hover {
-  background: rgba(255, 77, 77, 0.1);
-  color: #fff;
-  border-top-color: rgba(255, 255, 255, 0.3);
-}
+#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; border-top-color: rgba(255, 255, 255, 0.3); }
 
 /* --- MAIN CONTENT --- */
-.main { flex:1; padding: 30px; overflow-x: hidden; }
+.main { flex:1; padding: 30px; overflow-x: hidden; width: 100%; }
+
+/* MOBILE HEADER */
+.mobile-header {
+    display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
+}
+.mobile-toggle {
+    background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px;
+}
 
 h1 {
   font-family: 'Orbitron', sans-serif;
@@ -138,10 +132,18 @@ h1 {
   border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-  overflow: hidden;
+  overflow: hidden; /* Penting untuk border radius */
+  margin-bottom: 30px;
 }
 
-table { width: 100%; border-collapse: collapse; }
+/* Table Responsive Container */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto; /* Scroll tepi di mobile */
+    -webkit-overflow-scrolling: touch;
+}
+
+table { width: 100%; border-collapse: collapse; min-width: 800px; /* Lebar minimum supaya tak kemek */ }
 th, td { padding: 18px 25px; text-align: left; }
 
 th {
@@ -151,6 +153,7 @@ th {
   font-size: 12px; letter-spacing: 1px;
   text-transform: uppercase;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 td {
@@ -237,44 +240,68 @@ td:first-child {
 #backToTop:hover { transform: translateY(-5px); box-shadow: 0 0 40px var(--neon-blue); background: #fff; }
 #backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
-/* Keyframes */
+/* --- MOBILE RESPONSIVE CSS --- */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed; left: -100%; top: 0; bottom: 0;
+        width: 80%; max-width: 300px;
+        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+    }
+    .sidebar.active { left: 0; }
+    
+    .sidebar-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+        z-index: 90; display: none; backdrop-filter: blur(3px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    .main { padding: 20px; }
+    .mobile-header { display: flex; }
+    
+    h1 { font-size: 20px; margin-bottom: 15px; }
+    .search-filter { max-width: 100%; }
+    
+    .modal-content { padding: 20px; width: 95%; }
+}
+
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes pulse { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
 @keyframes modalEnter { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-
-/* Mobile Responsive */
-@media(max-width: 768px){
-    .app { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; position: relative; padding: 20px; }
-    .nav { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; }
-    .nav a { margin: 0; white-space: nowrap; }
-    .search-filter { max-width: 100%; }
-    th, td { padding: 12px 15px; font-size: 12px; }
-    /* Table scroll on mobile */
-    .card { overflow-x: auto; }
-}
 </style>
 </head>
 <body>
 
 <div class="app">
 
-<aside class="sidebar">
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
   <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
   <div class="brand">SYSTEM CORE</div>
-  <nav class="nav">
+  
+  <div class="nav nav-links">
     <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
     <a href="complaints.html" class="active"><i class="fa-solid fa-file-shield"></i> Complaints</a>
     <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
     <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
     <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
     <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
-    
+  </div>
+
+  <div class="nav">
     <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
-  </nav>
+  </div>
 </aside>
 
 <main class="main">
+  <div class="mobile-header">
+      <button class="mobile-toggle" onclick="toggleSidebar()">
+          <i class="fa-solid fa-bars"></i>
+      </button>
+      <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">RECORDS</div>
+      <div style="width:24px;"></div>
+  </div>
+
   <h1>COMPLAINT DATABASE</h1>
 
   <div class="search-filter">
@@ -286,7 +313,7 @@ td:first-child {
        <i class="fa-solid fa-spinner fa-spin"></i> ACCESSING DATABASE...
     </div>
     
-    <div style="overflow-x: auto;">
+    <div class="table-responsive">
       <table id="complaintTable" style="display:none;">
         <thead>
           <tr>
@@ -317,7 +344,13 @@ td:first-child {
 </button>
 
 <script>
-// --- FIREBASE CONFIG (Kekal) ---
+// --- TOGGLE SIDEBAR MOBILE ---
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+// --- FIREBASE CONFIG ---
 const firebaseConfig = {
   apiKey: "AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain: "e-complaint-8nu9kp.firebaseapp.com",
@@ -329,18 +362,17 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// --- LOGOUT LOGIC ---
+// --- LOGOUT LOGIC (Fixed Bottom) ---
 document.getElementById("logout").onclick = () => {
   firebase.auth().signOut().finally(() => {
     localStorage.removeItem("admin_logged_in");
-    window.location.href = "login.html"; // Pastikan redirect ke login.html
+    window.location.href = "login.html"; 
   });
 };
 
 // HELPER DATE
 function formatDate(ts){
   if(!ts || !ts.toDate) return "-";
-  // Format standard Malaysia
   return ts.toDate().toLocaleDateString("ms-MY", { 
     day: '2-digit', month: '2-digit', year: 'numeric' 
   }) + " <span style='color:rgba(255,255,255,0.5); font-size:12px;'>" + 
@@ -355,15 +387,15 @@ async function loadComplaints(){
   const loading = document.getElementById("loading");
 
   try{
-    const snapshot = await db.collection("complaint").orderBy("reportdatesection1","asc").get();
+    const snapshot = await db.collection("complaint").orderBy("reportdatesection1","desc").get(); // susun desc lagi baru
     complaintsData = [];
-    let counter = 1;
+    let counter = snapshot.size; // Reverse counter logic or just use doc ID if preferred
 
     snapshot.forEach(doc => {
       const d = doc.data();
       d._id = doc.id;
-      d._code = String(counter).padStart(3,'0');
-      counter++;
+      d._code = String(counter).padStart(3,'0'); // Simple Code logic
+      counter--;
       complaintsData.push(d);
     });
 
