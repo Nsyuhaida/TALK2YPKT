@@ -1,81 +1,62 @@
-<div class="card" style="border-left: 4px solid var(--neon-blue);">
-        <div class="profile-module">
-            <div class="profile-info-group">
-                <div class="profile-avatar">
-                    <i class="fa-solid fa-user-astronaut"></i>
-                </div>
-                <div class="profile-text">
-                    <h4 id="profileName">Loading... <span class="badge-role">ADMIN</span></h4>
-                    <p id="profileEmail">loading@system.core</p>
-                </div>
-            </div>
-            <button class="btn-edit" onclick="toggleEditProfile()"><i class="fa-solid fa-pen-to-square"></i> Edit Identity</button>
-        </div>
+<script>
+// --- KONFIGURASI FIREBASE ---
+firebase.initializeApp({
+  apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
+  authDomain:"e-complaint-8nu9kp.firebaseapp.com",
+  projectId:"e-complaint-8nu9kp"
+});
 
-        <div class="edit-form-container" id="editProfileForm">
-            <div class="form-row">
-                <label style="width:100px; color:var(--text-muted); padding-top:10px;">Username:</label>
-                <input type="text" id="editUsernameInput" class="form-input" placeholder="New Username">
-            </div>
-            <div class="form-row">
-                <label style="width:100px; color:var(--text-muted); padding-top:10px;">Password:</label>
-                <input type="password" id="editPasswordInput" class="form-input" placeholder="New Password (Biarkan kosong jika tak nak ubah)">
-            </div>
-            <div class="form-row">
-                <button class="btn-save" onclick="saveProfileChanges()">Update Record</button>
-                <button class="btn-cancel" onclick="toggleEditProfile()">Cancel</button>
-            </div>
-            <p style="font-size:12px; color: #ffaa00; margin-top:5px;">* Note: Changing password requires recent login.</p>
-        </div>
-    </div>
-    ```
+const db = firebase.firestore();
+let currentUserDocId = null; 
 
-### 2. Update Bahagian Script (Javascript)
-Gantikan keseluruhan fungsi `saveProfileChanges` dan `firebase.auth().onAuthStateChanged` dengan kod di bawah ini. Saya telah ubah logiknya supaya lebih "kuat" dan support tukar password.
-
-```javascript
-// --- AUTH & PROFILE LOGIC ---
+// --- 1. AUTH & PAPARAN PROFIL (DIBETULKAN) ---
 firebase.auth().onAuthStateChanged(async (user) => {
   if (user) {
-    currentUserDocId = user.uid; // Capture UID
-    
-    // Paparkan Email (Read Only)
-    document.getElementById("profileEmail").textContent = user.email;
+    currentUserDocId = user.uid;
+    const welcomeMsg = document.getElementById("welcomeMsg");
+    const profileName = document.getElementById("profileName");
+    const profileEmail = document.getElementById("profileEmail");
+    const editUsernameInput = document.getElementById("editUsernameInput");
+
+    // Set Email dahulu (Pasti ada)
+    profileEmail.textContent = user.email;
 
     try {
-      // Get User Data dari Firestore
+      // Cuba ambil data dari database
       const doc = await db.collection("admin_users").doc(user.uid).get();
       
-      let username = "Admin Officer"; // Default name
-
+      let displayName = user.email; // Default: Guna email jika tiada nama
+      
       if (doc.exists) {
         const data = doc.data();
-        if(data.username) username = data.username;
-      } else {
-        // Jika document tiada, kita create satu 'placeholder' dalam memory dulu
-        console.log("Profile document not found, creating default view.");
+        if (data.username && data.username.trim() !== "") {
+            displayName = data.username; // Jika ada nama, guna nama
+        }
       }
+
+      // Update UI dengan Nama yang betul
+      welcomeMsg.innerHTML = "Welcome back, <strong>" + displayName + "</strong>";
+      profileName.innerHTML = displayName + ' <span class="badge-role">ADMIN</span>';
       
-      // Update UI
-      welcomeMsg.innerHTML = "Welcome back, <strong>" + username + "</strong>";
-      document.getElementById("profileName").innerHTML = username + ' <span class="badge-role">ADMIN</span>';
-      
-      // Masukkan data dalam form siap-siap
-      document.getElementById("editUsernameInput").value = username;
+      // Masukkan nama dalam kotak edit siap-siap
+      editUsernameInput.value = displayName;
 
     } catch (error) {
       console.error("Error fetching user data:", error);
+      // Fallback jika error: Guna email
+      welcomeMsg.innerHTML = "Welcome back, <strong>" + user.email + "</strong>";
+      profileName.innerHTML = user.email + ' <span class="badge-role">ADMIN</span>';
     }
   } else {
-    // Redirect if not logged in
+    // Jika user belum login, tendang ke login page
     window.location.href="login.html";
   }
 });
 
-// --- PROFILE EDIT FUNCTIONS (UPDATED) ---
+// --- 2. FUNGSI EDIT & SIMPAN (DIBETULKAN) ---
 function toggleEditProfile() {
     const form = document.getElementById("editProfileForm");
-    // Clear password input bila tutup/buka
+    // Reset kotak password jadi kosong setiap kali buka
     document.getElementById("editPasswordInput").value = ""; 
     
     if (form.style.display === "block") {
@@ -91,51 +72,187 @@ async function saveProfileChanges() {
     const user = firebase.auth().currentUser;
 
     if(!newName.trim()) {
-        alert("Username cannot be empty");
+        alert("Username tidak boleh kosong!");
         return;
     }
 
     if(!user) {
-        alert("No user logged in.");
+        alert("Sila login semula.");
         return;
     }
 
+    const btnSave = document.querySelector(".btn-save");
+    btnSave.textContent = "Updating..."; // UI Feedback
+    btnSave.disabled = true;
+
     try {
-        // 1. Update Username dalam Firestore
-        // Kita guna .set() dengan {merge: true}.
-        // Ini akan betulkan masalah "Data Tak Masuk" kalau document belum wujud.
+        // A. SIMPAN NAMA KE DATABASE
+        // Guna .set({ ... }, { merge: true }) supaya ia create data baru jika belum wujud
         await db.collection("admin_users").doc(user.uid).set({
             username: newName,
-            email: user.email // Simpan email juga untuk rujukan database
+            email: user.email,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
 
-        // 2. Update Password (Jika user isi kotak password)
+        // B. TUKAR PASSWORD (JIKA DIISI)
         if (newPass.trim() !== "") {
             if (newPass.length < 6) {
-                alert("Password must be at least 6 characters.");
+                alert("Password mesti sekurang-kurangnya 6 aksara.");
+                btnSave.textContent = "Update Record";
+                btnSave.disabled = false;
                 return;
             }
             await user.updatePassword(newPass);
-            console.log("Password updated successfully");
+            console.log("Password updated");
         }
 
-        // 3. Success Feedback
-        alert("Profile Updated Successfully!");
-        
-        // Refresh UI serta-merta
-        document.getElementById("profileName").innerHTML = newName + ' <span class="badge-role">ADMIN</span>';
+        // C. KEMASKINI PAPARAN SEGERA (TANPA RELOAD)
+        const welcomeMsg = document.getElementById("welcomeMsg");
+        const profileName = document.getElementById("profileName");
+
         welcomeMsg.innerHTML = "Welcome back, <strong>" + newName + "</strong>";
+        profileName.innerHTML = newName + ' <span class="badge-role">ADMIN</span>';
         
+        alert("Profil berjaya dikemaskini!");
         toggleEditProfile(); // Tutup form
 
     } catch (error) {
-        console.error("Error updating profile: ", error);
+        console.error("Error updating:", error);
         
-        // Error Handling khas untuk Password
         if (error.code === 'auth/requires-recent-login') {
-            alert("Security Alert: Untuk tukar password, sila Sign Out dan Login semula, kemudian cuba lagi.");
+            alert("Keselamatan: Untuk tukar password, sila Sign Out dan Login semula dahulu.");
         } else {
-            alert("Error: " + error.message);
+            alert("Gagal mengemaskini: " + error.message);
         }
+    } finally {
+        btnSave.textContent = "Update Record";
+        btnSave.disabled = false;
     }
 }
+
+// --- 3. LOGOUT ---
+document.getElementById("logout").addEventListener("click", ()=>{
+  firebase.auth().signOut().then(()=>{
+    window.location.href="login.html";
+  });
+});
+
+// --- 4. DATA TABLES & CHARTS (KEKAL SAMA) ---
+function formatDate(ts){
+  return ts?.toDate ? ts.toDate().toLocaleDateString("ms-MY") : "-";
+}
+
+let complaintsData=[];
+let statusChart;
+const searchInput = document.getElementById("searchInput");
+const totalComplaints = document.getElementById("totalComplaints");
+const approveCount = document.getElementById("approveCount");
+const notApproveCount = document.getElementById("notApproveCount");
+const todayCount = document.getElementById("todayCount");
+
+async function loadComplaints(){
+  try {
+    const snap = await db.collection("complaint").get();
+    complaintsData = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+    renderTable();
+    renderStats();
+    renderDonut();
+  } catch(e) {
+    console.log("Error loading data:", e);
+  }
+}
+
+function renderTable(){
+  const tb = document.querySelector("#dashboardTable tbody");
+  const search = searchInput.value.toLowerCase();
+  tb.innerHTML = "";
+
+  const filtered = complaintsData.filter(c =>
+      (c.id || "").toLowerCase().includes(search) ||
+      (c.lastUser||"").toLowerCase().includes(search) ||
+      (c.assettype||"").toLowerCase().includes(search)
+  );
+
+  if(filtered.length === 0){
+      tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No matching data found in system.</td></tr>`;
+      return;
+  }
+
+  filtered.forEach(c=>{
+    let statusColor = '#fff';
+    if(c.approvalstatus === 'Approve') statusColor = '#00ff9d';
+    else statusColor = '#ffaa00';
+
+    tb.innerHTML += `
+      <tr>
+        <td style="font-family:'Orbitron'; color:var(--neon-blue);">${c.id}</td>
+        <td>${c.lastUser || "-"}</td>
+        <td>${c.assettype || "-"}</td>
+        <td>${formatDate(c.damagedate)}</td>
+        <td style="color:${statusColor}; font-weight:bold;">${c.approvalstatus || "PENDING"}</td>
+      </tr>`;
+    });
+}
+
+function renderStats(){
+  totalComplaints.textContent = complaintsData.length;
+  approveCount.textContent = 
+    complaintsData.filter(c=>c.approvalstatus==="Approve").length;
+  notApproveCount.textContent = 
+    complaintsData.filter(c=>c.approvalstatus!=="Approve").length;
+}
+
+function renderDonut(){
+  const approve = complaintsData.filter(c=>c.approvalstatus==="Approve").length;
+  const pending = complaintsData.length - approve;
+
+  if(statusChart) statusChart.destroy();
+  Chart.defaults.color = '#ccc';
+
+  statusChart = new Chart(document.getElementById("statusChart"),{
+    type:"doughnut",
+    data:{
+      labels:["Approve","Pending"],
+      datasets:[{
+        data:[approve,pending],
+        backgroundColor:["#00ff9d","#ff6600"],
+        borderColor: "#020617",
+        borderWidth: 2
+      }]
+    },
+    options:{
+      cutout:"70%",
+      plugins:{
+          legend:{
+              position:"bottom",
+              labels: { font: { family: 'Poppins' } }
+          }
+      }
+    }
+  });
+
+  const today = new Date().toLocaleDateString("ms-MY");
+  todayCount.textContent = complaintsData.filter(c => 
+    c.reportdatesection1?.toDate && 
+    c.reportdatesection1.toDate().toLocaleDateString("ms-MY") === today
+  ).length;
+}
+
+searchInput.oninput = renderTable;
+
+// --- BACK TO TOP ---
+const backToTopBtn = document.getElementById("backToTop");
+window.onscroll = function() {
+  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+    backToTopBtn.classList.add("show");
+  } else {
+    backToTopBtn.classList.remove("show");
+  }
+};
+backToTopBtn.onclick = function() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+};
+
+// Start
+loadComplaints();
+</script>
