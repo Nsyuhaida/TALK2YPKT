@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ypkt Faq| FAQ Archives</title>
+<title>FAQ Archives|TALK2YPKT ADMIN</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -35,9 +35,9 @@ body {
   min-height: 100vh;
 }
 
-.app { display:flex; min-height:100vh; }
+.app { display:flex; min-height:100vh; position: relative; }
 
-/* --- SIDEBAR --- */
+/* --- SIDEBAR (UPDATED) --- */
 .sidebar {
   width: 260px;
   background: rgba(10, 15, 30, 0.95);
@@ -46,6 +46,8 @@ body {
   display: flex; flex-direction: column;
   position: sticky; top: 0; height: 100vh;
   backdrop-filter: blur(10px);
+  z-index: 100;
+  transition: transform 0.3s ease;
 }
 
 .logo { width: 70px; display: block; margin: 0 auto 20px; filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.5)); }
@@ -58,12 +60,8 @@ body {
   letter-spacing: 2px; text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
 
-/* Nav Container Fix */
-.nav {
-  display: flex;
-  flex-direction: column;
-  flex: 1; 
-}
+/* Nav Wrapper untuk tolak Logout ke bawah */
+.nav-links { flex: 1; display: flex; flex-direction: column; }
 
 .nav a {
   display: flex; align-items: center; gap: 12px;
@@ -82,12 +80,11 @@ body {
 
 /* --- SIGN OUT STYLE (UPDATED) --- */
 #logout {
-  margin-top: 20px; /* Jarak dari item atas */
+  margin-top: auto; /* Jarak auto ke bawah */
   color: #ff4d4d;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garisan Sempadan */
-  padding-top: 20px; /* Jarak teks dari garisan */
+  border-top: 1px solid rgba(255, 255, 255, 0.1); 
+  padding-top: 20px; 
   border-radius: 0;
-  /* Reset border lain */
   border-bottom: 0; border-left: 0; border-right: 0; 
 }
 
@@ -95,11 +92,19 @@ body {
   background: rgba(255, 77, 77, 0.1);
   color: #fff;
   border-top-color: rgba(255, 255, 255, 0.3);
-  box-shadow: none; /* Reset specific shadow if needed, or keep consistent */
+  box-shadow: none;
 }
 
 /* --- MAIN CONTENT --- */
-.main { flex:1; padding: 40px; overflow-y: auto; position: relative; }
+.main { flex:1; padding: 40px; overflow-y: auto; position: relative; width: 100%; }
+
+/* MOBILE HEADER */
+.mobile-header {
+    width: 100%; display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
+}
+.mobile-toggle {
+    background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px;
+}
 
 h1 {
   font-family: 'Orbitron', sans-serif;
@@ -193,12 +198,25 @@ h1 {
 @keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-/* RESPONSIVE */
-@media(max-width:800px){
-  .app{ flex-direction: column; }
-  .sidebar{ width:100%; height:auto; padding:15px; position: relative; }
-  .nav { flex-direction: column; } 
-  .main{ padding: 20px; }
+/* --- RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed; left: -100%; top: 0; bottom: 0;
+        width: 80%; max-width: 300px;
+        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+    }
+    .sidebar.active { left: 0; }
+    
+    .sidebar-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+        z-index: 90; display: none; backdrop-filter: blur(3px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    .main { padding: 20px; }
+    .mobile-header { display: flex; }
+    
+    h1 { font-size: 22px; }
 }
 </style>
 </head>
@@ -207,23 +225,36 @@ h1 {
 
 <div class="app">
 
-  <aside class="sidebar">
-    <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
-    <div class="brand">SYSTEM CORE</div>
+  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <nav class="nav">
+  <aside class="sidebar" id="sidebar">
+    <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
+    <div class="brand">TALK2YPKT ADMIN</div>
+
+    <div class="nav nav-links">
       <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
       <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
       <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
       <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
       <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
       <a href="faq.html" class="active"><i class="fa-solid fa-circle-question"></i> FAQ</a>
-      
+    </div>
+
+    <div class="nav">
       <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
-    </nav>
+    </div>
   </aside>
 
   <main class="main">
+    
+    <div class="mobile-header">
+        <button class="mobile-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">FAQ</div>
+        <div style="width:24px;"></div>
+    </div>
+
     <h1><i class="fa-solid fa-folder-open"></i> FAQ ARCHIVES</h1>
 
     <div class="card">
@@ -386,14 +417,20 @@ h1 {
 <button id="btnUp" title="Back to Top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>
-// --- LOGOUT LOGIC (Unchanged Functionality) ---
+// --- SIDEBAR TOGGLE (New) ---
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+// --- LOGOUT LOGIC (Unchanged) ---
 document.getElementById("logout").addEventListener("click", ()=>{
   // Add authentication handling here if needed
   localStorage.removeItem("admin_logged_in");
   window.location.href="login.html";
 });
 
-// --- FAQ TOGGLE LOGIC ---
+// --- FAQ TOGGLE LOGIC (Unchanged) ---
 document.querySelectorAll(".faq-question").forEach(q=>{
   q.addEventListener("click", ()=>{
     q.classList.toggle("active");
@@ -407,7 +444,7 @@ document.querySelectorAll(".faq-question").forEach(q=>{
   });
 });
 
-// --- BUTTON UP LOGIC ---
+// --- BUTTON UP LOGIC (Unchanged) ---
 const btnUp = document.getElementById("btnUp");
 
 window.onscroll = function() {
