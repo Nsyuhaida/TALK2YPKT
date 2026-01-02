@@ -7,6 +7,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -18,7 +19,7 @@
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
   --bg-dark: #020617;
-  --glass: rgba(15, 23, 42, 0.85);
+  --glass: rgba(15, 23, 42, 0.95);
   --border: rgba(0, 243, 255, 0.2);
 }
 
@@ -31,6 +32,7 @@ body {
   animation: bgMove 20s ease infinite;
   color: #e2e8f0;
   min-height: 100vh;
+  overflow-x: hidden; /* Elak scroll putih di tepi body */
 }
 body::before {
   content: ""; position: fixed; inset: 0;
@@ -41,17 +43,28 @@ body::before {
 
 .app { display:flex; min-height:100vh; position: relative; z-index: 1; }
 
-/* SIDEBAR */
+/* --- SIDEBAR --- */
 .sidebar {
-  width: 260px; background: var(--glass); backdrop-filter: blur(15px);
-  border-right: 1px solid var(--border); padding: 30px 20px;
-  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  width: 260px; 
+  background: var(--glass); 
+  backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border); 
+  padding: 30px 20px;
+  display: flex; flex-direction: column; 
+  position: sticky; top: 0; height: 100vh;
+  z-index: 100;
+  transition: transform 0.3s ease;
 }
+
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
 .brand {
   font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
   text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
+
+/* Nav Wrapper (Tolak Logout ke Bawah) */
+.nav-links { flex: 1; display: flex; flex-direction: column; }
+
 .nav a {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
   padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
@@ -63,29 +76,28 @@ body::before {
 }
 .nav a i { width: 20px; text-align: center; }
 
-/* --- SIGN OUT STYLE (UPDATED) --- */
 #logout {
-  margin-top: 20px; /* Jarak dari item atas */
+  margin-top: auto; 
   color: #ff4d4d;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); /* Garisan Sempadan */
-  padding-top: 20px; /* Jarak teks dari garisan */
-  border-radius: 0;
-  /* Reset border lain */
-  border-bottom: 0; border-left: 0; border-right: 0; 
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px; border-radius: 0;
 }
+#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; border-top-color: rgba(255, 255, 255, 0.3); }
 
-#logout:hover {
-  background: rgba(255, 77, 77, 0.1);
-  color: #fff;
-  border-top-color: rgba(255, 255, 255, 0.3);
+/* --- MAIN CONTENT --- */
+.main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
+
+/* MOBILE HEADER */
+.mobile-header {
+    display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
 }
-
-/* MAIN CONTENT */
-.main { flex:1; padding:30px; overflow-x: hidden; }
+.mobile-toggle {
+    background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px;
+}
 
 h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
 
-/* SEARCH BAR STYLE */
+/* SEARCH */
 .search-container { margin-bottom: 25px; }
 #searchInput {
   width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4);
@@ -94,19 +106,24 @@ h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-b
 }
 #searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-/* LIST TABLE STYLE */
+/* TABLE CARD */
 .table-card {
   background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
   border-radius: 16px; border: 1px solid var(--border);
   padding: 0; overflow: hidden; margin-bottom: 30px;
-  max-height: 300px; overflow-y: auto; /* Limit height supaya tak semak */
+  max-height: 350px; overflow-y: auto; /* Scroll Bawah */
 }
-table { width:100%; border-collapse: collapse; }
-th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; backdrop-filter: blur(5px); }
+/* Table Responsive Style */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto; /* Scroll Tepi untuk Mobile */
+}
+table { width:100%; border-collapse: collapse; min-width: 600px; /* Pastikan table tak kemek */ }
+th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; backdrop-filter: blur(5px); white-space: nowrap; }
 td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; }
 tr:hover { background: rgba(0, 243, 255, 0.05); cursor: pointer; color: #fff; }
 
-/* FORM STYLES */
+/* FORM */
 .card {
   background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px);
   padding: 40px; border-radius: 16px; border: 1px solid var(--border);
@@ -145,7 +162,7 @@ select.input { background-color: #020617; }
 .btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-/* Toast */
+/* TOAST */
 .toast {
   position: fixed; top: 20px; right: 20px;
   background: rgba(0, 255, 157, 0.1); color: var(--neon-green); border: 1px solid var(--neon-green);
@@ -157,7 +174,7 @@ select.input { background-color: #020617; }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.error { border-color: #ff4d4d; color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
 
-/* Back to Top */
+/* BACK TO TOP */
 #backToTop {
   position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
   background: var(--neon-blue); color: #000; border-radius: 50%; border: none; 
@@ -168,6 +185,31 @@ select.input { background-color: #020617; }
 #backToTop:hover { transform: translateY(-5px); background: #fff; }
 #backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
+/* --- MOBILE RESPONSIVE CSS --- */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed; left: -100%; top: 0; bottom: 0;
+        width: 80%; max-width: 300px;
+        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+    }
+    .sidebar.active { left: 0; }
+    
+    .sidebar-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+        z-index: 90; display: none; backdrop-filter: blur(3px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    .main { padding: 20px; width: 100%; }
+    .mobile-header { display: flex; }
+    h1 { font-size: 20px; margin-bottom: 15px; }
+
+    /* Form jadi 1 column di phone */
+    .form-grid { grid-template-columns: 1fr; gap: 15px; }
+    .full-width { grid-column: span 1; }
+    .card { padding: 20px; }
+}
+
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 </style>
@@ -176,22 +218,36 @@ select.input { background-color: #020617; }
 <body>
 <div class="app">
 
-<aside class="sidebar">
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
   <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
   <div class="brand">SYSTEM CORE</div>
-  <nav class="nav">
+  
+  <div class="nav nav-links">
     <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
     <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
     <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
     <a href="data-entry.html" class="active"><i class="fa-solid fa-database"></i> Data Entry</a>
     <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
     <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
-    
+  </div>
+
+  <div class="nav">
     <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
-  </nav>
+  </div>
 </aside>
 
 <main class="main">
+    
+<div class="mobile-header">
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">DATA TERMINAL</div>
+    <div style="width:24px;"></div>
+</div>
+
 <h1><i class="fa-solid fa-terminal"></i> DATA ENTRY TERMINAL</h1>
 
 <div class="search-container">
@@ -266,7 +322,13 @@ select.input { background-color: #020617; }
 <button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>
-// --- FIREBASE & LOGIC (KEKAL SAMA SEPERTI ASAL) ---
+// --- TOGGLE SIDEBAR MOBILE ---
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+// --- FIREBASE SETUP ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -275,13 +337,15 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 
-// Logout Logic
+// Logout
 document.getElementById("logout").onclick = () => {
   firebase.auth().signOut().then(() => { window.location.href="login.html"; });
 };
 
+// Helper Dates
 const dt=t=>t&&t.toDate?t.toDate().toISOString().slice(0,16):"";
 
+// Toast Notification
 function toast(msg,error=false){
   const t=document.getElementById("toast");
   t.innerHTML = error ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`;
@@ -289,22 +353,33 @@ function toast(msg,error=false){
   setTimeout(() => t.classList.remove("show"), 3000);
 }
 
+// --- DATA LOGIC (FIXED) ---
 let complaints=[];
 
+// 1. Load Data dari Database
 async function loadComplaints(){
-  const s=await db.collection("complaint").get();
-  complaints=s.docs.map(d=>({id:d.id,...d.data()}));
-  renderTable(complaints);
+  try {
+      const s=await db.collection("complaint").get();
+      complaints=s.docs.map(d=>({id:d.id,...d.data()}));
+      renderTable(complaints);
+  } catch (err) {
+      console.error(err);
+      document.getElementById("complaintList").innerHTML = `<div style="padding:20px; color:#ff4d4d; text-align:center;">Failed to load data. Please check connection.</div>`;
+  }
 }
 
+// 2. Paparkan dalam Table
 function renderTable(list){
+  const container = document.getElementById("complaintList");
+  
   if(list.length === 0) {
-      document.getElementById("complaintList").innerHTML = "<div style='padding:20px; text-align:center;'>No matching records found.</div>";
+      container.innerHTML = "<div style='padding:20px; text-align:center;'>No matching records found.</div>";
       return;
   }
   
-  // Guna structure table yang sama macam Full Report
-  let h = "<table><thead><tr><th>ID REF</th><th>USER</th><th>STATUS</th></tr></thead><tbody>";
+  // Bungkus dalam div 'table-wrapper' supaya boleh scroll tepi di phone
+  let h = "<div class='table-wrapper'><table><thead><tr><th>ID REF</th><th>USER</th><th>STATUS</th></tr></thead><tbody>";
+  
   list.forEach(c => {
     let statusColor = c.approvalstatus === 'Approve' ? '#00ff9d' : (c.approvalstatus === 'Not approve' ? '#ff4d4d' : '#ccc');
     
@@ -314,24 +389,26 @@ function renderTable(list){
       <td style="color:${statusColor}; font-weight:bold;">${c.approvalstatus||"Pending"}</td>
     </tr>`;
   });
-  h += "</tbody></table>";
+  h += "</tbody></table></div>"; // Tutup wrapper
   
-  const container = document.getElementById("complaintList");
   container.innerHTML = h;
   
+  // Tambah event listener click
   container.querySelectorAll("tr[data-id]").forEach(r => {
     r.onclick = () => loadDetail(r.dataset.id);
   });
 }
 
-searchInput.oninput = () => {
-  const v = searchInput.value.toLowerCase();
+// 3. Search Function
+document.getElementById("searchInput").oninput = (e) => {
+  const v = e.target.value.toLowerCase();
   renderTable(complaints.filter(c =>
     c.id.toLowerCase().includes(v) ||
     (c.lastUser||"").toLowerCase().includes(v)
   ));
 };
 
+// 4. Load Detail (Bila tekan row) - STABLE FIX
 async function loadDetail(id){
   const docRef = await db.collection("complaint").doc(id).get();
   if(!docRef.exists) return;
@@ -342,34 +419,41 @@ async function loadDetail(id){
   form.style.display="block";
   form.dataset.id = id;
 
-  // Data Loading
-  assettype.value = d.assettype||"";
-  SerialNumber.value = d.serialNumber||"";
-  lastUser.value = d.lastUser||"";
-  damagedate.value = dt(d.damagedate);
-  damagedescription.value = d.damagedescription||"";
-  reportdatesection1.value = dt(d.reportdatesection1);
+  // Guna getElementById supaya data PASTI masuk
+  document.getElementById('assettype').value = d.assettype||"";
+  document.getElementById('SerialNumber').value = d.serialNumber||"";
+  document.getElementById('lastUser').value = d.lastUser||"";
+  document.getElementById('damagedate').value = dt(d.damagedate);
+  document.getElementById('damagedescription').value = d.damagedescription||"";
+  document.getElementById('reportdatesection1').value = dt(d.reportdatesection1);
 
-  recommendationsection2.value = d.recommendationsection2||"";
-  section2nameposition.value = d.section2nameposition||"";
-  section2date.value = dt(d.section2date);
+  document.getElementById('recommendationsection2').value = d.recommendationsection2||"";
+  document.getElementById('section2nameposition').value = d.section2nameposition||"";
+  document.getElementById('section2date').value = dt(d.section2date);
 
-  previousmaintenancecost.value = d.previousmaintenancecost||"";
-  estimatedmaintenancecost.value = d.estimatedmaintenancecost||"";
-  recommendsection3.value = d.recommendsection3||"";
-  section3nameposition.value = d.section3nameposition||"";
-  section3date.value = dt(d.section3date);
+  document.getElementById('previousmaintenancecost').value = d.previousmaintenancecost||"";
+  document.getElementById('estimatedmaintenancecost').value = d.estimatedmaintenancecost||"";
+  document.getElementById('recommendsection3').value = d.recommendsection3||"";
+  document.getElementById('section3nameposition').value = d.section3nameposition||"";
+  document.getElementById('section3date').value = dt(d.section3date);
 
-  approvalstatus.value = d.approvalstatus||"Pending";
-  approvalcomment.value = d.approvalcomment||"";
-  approvername.value = d.approvername||"";
-  approverposition.value = d.approverposition||"";
-  approvaldate.value = dt(d.approvaldate);
+  document.getElementById('approvalstatus').value = d.approvalstatus||"Pending";
+  document.getElementById('approvalcomment').value = d.approvalcomment||"";
+  document.getElementById('approvername').value = d.approvername||"";
+  document.getElementById('approverposition').value = d.approverposition||"";
+  document.getElementById('approvaldate').value = dt(d.approvaldate);
 
   form.scrollIntoView({behavior: "smooth", block: "start"});
+  
+  // Tutup sidebar di phone lepas pilih
+  if(window.innerWidth < 768) {
+      document.getElementById('sidebar').classList.remove('active');
+      document.querySelector('.sidebar-overlay').classList.remove('active');
+  }
 }
 
-saveComplaint.onclick = async () => {
+// 5. Simpan Data
+document.getElementById("saveComplaint").onclick = async () => {
   const id = document.getElementById("complaintDetail").dataset.id;
   if(!id){ toast("Please select a record first", true); return; }
 
@@ -377,18 +461,33 @@ saveComplaint.onclick = async () => {
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAVING...';
 
+  // Ambil value guna getElementById
+  const prevCost = document.getElementById('previousmaintenancecost').value;
+  const estCost = document.getElementById('estimatedmaintenancecost').value;
+  const sec3Rec = document.getElementById('recommendsection3').value;
+  const sec3Name = document.getElementById('section3nameposition').value;
+  const sec3Date = document.getElementById('section3date').value;
+
+  const appStatus = document.getElementById('approvalstatus').value;
+  const appComment = document.getElementById('approvalcomment').value;
+  const appName = document.getElementById('approvername').value;
+  const appPos = document.getElementById('approverposition').value;
+  const appDate = document.getElementById('approvaldate').value;
+
   try{
     await db.collection("complaint").doc(id).set({
-      previousmaintenancecost: +previousmaintenancecost.value || 0,
-      estimatedmaintenancecost: +estimatedmaintenancecost.value || 0,
-      recommendsection3: recommendsection3.value,
-      section3nameposition: section3nameposition.value,
-      section3date: section3date.value ? firebase.firestore.Timestamp.fromDate(new Date(section3date.value)) : null,
-      approvalstatus: approvalstatus.value,
-      approvalcomment: approvalcomment.value,
-      approvername: approvername.value,
-      approverposition: approverposition.value,
-      approvaldate: approvaldate.value ? firebase.firestore.Timestamp.fromDate(new Date(approvaldate.value)) : null,
+      previousmaintenancecost: +prevCost || 0,
+      estimatedmaintenancecost: +estCost || 0,
+      recommendsection3: sec3Rec,
+      section3nameposition: sec3Name,
+      section3date: sec3Date ? firebase.firestore.Timestamp.fromDate(new Date(sec3Date)) : null,
+      
+      approvalstatus: appStatus,
+      approvalcomment: appComment,
+      approvername: appName,
+      approverposition: appPos,
+      approvaldate: appDate ? firebase.firestore.Timestamp.fromDate(new Date(appDate)) : null,
+      
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
 
@@ -416,6 +515,7 @@ backToTopBtn.onclick = function() {
   window.scrollTo({top: 0, behavior: 'smooth'});
 };
 
+// Start App
 loadComplaints();
 </script>
 </body>
