@@ -49,10 +49,10 @@ body::before {
 /* --- KAD LOGIN DENGAN BORDER BERPUSING --- */
 .login-card-wrap {
     position: relative;
-    height: 550px; /* Tinggi kad */
+    height: 580px; /* Increased slightly to fit new link */
     border-radius: 20px;
     overflow: hidden;
-    padding: 3px; /* Ruang untuk border cahaya */
+    padding: 3px; 
     
     /* Animasi Masuk */
     opacity: 0;
@@ -144,6 +144,22 @@ input:focus{
 }
 .password-toggle:hover { opacity: 1; text-shadow: 0 0 5px var(--neon-blue); }
 
+/* --- FORGOT PASSWORD LINK (NEW) --- */
+.forgot-link {
+    display: block;
+    text-align: right;
+    margin-top: 8px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.forgot-link:hover {
+    color: var(--neon-blue);
+    text-shadow: 0 0 5px var(--neon-blue);
+}
+
 /* BUTANG NEON */
 .btn-primary{
   width:100%;
@@ -234,6 +250,8 @@ input:focus{
           <label>PASSCODE</label>
           <input id="password" type="password" placeholder="Enter sequence">
           <i class="fa-solid fa-eye password-toggle" id="togglePassword"></i>
+          
+          <div class="forgot-link" onclick="forgotPassword()">Forgot Passcode?</div>
         </div>
 
         <button class="btn-primary" onclick="login()">INITIALIZE LOGIN</button>
@@ -301,6 +319,27 @@ async function googleLogin(){
     console.error(error);
     alert("Google Login Failed. Error: " + error.message);
   }
+}
+
+// === FORGOT PASSWORD FUNCTION ===
+async function forgotPassword() {
+    const emailVal = document.getElementById('email').value;
+
+    if (!emailVal) {
+        alert("Please enter your Email Address in the 'ACCESS ID' box above so we can send the reset link.");
+        return;
+    }
+
+    try {
+        await auth.sendPasswordResetEmail(emailVal);
+        alert("Reset link sent! Please check your email inbox (and spam folder) for instructions.");
+    } catch (error) {
+        if(error.code === 'auth/user-not-found'){
+            alert("Error: No user found with this email.");
+        } else {
+            alert("Error: " + error.message);
+        }
+    }
 }
 </script>
 
