@@ -107,90 +107,118 @@ body::before {
 /* DASHBOARD HEADER */
 .header {
   display: flex; justify-content: space-between; align-items: flex-end;
-  margin-bottom: 30px; flex-wrap: wrap; gap: 20px;
+  margin-bottom: 25px; flex-wrap: wrap; gap: 20px;
   border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 20px;
+  padding-bottom: 15px;
 }
 
 .header h1 {
   font-family: 'Orbitron', sans-serif;
-  font-size: 28px; color: #fff;
+  font-size: 24px; color: #fff;
   text-shadow: 0 0 15px rgba(255,255,255,0.2);
 }
 
-.header p { color: var(--neon-blue); font-size: 14px; letter-spacing: 1px; }
+.header p { color: var(--neon-blue); font-size: 12px; letter-spacing: 1px; }
 
 /* Search Input */
 .input {
-  padding: 12px 20px; border-radius: 50px;
+  padding: 10px 20px; border-radius: 50px;
   border: 1px solid var(--glass-border);
   background: rgba(0,0,0,0.3); color: #fff;
-  width: 280px; outline: none; transition: 0.3s;
+  width: 250px; outline: none; transition: 0.3s; font-size: 13px;
 }
 .input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-/* --- PROFILE MODULE STYLES (NEW STATIC) --- */
-.profile-module {
-    display: block;
+/* --- COMPACT PROFILE STYLES (NEW) --- */
+.compact-profile-wrapper {
+    display: flex; justify-content: space-between; align-items: center;
 }
+.compact-left { display: flex; align-items: center; gap: 15px; }
 
-.profile-avatar {
+.profile-avatar-small {
+    width: 50px; height: 50px; /* Saiz Kecil */
     background: rgba(0, 243, 255, 0.1); border: 2px solid var(--neon-blue);
     display: flex; align-items: center; justify-content: center;
-    font-size: 30px; color: var(--neon-blue);
-    overflow: hidden; 
-    border-radius: 50%;
+    font-size: 20px; color: var(--neon-blue);
+    overflow: hidden; border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
 }
 
 .badge-role {
     background: rgba(0, 255, 157, 0.1); color: var(--neon-green);
-    padding: 2px 8px; border-radius: 4px; font-size: 10px; letter-spacing: 1px;
+    padding: 1px 6px; border-radius: 4px; font-size: 9px; letter-spacing: 1px;
     border: 1px solid rgba(0, 255, 157, 0.3); font-weight: bold;
 }
 
+/* Compact Toggle Button */
+.btn-toggle-compact {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text-muted);
+    padding: 5px 12px;
+    font-size: 10px;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+.btn-toggle-compact:hover {
+    border-color: var(--neon-blue); color: var(--neon-blue);
+    background: rgba(0, 243, 255, 0.05);
+}
+
+/* Hidden Section Animation */
+#metadataPanel {
+    animation: fadeIn 0.4s ease;
+    margin-top: 15px;
+    border-top: 1px dashed rgba(255,255,255,0.1);
+    padding-top: 15px;
+}
+
 /* STATS CARDS */
-.stats-wrapper { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+.stats-wrapper { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; }
 
 .stats-card {
-  flex: 1; min-width: 200px;
+  flex: 1; min-width: 180px;
   background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
-  padding: 25px; border-radius: 16px;
+  padding: 20px; border-radius: 12px;
   border: 1px solid var(--glass-border); text-align: center;
   transition: 0.3s; position: relative; overflow: hidden;
 }
 
-.stats-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-color: var(--neon-blue); }
-.stats-card h2 { font-family: 'Orbitron', sans-serif; font-size: 42px; color: #fff; margin-bottom: 5px; }
-.stats-card span { color: var(--neon-blue); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+.stats-card:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.4); border-color: var(--neon-blue); }
+.stats-card h2 { font-family: 'Orbitron', sans-serif; font-size: 32px; color: #fff; margin-bottom: 5px; }
+.stats-card span { color: var(--neon-blue); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
 
 /* TABLES & CARDS */
 .card {
   background: var(--glass-panel); backdrop-filter: blur(10px);
-  padding: 25px; border-radius: 16px;
+  padding: 20px; border-radius: 16px; /* Reduced Padding */
   border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3); margin-bottom: 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3); margin-bottom: 25px;
 }
 
 .card h3 {
   font-family: 'Orbitron', sans-serif; color: var(--neon-blue);
-  margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 10px;
+  margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 10px; font-size: 16px;
 }
 
-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 0px; }
+table { width: 100%; border-collapse: separate; border-spacing: 0 5px; margin-top: 0px; }
 
 th {
-  text-align: left; padding: 15px; color: rgba(255,255,255,0.6);
-  font-weight: 500; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+  text-align: left; padding: 12px; color: rgba(255,255,255,0.6);
+  font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
 }
 
 td {
-  background: rgba(255,255,255,0.03); padding: 15px;
+  background: rgba(255,255,255,0.03); padding: 12px;
   border-top: 1px solid transparent; border-bottom: 1px solid transparent;
-  color: #fff; font-size: 14px;
+  color: #fff; font-size: 13px;
 }
-td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
-td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
 
 tr:hover td {
   background: rgba(0, 243, 255, 0.1); border-color: var(--glass-border);
@@ -199,18 +227,18 @@ tr:hover td {
 
 /* CHART & SUMMARY */
 .summary-wrapper { max-width: 800px; margin: 0 auto; }
-.summary-row { display: flex; gap: 50px; align-items: center; justify-content: center; flex-wrap: wrap; }
-.summary-chart { width: 320px; position: relative; }
+.summary-row { display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.summary-chart { width: 280px; position: relative; }
 .summary-kpi {
-  text-align: center; padding: 30px; border-radius: 50%;
-  border: 2px dashed var(--glass-border); width: 200px; height: 200px;
+  text-align: center; padding: 20px; border-radius: 50%;
+  border: 2px dashed var(--glass-border); width: 160px; height: 160px;
   display: flex; flex-direction: column; justify-content: center;
   animation: rotateBorder 20s linear infinite reverse;
 }
 .summary-kpi-inner { animation: rotateBorder 20s linear infinite; }
 
-.summary-kpi h2 { font-size: 48px; color: #fff; font-family: 'Orbitron', sans-serif; }
-.summary-kpi span { font-size: 12px; color: var(--neon-blue); text-transform: uppercase; }
+.summary-kpi h2 { font-size: 36px; color: #fff; font-family: 'Orbitron', sans-serif; }
+.summary-kpi span { font-size: 10px; color: var(--neon-blue); text-transform: uppercase; }
 
 /* BACK TO TOP */
 #backToTop {
@@ -244,11 +272,14 @@ tr:hover td {
     }
     .sidebar-overlay.active { display: block; }
 
-    .main { padding: 20px; }
+    .main { padding: 15px; }
     .mobile-header { display: flex; }
     
     .header { flex-direction: column; align-items: flex-start; }
     .input { width: 100%; }
+    
+    .compact-profile-wrapper { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .btn-toggle-compact { width: 100%; text-align: center; }
 }
 </style>
 </head>
@@ -295,42 +326,42 @@ tr:hover td {
       <input id="searchInput" class="input" placeholder="Search Database ID / Asset...">
     </div>
 
-    <div class="card" style="border-left: 4px solid var(--neon-blue);">
-        <h3 style="margin-bottom: 20px; border-bottom: none;">OPERATOR IDENTITY</h3>
+    <div class="card" style="border-left: 3px solid var(--neon-blue); padding: 15px 20px;">
         
-        <div class="profile-module" style="display: block;">
-            
-            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px; flex-wrap: wrap;">
-                <div class="profile-avatar" style="width: 80px; height: 80px; box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);">
+        <div class="compact-profile-wrapper">
+            <div class="compact-left">
+                <div class="profile-avatar-small">
                     <i class="fa-solid fa-user-astronaut"></i>
                 </div>
                 <div>
-                    <h4 id="displayEmail" style="font-size: 18px; color: #fff; margin-bottom: 5px;">loading...</h4>
-                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <h4 id="displayEmail" style="font-size: 14px; color: #fff; margin-bottom: 2px;">loading...</h4>
+                    <div style="display: flex; align-items: center; gap: 8px;">
                         <span class="badge-role">ADMIN</span>
-                        <span id="displayUid" style="font-family: 'Courier New', monospace; font-size: 11px; color: var(--neon-blue); letter-spacing: 1px; opacity: 0.8;">UID: ...</span>
+                        <span id="displayUid" style="font-family: 'Courier New', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px;">UID: ...</span>
                     </div>
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                
-                <div style="border-right: 1px solid rgba(255,255,255,0.1);">
-                    <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 5px;">
-                        <i class="fa-solid fa-calendar-plus"></i> Date Enlisted (Sign Up)
-                    </span>
-                    <div id="displayJoined" style="font-family: 'Orbitron'; font-size: 14px; color: #fff;">-</div>
-                </div>
+            <button class="btn-toggle-compact" onclick="toggleMetadata()" id="btnToggleMeta">
+                DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>
+            </button>
+        </div>
 
-                <div style="padding-left: 10px;">
-                    <span style="font-size: 10px; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 5px;">
-                        <i class="fa-solid fa-clock"></i> Last Active (Sign In)
-                    </span>
-                    <div id="displayLastLogin" style="font-family: 'Orbitron'; font-size: 14px; color: var(--neon-green);">-</div>
-                </div>
-
+        <div id="metadataPanel" style="display: none; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div>
+                <span style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; display: block;">
+                    <i class="fa-solid fa-calendar-plus"></i> Registered
+                </span>
+                <div id="displayJoined" style="font-family: 'Orbitron'; font-size: 12px; color: #fff;">-</div>
+            </div>
+            <div>
+                <span style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; display: block;">
+                    <i class="fa-solid fa-clock"></i> Last Login
+                </span>
+                <div id="displayLastLogin" style="font-family: 'Orbitron'; font-size: 12px; color: var(--neon-green);">-</div>
             </div>
         </div>
+
     </div>
 
     <div class="stats-wrapper">
@@ -409,7 +440,7 @@ function toggleSidebar() {
     document.querySelector('.sidebar-overlay').classList.toggle('active');
 }
 
-// --- AUTH & PROFILE DISPLAY LOGIC (READ ONLY - NO DB REQUIRED) ---
+// --- AUTH & PROFILE DISPLAY LOGIC ---
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     // 1. Set Welcome Message
@@ -420,12 +451,10 @@ firebase.auth().onAuthStateChanged((user) => {
     document.getElementById("displayUid").textContent = "UID: " + user.uid;
 
     // 3. Format & Papar Tarikh dari Metadata (Firebase Auth)
-    // user.metadata.creationTime = Tarikh Sign Up
     const joinedDate = new Date(user.metadata.creationTime).toLocaleDateString("ms-MY", { 
         day: 'numeric', month: 'short', year: 'numeric' 
     });
     
-    // user.metadata.lastSignInTime = Tarikh Login Terakhir
     const lastLoginDate = new Date(user.metadata.lastSignInTime).toLocaleString("ms-MY", {
         day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit'
     });
@@ -438,6 +467,24 @@ firebase.auth().onAuthStateChanged((user) => {
     window.location.href = "login.html";
   }
 });
+
+// --- TOGGLE METADATA (COMPACT) ---
+function toggleMetadata() {
+    const panel = document.getElementById("metadataPanel");
+    const btn = document.getElementById("btnToggleMeta");
+    
+    if (panel.style.display === "none") {
+        panel.style.display = "grid"; // Tukar kepada grid bila buka
+        btn.innerHTML = `CLOSE <i class="fa-solid fa-chevron-up" style="margin-left:5px;"></i>`;
+        btn.style.color = "var(--neon-blue)";
+        btn.style.borderColor = "var(--neon-blue)";
+    } else {
+        panel.style.display = "none"; // Tutup semula
+        btn.innerHTML = `DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>`;
+        btn.style.color = "var(--text-muted)";
+        btn.style.borderColor = "rgba(255,255,255,0.2)";
+    }
+}
 
 // --- LOGOUT LOGIC ---
 document.getElementById("logout").addEventListener("click", ()=>{
@@ -454,7 +501,6 @@ let complaintsData=[];
 let statusChart;
 
 async function loadComplaints(){
-  // Mengambil data complaints
   const snap = await db.collection("complaint").orderBy("reportdatesection1", "desc").get();
   complaintsData = snap.docs.map(d=>({ id:d.id, ...d.data() }));
   renderTable();
