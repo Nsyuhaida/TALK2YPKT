@@ -19,7 +19,7 @@
   --neon-green: #00ff9d;
   --neon-red: #ff4d4d;
   --bg-dark: #020617;
-  --glass-panel: rgba(15, 23, 42, 0.85); /* Consistent Glass */
+  --glass-panel: rgba(15, 23, 42, 0.85);
   --glass-border: rgba(0, 243, 255, 0.2);
   --text-main: #e2e8f0;
   --text-muted: #94a3b8;
@@ -47,7 +47,7 @@ body::before {
 
 .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
-/* --- SIDEBAR (SEBIJI SAMA DENGAN PAGE LAIN) --- */
+/* --- SIDEBAR --- */
 .sidebar {
   width: 260px; 
   background: rgba(15, 23, 42, 0.95); 
@@ -66,7 +66,6 @@ body::before {
   text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
 
-/* Nav Wrapper untuk tolak Logout ke bawah */
 .nav-links { flex: 1; display: flex; flex-direction: column; }
 
 .nav a {
@@ -80,7 +79,6 @@ body::before {
 }
 .nav a i { width: 20px; text-align: center; }
 
-/* SIGN OUT BUTTON STYLE */
 #logout {
   margin-top: auto; 
   color: var(--neon-red);
@@ -98,7 +96,6 @@ body::before {
 /* --- MAIN CONTENT --- */
 .main { flex: 1; padding: 30px; overflow-x: hidden; width: 100%; }
 
-/* MOBILE HEADER (SEBIJI SAMA) */
 .mobile-header {
     width: 100%; display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
 }
@@ -131,7 +128,7 @@ body::before {
 }
 .input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-/* --- PROFILE MODULE STYLES --- */
+/* --- PROFILE MODULE STYLES (UPDATED) --- */
 .profile-module {
     display: flex; justify-content: space-between; align-items: center;
     gap: 20px; flex-wrap: wrap;
@@ -144,11 +141,13 @@ body::before {
     background: rgba(0, 243, 255, 0.1); border: 2px solid var(--neon-blue);
     display: flex; align-items: center; justify-content: center;
     font-size: 30px; color: var(--neon-blue);
+    overflow: hidden; /* Supaya gambar bulat */
     box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
 }
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .profile-text h4 { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 18px; margin-bottom: 4px; }
-.profile-text p { color: rgba(255,255,255,0.6); font-size: 13px; }
+.profile-text p { color: rgba(255,255,255,0.6); font-size: 13px; margin-bottom: 2px; }
 
 .badge-role {
     background: rgba(0, 255, 157, 0.1); color: var(--neon-green);
@@ -169,15 +168,17 @@ body::before {
     border-top: 1px dashed rgba(255,255,255,0.1); animation: fadeIn 0.5s ease;
 }
 
-.form-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.form-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+.form-label { font-size: 12px; color: var(--neon-blue); margin-bottom: 5px; font-family: 'Orbitron'; letter-spacing: 1px;}
+
 .form-input {
-    flex: 1; padding: 10px; background: rgba(0,0,0,0.3);
+    width: 100%; padding: 10px; background: rgba(0,0,0,0.3);
     border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px; outline: none;
 }
 .form-input:focus { border-color: var(--neon-blue); }
 
-.btn-save { background: var(--neon-green); color: #000; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;}
-.btn-cancel { background: var(--neon-red); color: #fff; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+.btn-save { background: var(--neon-green); color: #000; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 10px;}
+.btn-cancel { background: var(--neon-red); color: #fff; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
 
 /* STATS CARDS */
 .stats-wrapper { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
@@ -260,7 +261,7 @@ tr:hover td {
 @keyframes rotateBorder { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @keyframes fadeIn { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
 
-/* --- MOBILE RESPONSIVE (SEBIJI SAMA DENGAN PAGE LAIN) --- */
+/* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
     .sidebar {
         position: fixed; left: -100%; top: 0; bottom: 0;
@@ -278,7 +279,6 @@ tr:hover td {
     .main { padding: 20px; }
     .mobile-header { display: flex; }
     
-    /* Header Adjustments */
     .header { flex-direction: column; align-items: flex-start; }
     .input { width: 100%; }
 }
@@ -330,12 +330,13 @@ tr:hover td {
     <div class="card" style="border-left: 4px solid var(--neon-blue);">
         <div class="profile-module">
             <div class="profile-info-group">
-                <div class="profile-avatar">
+                <div class="profile-avatar" id="profileIconContainer">
                     <i class="fa-solid fa-user-astronaut"></i>
                 </div>
                 <div class="profile-text">
-                    <h4 id="profileName">Loading... <span class="badge-role">ADMIN</span></h4>
-                    <p id="profileEmail">loading@system.core</p>
+                    <h4 id="displayEmail">loading@system.core</h4>
+                    <p><i class="fa-solid fa-phone" style="color:var(--neon-blue); margin-right:5px;"></i> <span id="displayPhone">Loading...</span></p>
+                    <p style="font-size:11px; opacity:0.7;">ADMINISTRATOR ACCESS GRANTED</p>
                 </div>
             </div>
             <button class="btn-edit" onclick="toggleEditProfile()"><i class="fa-solid fa-pen-to-square"></i> Edit Identity</button>
@@ -343,9 +344,19 @@ tr:hover td {
 
         <div class="edit-form-container" id="editProfileForm">
             <div class="form-row">
-                <input type="text" id="editUsernameInput" class="form-input" placeholder="New Username">
+                <label class="form-label">Profile Icon URL (Link Gambar)</label>
+                <input type="text" id="editIconInput" class="form-input" placeholder="https://example.com/photo.jpg">
             </div>
             <div class="form-row">
+                <label class="form-label">Contact Email</label>
+                <input type="text" id="editEmailInput" class="form-input" placeholder="admin@email.com">
+            </div>
+            <div class="form-row">
+                <label class="form-label">Phone Number</label>
+                <input type="text" id="editPhoneInput" class="form-input" placeholder="+6012-3456789">
+            </div>
+            
+            <div class="form-row" style="flex-direction: row; margin-top:10px;">
                 <button class="btn-save" onclick="saveProfileChanges()">Update Record</button>
                 <button class="btn-cancel" onclick="toggleEditProfile()">Cancel</button>
             </div>
@@ -423,31 +434,53 @@ firebase.initializeApp({
 const db = firebase.firestore();
 let currentUserDocId = null;
 
-// --- SIDEBAR TOGGLE FUNCTION (New) ---
+// --- SIDEBAR TOGGLE FUNCTION ---
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
     document.querySelector('.sidebar-overlay').classList.toggle('active');
 }
 
-// --- AUTH & PROFILE LOGIC ---
+// --- AUTH & PROFILE LOGIC (UPDATED) ---
 firebase.auth().onAuthStateChanged(async (user) => {
+  const welcomeMsg = document.getElementById("welcomeMsg");
+  const displayEmail = document.getElementById("displayEmail");
+  const displayPhone = document.getElementById("displayPhone");
+  const iconContainer = document.getElementById("profileIconContainer");
+
   if (user) {
     currentUserDocId = user.uid;
+    
+    // 1. SET HEADER WELCOME MESSAGE (Seperti yang diminta)
+    welcomeMsg.innerHTML = `Welcome User ...... <span style="color:var(--neon-blue); font-weight:bold;">${user.email}</span>`;
+
+    // Default values
+    displayEmail.textContent = user.email;
+    document.getElementById("editEmailInput").value = user.email;
+
     try {
+      // 2. LOAD DATA PROFILE LAIN DARI DB
       const doc = await db.collection("admin_users").doc(user.uid).get();
+      
       if (doc.exists) {
         const data = doc.data();
-        const username = data.username || "Admin Officer";
         
-        welcomeMsg.innerHTML = "Welcome back, <strong>" + username + "</strong>";
-        document.getElementById("profileName").innerHTML = username + ' <span class="badge-role">ADMIN</span>';
-        document.getElementById("profileEmail").textContent = user.email;
-        document.getElementById("editUsernameInput").value = username;
+        // Update Paparan Profile
+        displayEmail.textContent = data.contactEmail || user.email;
+        displayPhone.textContent = data.phone || "No Phone Number";
+        
+        // Update Icon jika ada URL
+        if(data.iconUrl && data.iconUrl.trim() !== "") {
+            iconContainer.innerHTML = `<img src="${data.iconUrl}" alt="Profile">`;
+        }
+
+        // Masukkan data ke dalam borang Edit
+        document.getElementById("editIconInput").value = data.iconUrl || "";
+        document.getElementById("editEmailInput").value = data.contactEmail || user.email;
+        document.getElementById("editPhoneInput").value = data.phone || "";
 
       } else {
-        welcomeMsg.textContent = "Welcome, " + user.email;
-        document.getElementById("profileName").innerHTML = "Unknown User <span class='badge-role'>GUEST</span>";
-        document.getElementById("profileEmail").textContent = user.email;
+         // Jika data tiada, kekalkan default
+         displayPhone.textContent = "No Phone Number";
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -457,7 +490,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
   }
 });
 
-// --- PROFILE EDIT FUNCTIONS ---
+// --- PROFILE EDIT FUNCTIONS (UPDATED) ---
 function toggleEditProfile() {
     const form = document.getElementById("editProfileForm");
     if (form.style.display === "block") {
@@ -468,26 +501,39 @@ function toggleEditProfile() {
 }
 
 function saveProfileChanges() {
-    const newName = document.getElementById("editUsernameInput").value;
+    const newIcon = document.getElementById("editIconInput").value;
+    const newEmail = document.getElementById("editEmailInput").value;
+    const newPhone = document.getElementById("editPhoneInput").value;
     
-    if(!newName.trim()) {
-        alert("Username cannot be empty");
+    if(!currentUserDocId) {
+        alert("User authentication error.");
         return;
     }
 
-    if(currentUserDocId) {
-        db.collection("admin_users").doc(currentUserDocId).update({
-            username: newName
-        }).then(() => {
-            alert("Identity Updated Successfully");
-            document.getElementById("profileName").innerHTML = newName + ' <span class="badge-role">ADMIN</span>';
-            welcomeMsg.innerHTML = "Welcome back, <strong>" + newName + "</strong>";
-            toggleEditProfile();
-        }).catch((error) => {
-            console.error("Error updating profile: ", error);
-            alert("Error updating profile: " + error.message);
-        });
-    }
+    // Simpan ke Firestore
+    db.collection("admin_users").doc(currentUserDocId).set({
+        iconUrl: newIcon,
+        contactEmail: newEmail,
+        phone: newPhone
+    }, { merge: true }).then(() => {
+        alert("Identity Updated Successfully");
+        
+        // Update paparan serta merta tanpa refresh
+        document.getElementById("displayEmail").textContent = newEmail;
+        document.getElementById("displayPhone").textContent = newPhone;
+        
+        const iconContainer = document.getElementById("profileIconContainer");
+        if(newIcon.trim() !== "") {
+            iconContainer.innerHTML = `<img src="${newIcon}" alt="Profile">`;
+        } else {
+            iconContainer.innerHTML = `<i class="fa-solid fa-user-astronaut"></i>`;
+        }
+
+        toggleEditProfile(); // Tutup form
+    }).catch((error) => {
+        console.error("Error updating profile: ", error);
+        alert("Error updating profile: " + error.message);
+    });
 }
 
 // --- LOGOUT LOGIC ---
@@ -505,7 +551,7 @@ let complaintsData=[];
 let statusChart;
 
 async function loadComplaints(){
-  const snap = await db.collection("complaint").get();
+  const snap = await db.collection("complaint").orderBy("reportdatesection1", "desc").get(); // Added OrderBy for consistency
   complaintsData = snap.docs.map(d=>({ id:d.id, ...d.data() }));
   renderTable();
   renderStats();
