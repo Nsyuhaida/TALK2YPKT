@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FAQ Archives|TALK2YPKT ADMIN</title>
+<title>FAQ Archives | TALK2YPKT ADMIN</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
   --neon-green: #00ff9d;
   --neon-red: #ff4d4d;
   --bg-dark: #020617;
-  --glass-panel: rgba(15, 23, 42, 0.85); /* Diselaraskan dengan page lain */
+  --glass-panel: rgba(15, 23, 42, 0.85);
   --glass-border: rgba(0, 243, 255, 0.2);
   --text-main: #e2e8f0;
   --text-muted: #94a3b8;
@@ -24,7 +24,7 @@
 * { margin:0; padding:0; box-sizing:border-box; scroll-behavior: smooth; }
 
 body {
-  background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617); /* Background sama macam Full Report */
+  background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
   background-size: 400% 400%;
   animation: bgMove 20s ease infinite;
   color: var(--text-main);
@@ -41,7 +41,7 @@ body::before {
 
 .app { display:flex; min-height:100vh; position: relative; z-index: 1; }
 
-/* --- SIDEBAR (SEBIJI SAMA DENGAN FULL REPORT) --- */
+/* --- SIDEBAR --- */
 .sidebar {
   width: 260px; 
   background: rgba(15, 23, 42, 0.95); 
@@ -60,7 +60,6 @@ body::before {
   text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
 
-/* Nav Wrapper untuk tolak Logout ke bawah */
 .nav-links { flex: 1; display: flex; flex-direction: column; }
 
 .nav a {
@@ -74,7 +73,6 @@ body::before {
 }
 .nav a i { width: 20px; text-align: center; }
 
-/* SIGN OUT BUTTON STYLE (SEBIJI SAMA) */
 #logout {
   margin-top: auto; 
   color: var(--neon-red);
@@ -89,10 +87,15 @@ body::before {
   box-shadow: none;
 }
 
-/* --- MAIN CONTENT --- */
-.main { flex:1; padding: 30px; overflow-x: hidden; width: 100%; }
+/* --- MAIN CONTENT (FIXED SCROLL) --- */
+.main { 
+    flex:1; 
+    padding: 30px; 
+    overflow-x: auto; /* ✅ FIX: Tukar hidden kepada auto supaya boleh scroll */
+    width: 100%; 
+}
 
-/* MOBILE HEADER (SEBIJI SAMA) */
+/* MOBILE HEADER */
 .mobile-header {
     width: 100%; display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
 }
@@ -106,7 +109,7 @@ h1 {
   display: flex; align-items: center; gap: 15px;
 }
 
-/* --- FAQ SPECIFIC STYLES --- */
+/* --- FAQ STYLES --- */
 .card {
   background: var(--glass-panel);
   border: 1px solid var(--glass-border);
@@ -173,6 +176,18 @@ h1 {
   animation: fadeIn 0.4s ease;
 }
 
+/* --- ✅ NEW: TABLE RESPONSIVE HELPER --- */
+/* Gunakan class ini wrapping <table> anda nanti */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 15px;
+    border: 1px solid rgba(0,243,255,0.1);
+    border-radius: 8px;
+}
+table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+
 /* BUTTON UP */
 #btnUp {
   position: fixed; bottom: 30px; right: 30px;
@@ -190,7 +205,7 @@ h1 {
 @keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-/* --- MOBILE RESPONSIVE (SEBIJI SAMA) --- */
+/* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
     .sidebar {
         position: fixed; left: -100%; top: 0; bottom: 0;
@@ -205,7 +220,7 @@ h1 {
     }
     .sidebar-overlay.active { display: block; }
 
-    .main { padding: 20px; }
+    .main { padding: 15px; } /* Kurangkan padding mobile */
     .mobile-header { display: flex; }
     
     h1 { font-size: 22px; }
@@ -250,7 +265,7 @@ h1 {
     <h1><i class="fa-solid fa-folder-open"></i> FAQ ARCHIVES</h1>
 
     <div class="card">
-
+      
       <div class="faq-item">
         <div class="faq-question">1. How does the complaint workflow operate? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
@@ -262,7 +277,7 @@ h1 {
           accountability, and efficient handling of all complaints.
         </div>
       </div>
-
+      
       <div class="faq-item">
         <div class="faq-question">2. What complaint statuses are available? <i class="fa-solid fa-chevron-down"></i></div>
         <div class="faq-answer">
@@ -273,143 +288,14 @@ h1 {
         </div>
       </div>
 
-      <div class="faq-item">
-        <div class="faq-question">3. Where can admins update complaint details? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          Admins can update or modify complaint details through the <strong>Data Entry</strong> section of the system.
-          This includes editing descriptions, updating complaint status, adding administrative remarks,
-          or assigning staff for action. Any updates made are saved immediately to ensure the most
-          accurate and up-to-date information is available at all times.
-        </div>
       </div>
-
-      <div class="faq-item">
-        <div class="faq-question">4. How is system performance measured? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          System performance is measured by analyzing the ratio of resolved complaints compared
-          to the total number of complaints recorded. This performance indicator provides admins
-          with a quick overview of operational efficiency and resolution effectiveness.
-          A higher performance percentage indicates faster and more efficient complaint handling.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">5. Can multiple admins manage complaints simultaneously? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          Yes, the system supports multiple administrators accessing and managing complaints
-          simultaneously. All updates are synchronized in real time, allowing admins to work
-          collaboratively without data conflicts. This feature ensures smooth operations,
-          especially when handling a large volume of complaints.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">6. Can admins generate and print reports? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          Admins can generate detailed complaint reports from the <strong>Full Report</strong> section.
-          These reports can be filtered by date, status, or device type, and then printed
-          or exported for documentation, audits, or management meetings.
-          This feature supports transparent reporting and informed decision-making.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">7. What if incorrect data is entered? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          If incorrect data is identified, admins should promptly update and correct the
-          information using the <strong>Data Entry</strong> page. Maintaining accurate records is critical
-          for reliable reporting, proper decision-making, and system integrity.
-          All corrections should be verified before saving to prevent recurring errors.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">8. Are admin actions recorded in the system? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          Yes, the system records key administrative actions such as status updates,
-          approvals, and modifications. These logs provide accountability and allow
-          administrators to review previous actions if needed.
-          This ensures transparency and supports auditing processes.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">9. How does the system support daily operations? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          The system supports daily operations by providing a centralized dashboard with
-          real-time data, complaint summaries, and performance indicators.
-          These features allow admins to monitor progress, prioritize tasks,
-          and respond efficiently to new complaints, improving overall workflow management.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">10. How are resolved complaints handled? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          Once a complaint has been resolved, it is marked as <strong>Resolved</strong> and remains stored
-          in the system for future reference. Resolved complaints can still be viewed
-          in reports and historical records, allowing admins to analyze trends
-          and improve future service quality.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">11. Can admins manually add complaints? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          Yes, admins are able to manually add complaints through the <strong>Data Entry</strong> section.
-          This is particularly useful when users are unable to submit complaints themselves
-          or when complaints are received through alternative channels such as phone calls
-          or in-person reports.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">12. What happens when a complaint is approved? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          When a complaint is approved, it confirms that the reported issue has been verified
-          and accepted for action. The complaint then moves to the processing stage,
-          where appropriate steps are taken to resolve the issue.
-          This ensures only valid complaints proceed through the system.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">13. Can admins review previous actions? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          Yes, admins can review the complete history of a complaint, including all previous
-          updates, status changes, and remarks. This detailed record helps admins understand
-          the progression of each case and supports accurate follow-up actions.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">14. How does the system help reduce response time? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          The system reduces response time by offering real-time updates, clear status tracking,
-          and filtering tools. These features enable admins to quickly identify new or urgent
-          complaints and respond promptly, leading to faster resolutions
-          and improved service efficiency.
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-question">15. How should admins properly end their session? <i class="fa-solid fa-chevron-down"></i></div>
-        <div class="faq-answer">
-          Admins should always sign out using the <strong>Sign Out</strong> option after completing their tasks.
-          This prevents unauthorized access and helps maintain system security.
-          Logging out is especially important when accessing the system
-          from shared or public devices.
-        </div>
-      </div>
-
-    </div>
   </main>
 </div>
 
 <button id="btnUp" title="Back to Top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>
-// --- SIDEBAR TOGGLE (FOR MOBILE) ---
+// --- SIDEBAR TOGGLE ---
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
     document.querySelector('.sidebar-overlay').classList.toggle('active');
@@ -417,7 +303,6 @@ function toggleSidebar() {
 
 // --- LOGOUT LOGIC ---
 document.getElementById("logout").addEventListener("click", ()=>{
-  // Add authentication handling here if needed
   localStorage.removeItem("admin_logged_in");
   window.location.href="login.html";
 });
@@ -454,4 +339,3 @@ btnUp.onclick = function() {
 
 </body>
 </html>
-
