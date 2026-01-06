@@ -377,9 +377,27 @@ function toggleSidebar() {
     document.querySelector('.sidebar-overlay').classList.toggle('active');
 }
 
-// --- 3. AUTH LOGIC ---
+// --- 3. AUTH LOGIC (WITH SECURITY CHECK) ---
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
+    // ----------------------------------------------------------------
+    // 🔒 SECURITY CHECK: HANYA EMAIL YPKT ATAU ADMIN BOLEH MASUK
+    // ----------------------------------------------------------------
+    const allowedDomain = "@ypkt.gov.com";
+    
+    // 🔴 TUKAR EMAIL INI KEPADA EMAIL PERSONAL AWAK UTK TESTING (Contoh: "ali@gmail.com")
+    const myAdminEmail = "user@gmail.com"; 
+
+    // Logic Check
+    if (!user.email.endsWith(allowedDomain) && user.email !== myAdminEmail) {
+        alert("ACCESS DENIED: Please use authorized YPKT email.");
+        firebase.auth().signOut().then(() => {
+            window.location.href = "login.html";
+        });
+        return; // Stop execution here
+    }
+    // ----------------------------------------------------------------
+
     // Populate User Info
     document.getElementById("welcomeMsg").innerHTML = `Welcome User ...... <span style="color:var(--neon-blue); font-weight:bold;">${user.email}</span>`;
     document.getElementById("displayEmail").textContent = user.email;
@@ -394,6 +412,7 @@ firebase.auth().onAuthStateChanged((user) => {
     listenToComplaints();
 
   } else {
+    // Kalau user tak login, tendang ke login page
     window.location.href = "login.html";
   }
 });
@@ -498,7 +517,7 @@ function renderTable(){
   const search = document.getElementById("searchInput").value.toLowerCase();
   tb.innerHTML = "";
 
-  const filtered = complaintsData.filter(c =>
+  const filtered = complaintsData.filter(c => 
       c.id.toLowerCase().includes(search) ||
       (c.lastUser||"").toLowerCase().includes(search) ||
       (c.assettype||"").toLowerCase().includes(search)
