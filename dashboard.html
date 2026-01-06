@@ -28,7 +28,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
 
-/* --- BACKGROUND SYSTEM NEXUS --- */
+/* --- BACKGROUND SYSTEM --- */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
   background-size: 400% 400%;
@@ -37,7 +37,6 @@ body {
   min-height: 100vh;
 }
 
-/* Grid Overlay */
 body::before {
   content: ""; position: fixed; inset: 0;
   background-image: 
@@ -81,17 +80,13 @@ body::before {
 .nav a i { width: 20px; text-align: center; }
 
 #logout {
-  margin-top: auto; 
-  color: var(--neon-red);
+  margin-top: auto; color: var(--neon-red);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 20px; border-radius: 0;
 }
 #logout:hover {
-  background: rgba(255, 77, 77, 0.1); 
-  border-top-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-  border-color: rgba(255, 77, 77, 0.5);
-  box-shadow: none;
+  background: rgba(255, 77, 77, 0.1); border-top-color: rgba(255, 255, 255, 0.3);
+  color: #fff; border-color: rgba(255, 77, 77, 0.5); box-shadow: none;
 }
 
 /* --- MAIN CONTENT --- */
@@ -104,23 +99,18 @@ body::before {
     background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px;
 }
 
-/* DASHBOARD HEADER */
+/* HEADER & INPUT */
 .header {
   display: flex; justify-content: space-between; align-items: flex-end;
   margin-bottom: 25px; flex-wrap: wrap; gap: 20px;
-  border-bottom: 1px solid var(--glass-border);
-  padding-bottom: 15px;
+  border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;
 }
-
 .header h1 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 24px; color: #fff;
+  font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff;
   text-shadow: 0 0 15px rgba(255,255,255,0.2);
 }
-
 .header p { color: var(--neon-blue); font-size: 12px; letter-spacing: 1px; }
 
-/* Search Input */
 .input {
   padding: 10px 20px; border-radius: 50px;
   border: 1px solid var(--glass-border);
@@ -129,14 +119,12 @@ body::before {
 }
 .input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-/* --- COMPACT PROFILE STYLES (NEW) --- */
-.compact-profile-wrapper {
-    display: flex; justify-content: space-between; align-items: center;
-}
+/* --- PROFILE SECTION --- */
+.compact-profile-wrapper { display: flex; justify-content: space-between; align-items: center; }
 .compact-left { display: flex; align-items: center; gap: 15px; }
 
 .profile-avatar-small {
-    width: 50px; height: 50px; /* Saiz Kecil */
+    width: 50px; height: 50px;
     background: rgba(0, 243, 255, 0.1); border: 2px solid var(--neon-blue);
     display: flex; align-items: center; justify-content: center;
     font-size: 20px; color: var(--neon-blue);
@@ -150,35 +138,24 @@ body::before {
     border: 1px solid rgba(0, 255, 157, 0.3); font-weight: bold;
 }
 
-/* Compact Toggle Button */
 .btn-toggle-compact {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: var(--text-muted);
-    padding: 5px 12px;
-    font-size: 10px;
-    font-family: 'Orbitron', sans-serif;
-    cursor: pointer;
-    border-radius: 50px;
-    transition: 0.3s;
-    white-space: nowrap;
+    background: transparent; border: 1px solid rgba(255,255,255,0.2);
+    color: var(--text-muted); padding: 5px 12px; font-size: 10px;
+    font-family: 'Orbitron', sans-serif; cursor: pointer;
+    border-radius: 50px; transition: 0.3s; white-space: nowrap;
 }
 .btn-toggle-compact:hover {
     border-color: var(--neon-blue); color: var(--neon-blue);
     background: rgba(0, 243, 255, 0.05);
 }
 
-/* Hidden Section Animation */
 #metadataPanel {
-    animation: fadeIn 0.4s ease;
-    margin-top: 15px;
-    border-top: 1px dashed rgba(255,255,255,0.1);
-    padding-top: 15px;
+    animation: fadeIn 0.4s ease; margin-top: 15px;
+    border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;
 }
 
 /* STATS CARDS */
 .stats-wrapper { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; }
-
 .stats-card {
   flex: 1; min-width: 180px;
   background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
@@ -186,46 +163,29 @@ body::before {
   border: 1px solid var(--glass-border); text-align: center;
   transition: 0.3s; position: relative; overflow: hidden;
 }
-
 .stats-card:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.4); border-color: var(--neon-blue); }
 .stats-card h2 { font-family: 'Orbitron', sans-serif; font-size: 32px; color: #fff; margin-bottom: 5px; }
 .stats-card span { color: var(--neon-blue); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
 
-/* TABLES & CARDS */
+/* TABLE & CARDS */
 .card {
   background: var(--glass-panel); backdrop-filter: blur(10px);
-  padding: 20px; border-radius: 16px; /* Reduced Padding */
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3); margin-bottom: 25px;
+  padding: 20px; border-radius: 16px; margin-bottom: 25px;
+  border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
 }
-
 .card h3 {
   font-family: 'Orbitron', sans-serif; color: var(--neon-blue);
   margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);
   padding-bottom: 10px; font-size: 16px;
 }
-
-table { width: 100%; border-collapse: separate; border-spacing: 0 5px; margin-top: 0px; }
-
-th {
-  text-align: left; padding: 12px; color: rgba(255,255,255,0.6);
-  font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
-}
-
-td {
-  background: rgba(255,255,255,0.03); padding: 12px;
-  border-top: 1px solid transparent; border-bottom: 1px solid transparent;
-  color: #fff; font-size: 13px;
-}
+table { width: 100%; border-collapse: separate; border-spacing: 0 5px; }
+th { text-align: left; padding: 12px; color: rgba(255,255,255,0.6); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+td { background: rgba(255,255,255,0.03); padding: 12px; color: #fff; font-size: 13px; }
 td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
 td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 
-tr:hover td {
-  background: rgba(0, 243, 255, 0.1); border-color: var(--glass-border);
-  cursor: pointer; box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
-}
-
-/* CHART & SUMMARY */
+/* CHARTS & KPI */
 .summary-wrapper { max-width: 800px; margin: 0 auto; }
 .summary-row { display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap; }
 .summary-chart { width: 280px; position: relative; }
@@ -234,52 +194,35 @@ tr:hover td {
   border: 2px dashed var(--glass-border); width: 160px; height: 160px;
   display: flex; flex-direction: column; justify-content: center;
   animation: rotateBorder 20s linear infinite reverse;
+  transition: border-color 0.5s ease; /* Smooth color change */
 }
 .summary-kpi-inner { animation: rotateBorder 20s linear infinite; }
-
 .summary-kpi h2 { font-size: 36px; color: #fff; font-family: 'Orbitron', sans-serif; }
 .summary-kpi span { font-size: 10px; color: var(--neon-blue); text-transform: uppercase; }
 
-/* BACK TO TOP */
+/* UTILS */
 #backToTop {
   position: fixed; bottom: 30px; right: 30px;
   width: 50px; height: 50px; background: var(--neon-blue); color: #000;
   border-radius: 50%; border: none; cursor: pointer;
-  display: flex; justify-content: center; align-items: center;
-  font-size: 20px; box-shadow: 0 0 20px var(--neon-blue);
+  display: flex; justify-content: center; align-items: center; font-size: 20px;
   opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 100;
 }
-#backToTop:hover { transform: translateY(-5px); box-shadow: 0 0 40px var(--neon-blue); background: #fff; }
 #backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
 
-/* ANIMATIONS */
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes rotateBorder { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @keyframes fadeIn { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
 
-/* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
-    .sidebar {
-        position: fixed; left: -100%; top: 0; bottom: 0;
-        width: 80%; max-width: 300px;
-        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
-    }
+    .sidebar { position: fixed; left: -100%; width: 80%; }
     .sidebar.active { left: 0; }
-    
-    .sidebar-overlay {
-        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-        z-index: 90; display: none; backdrop-filter: blur(3px);
-    }
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
     .sidebar-overlay.active { display: block; }
-
-    .main { padding: 15px; }
     .mobile-header { display: flex; }
-    
     .header { flex-direction: column; align-items: flex-start; }
     .input { width: 100%; }
-    
     .compact-profile-wrapper { flex-direction: column; align-items: flex-start; gap: 15px; }
-    .btn-toggle-compact { width: 100%; text-align: center; }
 }
 </style>
 </head>
@@ -287,7 +230,6 @@ tr:hover td {
 <body>
 
 <div class="app">
-
   <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
   <aside class="sidebar" id="sidebar">
@@ -327,7 +269,6 @@ tr:hover td {
     </div>
 
     <div class="card" style="border-left: 3px solid var(--neon-blue); padding: 15px 20px;">
-        
         <div class="compact-profile-wrapper">
             <div class="compact-left">
                 <div class="profile-avatar-small">
@@ -341,7 +282,6 @@ tr:hover td {
                     </div>
                 </div>
             </div>
-
             <button class="btn-toggle-compact" onclick="toggleMetadata()" id="btnToggleMeta">
                 DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>
             </button>
@@ -361,7 +301,6 @@ tr:hover td {
                 <div id="displayLastLogin" style="font-family: 'Orbitron'; font-size: 12px; color: var(--neon-green);">-</div>
             </div>
         </div>
-
     </div>
 
     <div class="stats-wrapper">
@@ -380,7 +319,7 @@ tr:hover td {
     </div>
 
     <div class="card">
-      <h3>INCOMING DATA STREAM</h3>
+      <h3>INCOMING DATA STREAM (REAL-TIME)</h3>
       <div style="overflow-x:auto;">
         <table id="dashboardTable">
           <thead>
@@ -393,7 +332,7 @@ tr:hover td {
             </tr>
           </thead>
           <tbody>
-            <tr><td colspan="5" style="text-align:center; opacity:0.5;">Connecting to server...</td></tr>
+            <tr><td colspan="5" style="text-align:center; opacity:0.5;">Establishing uplink...</td></tr>
           </tbody>
         </table>
       </div>
@@ -407,10 +346,10 @@ tr:hover td {
             <canvas id="statusChart"></canvas>
           </div>
           
-          <div class="summary-kpi">
+          <div class="summary-kpi" id="kpiCircle">
             <div class="summary-kpi-inner">
-                <h2 id="todayCount">0</h2>
-                <span>LOGGED TODAY</span>
+                <h2 id="efficiencyValue" style="transition: color 0.5s ease;">0%</h2>
+                <span id="efficiencyLabel">CALCULATING...</span>
             </div>
           </div>
         </div>
@@ -420,12 +359,10 @@ tr:hover td {
   </main>
 </div>
 
-<button id="backToTop" title="Return to Top">
-    <i class="fa-solid fa-arrow-up"></i>
-</button>
+<button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>
-// --- KONFIGURASI FIREBASE ---
+// --- 1. FIREBASE CONFIG ---
 firebase.initializeApp({
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -434,84 +371,131 @@ firebase.initializeApp({
 
 const db = firebase.firestore();
 
-// --- SIDEBAR TOGGLE FUNCTION ---
+// --- 2. SIDEBAR LOGIC ---
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
     document.querySelector('.sidebar-overlay').classList.toggle('active');
 }
 
-// --- AUTH & PROFILE DISPLAY LOGIC ---
+// --- 3. AUTH LOGIC ---
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
-    // 1. Set Welcome Message
+    // Populate User Info
     document.getElementById("welcomeMsg").innerHTML = `Welcome User ...... <span style="color:var(--neon-blue); font-weight:bold;">${user.email}</span>`;
-
-    // 2. Papar Email & UID
     document.getElementById("displayEmail").textContent = user.email;
     document.getElementById("displayUid").textContent = "UID: " + user.uid;
 
-    // 3. Format & Papar Tarikh dari Metadata (Firebase Auth)
-    const joinedDate = new Date(user.metadata.creationTime).toLocaleDateString("ms-MY", { 
-        day: 'numeric', month: 'short', year: 'numeric' 
-    });
-    
-    const lastLoginDate = new Date(user.metadata.lastSignInTime).toLocaleString("ms-MY", {
-        day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit'
-    });
-
+    const joinedDate = new Date(user.metadata.creationTime).toLocaleDateString("ms-MY", { day: 'numeric', month: 'short', year: 'numeric' });
+    const lastLoginDate = new Date(user.metadata.lastSignInTime).toLocaleString("ms-MY", { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' });
     document.getElementById("displayJoined").textContent = joinedDate;
     document.getElementById("displayLastLogin").textContent = lastLoginDate;
 
+    // MULA DENGAR DATA
+    listenToComplaints();
+
   } else {
-    // Jika tiada user, pergi ke login page
     window.location.href = "login.html";
   }
 });
 
-// --- TOGGLE METADATA (COMPACT) ---
+// --- 4. TOGGLE METADATA ---
 function toggleMetadata() {
     const panel = document.getElementById("metadataPanel");
     const btn = document.getElementById("btnToggleMeta");
-    
     if (panel.style.display === "none") {
-        panel.style.display = "grid"; // Tukar kepada grid bila buka
+        panel.style.display = "grid"; 
         btn.innerHTML = `CLOSE <i class="fa-solid fa-chevron-up" style="margin-left:5px;"></i>`;
         btn.style.color = "var(--neon-blue)";
         btn.style.borderColor = "var(--neon-blue)";
     } else {
-        panel.style.display = "none"; // Tutup semula
+        panel.style.display = "none"; 
         btn.innerHTML = `DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>`;
         btn.style.color = "var(--text-muted)";
         btn.style.borderColor = "rgba(255,255,255,0.2)";
     }
 }
 
-// --- LOGOUT LOGIC ---
+// --- 5. LOGOUT ---
 document.getElementById("logout").addEventListener("click", ()=>{
-  firebase.auth().signOut().then(()=>{
-    window.location.href="login.html";
-  });
+  firebase.auth().signOut().then(()=>{ window.location.href="login.html"; });
 });
 
+// --- 6. DATE HELPER ---
 function formatDate(ts){
   return ts?.toDate ? ts.toDate().toLocaleDateString("ms-MY") : "-";
 }
 
-let complaintsData=[];
+let complaintsData = [];
 let statusChart;
 
-async function loadComplaints(){
-  const snap = await db.collection("complaint").orderBy("reportdatesection1", "desc").get();
-  complaintsData = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-  renderTable();
-  renderStats();
-  renderDonut();
+// --- 7. CORE: REAL-TIME LISTENER & EFFICIENCY LOGIC ---
+function listenToComplaints() {
+  db.collection("complaint")
+    .orderBy("reportdatesection1", "desc")
+    .onSnapshot((snapshot) => {
+        // Ambil Data
+        complaintsData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        // Render UI Biasa
+        renderTable();
+        renderStats();
+        renderDonut();
+
+        // KIRA SYSTEM EFFICIENCY (WOW FACTOR)
+        calculateEfficiency(); 
+    
+    }, (error) => {
+        console.error("Error stream:", error);
+    });
 }
 
-// --- RENDER TABLE ---
+function calculateEfficiency() {
+    const total = complaintsData.length;
+    const approved = complaintsData.filter(c => c.approvalstatus === 'Approve').length;
+    
+    // Kira Peratusan
+    let percent = 0;
+    if (total > 0) {
+        percent = Math.round((approved / total) * 100);
+    }
+
+    // Ambil Elemen UI
+    const valueText = document.getElementById("efficiencyValue");
+    const labelText = document.getElementById("efficiencyLabel");
+    const circleBorder = document.getElementById("kpiCircle");
+    
+    // Set Nilai
+    valueText.textContent = percent + "%";
+    
+    // Logic Warna Cyberpunk
+    if (percent >= 80) {
+        // Hijau Neon (Bagus)
+        valueText.style.color = "#00ff9d"; 
+        valueText.style.textShadow = "0 0 15px rgba(0, 255, 157, 0.5)";
+        circleBorder.style.borderColor = "#00ff9d";
+        labelText.textContent = "SYSTEM OPTIMAL";
+        labelText.style.color = "#00ff9d";
+    } else if (percent >= 50) {
+        // Oren (Sederhana)
+        valueText.style.color = "#ffaa00";
+        valueText.style.textShadow = "0 0 15px rgba(255, 170, 0, 0.5)";
+        circleBorder.style.borderColor = "#ffaa00";
+        labelText.textContent = "SYSTEM STABLE";
+        labelText.style.color = "#ffaa00";
+    } else {
+        // Merah (Bahaya)
+        valueText.style.color = "#ff4d4d";
+        valueText.style.textShadow = "0 0 15px rgba(255, 77, 77, 0.5)";
+        circleBorder.style.borderColor = "#ff4d4d";
+        labelText.textContent = "ATTENTION NEEDED";
+        labelText.style.color = "#ff4d4d";
+    }
+}
+
+// --- 8. RENDER TABLE ---
 function renderTable(){
   const tb = document.querySelector("#dashboardTable tbody");
-  const search = searchInput.value.toLowerCase();
+  const search = document.getElementById("searchInput").value.toLowerCase();
   tb.innerHTML = "";
 
   const filtered = complaintsData.filter(c =>
@@ -521,7 +505,7 @@ function renderTable(){
   );
 
   if(filtered.length === 0){
-      tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No matching data found in system.</td></tr>`;
+      tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">No matching data stream detected.</td></tr>`;
       return;
   }
 
@@ -541,57 +525,53 @@ function renderTable(){
     });
 }
 
+// --- 9. RENDER STATS CARDS ---
 function renderStats(){
-  totalComplaints.textContent = complaintsData.length;
-  approveCount.textContent = 
+  document.getElementById("totalComplaints").textContent = complaintsData.length;
+  document.getElementById("approveCount").textContent = 
     complaintsData.filter(c=>c.approvalstatus==="Approve").length;
-  notApproveCount.textContent = 
+  document.getElementById("notApproveCount").textContent = 
     complaintsData.filter(c=>c.approvalstatus!=="Approve").length;
 }
 
-// --- CHART ---
+// --- 10. RENDER CHART JS ---
 function renderDonut(){
   const approve = complaintsData.filter(c=>c.approvalstatus==="Approve").length;
   const pending = complaintsData.length - approve;
 
   if(statusChart) statusChart.destroy();
-
-  Chart.defaults.color = '#ccc';
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.font.family = 'Poppins';
 
   statusChart = new Chart(document.getElementById("statusChart"),{
     type:"doughnut",
     data:{
-      labels:["Approve","Pending"],
+      labels:["Approved","Pending"],
       datasets:[{
         data:[approve,pending],
         backgroundColor:["#00ff9d","#ff6600"],
         borderColor: "#020617",
-        borderWidth: 2
+        borderWidth: 2,
+        hoverOffset: 10
       }]
     },
     options:{
       cutout:"70%",
+      responsive: true,
+      maintainAspectRatio: false,
       plugins:{
           legend:{
               position:"bottom",
-              labels: { font: { family: 'Poppins' } }
+              labels: { padding: 20, usePointStyle: true }
           }
       }
     }
   });
-
-  const today = new Date().toLocaleDateString("ms-MY");
-  todayCount.textContent = complaintsData.filter(c => 
-    c.reportdatesection1?.toDate && 
-    c.reportdatesection1.toDate().toLocaleDateString("ms-MY") === today
-  ).length;
 }
 
-searchInput.oninput = renderTable;
+document.getElementById("searchInput").addEventListener("input", renderTable);
 
-// --- BACK TO TOP LOGIC ---
 const backToTopBtn = document.getElementById("backToTop");
-
 window.onscroll = function() {
   if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
     backToTopBtn.classList.add("show");
@@ -599,13 +579,9 @@ window.onscroll = function() {
     backToTopBtn.classList.remove("show");
   }
 };
-
 backToTopBtn.onclick = function() {
   window.scrollTo({top: 0, behavior: 'smooth'});
 };
-
-// Initial Load
-loadComplaints();
 </script>
 
 </body>
