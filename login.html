@@ -49,7 +49,7 @@ body::before {
 /* --- KAD LOGIN DENGAN BORDER BERPUSING --- */
 .login-card-wrap {
     position: relative;
-    height: 580px; /* Increased slightly to fit new link */
+    height: 580px;
     border-radius: 20px;
     overflow: hidden;
     padding: 3px; 
@@ -87,7 +87,7 @@ body::before {
 
 /* TYPOGRAPHY */
 h2{
-    font-family: 'Orbitron', sans-serif; /* Font Sci-fi */
+    font-family: 'Orbitron', sans-serif;
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 10px;
@@ -113,7 +113,7 @@ label{
 input{
   width:100%;
   padding:12px 15px;
-  padding-right: 45px; /* Ruang ikon mata */
+  padding-right: 45px;
   border-radius: 8px;
   border: 1px solid rgba(0, 243, 255, 0.3);
   background: rgba(0, 6, 20, 0.6);
@@ -144,7 +144,7 @@ input:focus{
 }
 .password-toggle:hover { opacity: 1; text-shadow: 0 0 5px var(--neon-blue); }
 
-/* --- FORGOT PASSWORD LINK (NEW) --- */
+/* --- FORGOT PASSWORD LINK --- */
 .forgot-link {
     display: block;
     text-align: right;
@@ -243,7 +243,7 @@ input:focus{
 
         <div class="form-group">
           <label>ACCESS ID (Email)</label>
-          <input id="email" type="email" placeholder="admin@system.core">
+          <input id="email" type="email" placeholder="admin@ypkt.gov.com">
         </div>
 
         <div class="form-group">
@@ -271,7 +271,7 @@ input:focus{
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <script>
-// Config anda (JANGAN UBAH INI)
+// --- 1. CONFIGURATION ---
 firebase.initializeApp({
   apiKey: "AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain: "e-complaint-8nu9kp.firebaseapp.com",
@@ -280,7 +280,11 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 
-// === Logic Toggle Password (Mata) ===
+// 🔴🔴 CONFIG DOMAIN DI SINI 🔴🔴
+const allowedDomain = "@ypkt.gov.com";
+const myAdminEmail = "user@gmail.com"; // 👈 LETAK EMAIL TESTING AWAK KAT SINI
+
+// --- 2. TOGGLE PASSWORD ---
 const togglePassword = document.querySelector('#togglePassword');
 const passwordInput = document.querySelector('#password');
 
@@ -291,10 +295,23 @@ togglePassword.addEventListener('click', function (e) {
     this.classList.toggle('fa-eye');
 });
 
-// === Login Biasa ===
+// --- 3. FUNCTION CHECK DOMAIN ---
+function checkAccess(user) {
+    if (user.email.endsWith(allowedDomain) || user.email === myAdminEmail) {
+        // Lulus: Masuk Dashboard
+        window.location.href = "dashboard.html";
+    } else {
+        // Gagal: Logout Balik & Alert
+        auth.signOut();
+        alert("ACCESS DENIED: Only authorized YPKT personnel allowed.");
+    }
+}
+
+// --- 4. LOGIN BIASA ---
 async function login(){
   const emailVal = document.getElementById('email').value;
   const passVal = document.getElementById('password').value;
+  const btn = document.querySelector('.btn-primary');
 
   if(!emailVal || !passVal) {
       alert("Please enter email and password");
@@ -302,26 +319,34 @@ async function login(){
   }
 
   try {
-    await auth.signInWithEmailAndPassword(emailVal, passVal);
-    window.location.href="dashboard.html";
+    btn.innerHTML = "AUTHENTICATING...";
+    const userCredential = await auth.signInWithEmailAndPassword(emailVal, passVal);
+    
+    // ✅ Check Domain Sebelum Redirect
+    checkAccess(userCredential.user);
+
   } catch(error) {
+    btn.innerHTML = "INITIALIZE LOGIN";
     alert("Login Failed: " + error.message);
   }
 }
 
-// === Google Login ===
+// --- 5. GOOGLE LOGIN ---
 async function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
-    await auth.signInWithPopup(provider);
-    window.location.href="dashboard.html";
+    const result = await auth.signInWithPopup(provider);
+    
+    // ✅ Check Domain Sebelum Redirect
+    checkAccess(result.user);
+
   } catch(error) {
     console.error(error);
     alert("Google Login Failed. Error: " + error.message);
   }
 }
 
-// === FORGOT PASSWORD FUNCTION ===
+// --- 6. FORGOT PASSWORD ---
 async function forgotPassword() {
     const emailVal = document.getElementById('email').value;
 
