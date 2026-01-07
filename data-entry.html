@@ -12,13 +12,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* --- DESIGN NEON SAMA SEPERTI SEBELUM INI --- */
+/* --- DESIGN SAMA MACAM SEBELUM INI --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap');
 
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
-  --neon-orange: #ff9500; /* Warna Oren untuk Pending */
+  --neon-orange: #ff9500;
   --bg-dark: #020617;
   --glass: rgba(15, 23, 42, 0.95);
   --border: rgba(0, 243, 255, 0.2);
@@ -44,7 +44,6 @@ body::before {
 .app { display:flex; min-height:100vh; position: relative; z-index: 1; opacity: 0; transition: opacity 0.5s; }
 .app.loaded { opacity: 1; }
 
-/* Loader */
 #authLoader {
     position: fixed; inset: 0; background: #020617; z-index: 9999;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -55,7 +54,6 @@ body::before {
 }
 .loader-text { font-family: 'Orbitron'; color: var(--neon-blue); letter-spacing: 2px; animation: pulse 1.5s infinite; }
 
-/* Sidebar */
 .sidebar {
   width: 260px; background: var(--glass); backdrop-filter: blur(15px);
   border-right: 1px solid var(--border); padding: 30px 20px;
@@ -79,13 +77,11 @@ body::before {
 }
 #logout { margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; cursor: pointer; }
 
-/* Main Content */
 .main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
 .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; }
 h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
 
-/* Search & Table */
 .search-container { margin-bottom: 25px; }
 #searchInput {
   width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4);
@@ -105,7 +101,6 @@ th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--
 td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; }
 tr:hover { background: rgba(0, 243, 255, 0.05); cursor: pointer; color: #fff; }
 
-/* Form Card */
 .card {
   background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px);
   padding: 40px; border-radius: 16px; border: 1px solid var(--border);
@@ -139,7 +134,6 @@ textarea.input { resize: vertical; min-height: 80px; }
 }
 .btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-green); }
 
-/* Status Labels */
 .status-badge { padding: 5px 12px; border-radius: 4px; font-weight: bold; font-family: 'Orbitron'; font-size: 0.8em; letter-spacing: 1px;}
 
 .toast { position: fixed; top: 20px; right: 20px; opacity: 0; z-index: 9999; padding: 15px 25px; border-radius: 8px; font-family: 'Orbitron'; color: var(--neon-green); background: rgba(0,255,157,0.1); border: 1px solid var(--neon-green); transition: 0.3s; transform: translateY(-20px); }
@@ -287,8 +281,21 @@ auth.onAuthStateChanged((user) => {
 });
 document.getElementById("logout").onclick=()=>auth.signOut().then(()=>window.location.href="login.html");
 
-// --- HELPER ---
-const dt=t=>t&&t.toDate?t.toDate().toISOString().slice(0,16):"";
+// --- HELPER DATE FORMATTER ---
+// Tukar format Firestore ke value Input HTML (YYYY-MM-DDTHH:mm)
+const dt = (t) => {
+    if (!t) return "";
+    try {
+        const d = t.toDate(); // Tukar Firestore Timestamp ke JS Date
+        // Kita guna teknik offset supaya tak lari timezone
+        const offset = d.getTimezoneOffset() * 60000; 
+        const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
+        return localISOTime;
+    } catch (e) {
+        return "";
+    }
+};
+
 const toast=(msg,err=false)=>{
   const t=document.getElementById("toast");
   t.innerHTML = err ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`;
@@ -299,19 +306,32 @@ const toast=(msg,err=false)=>{
 // --- MAIN LOGIC ---
 let complaints=[];
 
-// 1. Load Data
+// 1. Load Data (FIX: Order by report date so new items show up!)
 async function loadComplaints(){
   try {
-      const s=await db.collection(COLLECTION_NAME).orderBy('updatedAt', 'desc').get(); // Order by newest
+      // SAYA UBAH ORDERBY KEPADA 'reportdatesection1' (Tarikh Aduan)
+      // Ini memastikan data Syamimi keluar walaupun dia belum ada 'updatedAt'
+      const s = await db.collection(COLLECTION_NAME).orderBy('reportdatesection1', 'desc').get();
+      
       complaints=s.docs.map(d=>({id:d.id,...d.data()}));
       renderTable(complaints);
   } catch (err) {
       console.error(err);
-      document.getElementById("complaintList").innerHTML = `<div style="padding:20px; color:#ff4d4d; text-align:center;">Database Error.</div>`;
+      // Kalau error index, kita try fetch semua dulu
+      if(err.code === 'failed-precondition') {
+           console.log("Index missing, loading raw...");
+           const s = await db.collection(COLLECTION_NAME).get();
+           complaints = s.docs.map(d=>({id:d.id,...d.data()}));
+           // Sort manual dalam javascript
+           complaints.sort((a,b) => (b.reportdatesection1 || 0) - (a.reportdatesection1 || 0));
+           renderTable(complaints);
+      } else {
+        document.getElementById("complaintList").innerHTML = `<div style="padding:20px; color:#ff4d4d; text-align:center;">Database Error: ${err.message}</div>`;
+      }
   }
 }
 
-// 2. Render Table (HIJAU vs OREN)
+// 2. Render Table
 function renderTable(list){
   const container = document.getElementById("complaintList");
   if(list.length === 0) {
@@ -322,21 +342,17 @@ function renderTable(list){
   let h = "<div class='table-wrapper'><table><thead><tr><th>ID REF</th><th>REPORTED BY</th><th>STATUS</th></tr></thead><tbody>";
   
   list.forEach(c => {
-    // Tentukan Status & Warna
-    let status = c.approvalstatus || "Pending"; // Kalau kosong, anggap Pending
-    let color = "";
-    
-    if(status === "Approved") {
-        color = "#00ff9d"; // HIJAU
-    } else {
-        color = "#ff9500"; // OREN (untuk Pending atau Not Approve)
-        status = "Pending"; // Paksa teks jadi Pending untuk keseragaman
-    }
+    // CHECK CONTENT SECTION 3 UTK STATUS
+    let hasAdminContent = c.recommendsection3 && c.recommendsection3.trim().length > 0;
+    let isApproved = c.approvalstatus === 'Approved' || hasAdminContent;
+
+    let statusLabel = isApproved ? "Approved" : "Pending";
+    let color = isApproved ? "#00ff9d" : "#ff9500"; 
     
     h += `<tr data-id="${c.id}">
       <td style="font-family:'Orbitron'; color:var(--neon-blue)">${c.id}</td>
       <td>${c.lastUser||"-"}</td>
-      <td style="color:${color}; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${status}</td>
+      <td style="color:${color}; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${statusLabel}</td>
     </tr>`;
   });
   
@@ -354,7 +370,7 @@ document.getElementById("searchInput").oninput = (e) => {
   renderTable(complaints.filter(c => c.id.toLowerCase().includes(v) || (c.lastUser||"").toLowerCase().includes(v)));
 };
 
-// 4. Load Detail & LOCK LOGIC
+// 4. Load Detail
 async function loadDetail(id){
   const docRef = await db.collection(COLLECTION_NAME).doc(id).get();
   if(!docRef.exists) return;
@@ -362,11 +378,9 @@ async function loadDetail(id){
   const d = docRef.data();
   const form = document.getElementById("complaintDetail");
   
-  // Reset Form
   form.style.display="block";
   form.dataset.id = id;
 
-  // Set Section 1 & 2 (Always Readonly)
   const setVal = (eid, val) => document.getElementById(eid).value = val || "";
   setVal('assettype', d.assettype);
   setVal('SerialNumber', d.serialNumber);
@@ -378,44 +392,34 @@ async function loadDetail(id){
   setVal('section2nameposition', d.section2nameposition);
   setVal('section2date', dt(d.section2date));
 
-  // Set Section 3 (Admin)
+  // Admin Section
   setVal('previousmaintenancecost', d.previousmaintenancecost);
   setVal('estimatedmaintenancecost', d.estimatedmaintenancecost);
   setVal('recommendsection3', d.recommendsection3);
   setVal('section3nameposition', d.section3nameposition);
-  setVal('section3date', dt(d.section3date));
+  setVal('section3date', dt(d.section3date)); // Guna fungsi dt() yang dah dibetulkan
 
-  // --- LOGIC KUNCI (LOCK) ---
+  // LOGIC LOCK
   const statusHeader = document.getElementById("statusHeader");
   const saveBtn = document.getElementById("saveComplaint");
   const lockedBanner = document.getElementById("lockedBanner");
-  const adminInputs = document.querySelectorAll('.admin-input'); // Class khas utk input section 3
+  const adminInputs = document.querySelectorAll('.admin-input');
 
-  if (d.approvalstatus === 'Approved') {
-      // --- KES: SUDAH APPROVE (HIJAU) ---
-      // 1. Header jadi Hijau
+  let hasAdminContent = d.recommendsection3 && d.recommendsection3.trim().length > 0;
+  let isLocked = d.approvalstatus === 'Approved' || hasAdminContent;
+
+  if (isLocked) {
       statusHeader.innerText = "APPROVED";
       statusHeader.style.background = "var(--neon-green)";
       statusHeader.style.color = "#000";
-
-      // 2. Kunci semua input Section 3 (View Only)
       adminInputs.forEach(input => input.setAttribute('readonly', true));
-
-      // 3. Hilangkan butang simpan & Tunjuk Banner Lock
       saveBtn.style.display = "none";
       lockedBanner.style.display = "block";
-
   } else {
-      // --- KES: PENDING (OREN) ---
-      // 1. Header jadi Oren
       statusHeader.innerText = "PENDING ACTION";
       statusHeader.style.background = "var(--neon-orange)";
       statusHeader.style.color = "#000";
-
-      // 2. Buka kunci input Section 3 (Editable)
       adminInputs.forEach(input => input.removeAttribute('readonly'));
-
-      // 3. Tunjuk butang simpan & Sorok Banner Lock
       saveBtn.style.display = "flex";
       lockedBanner.style.display = "none";
   }
@@ -427,22 +431,21 @@ async function loadDetail(id){
   }
 }
 
-// 5. Submit Logic (Pending -> Approved)
+// 5. Submit Logic (FIX: Date Saving)
 document.getElementById("saveComplaint").onclick = async () => {
   const id = document.getElementById("complaintDetail").dataset.id;
   if(!id) return;
 
-  // Validation: Pastikan isi
   const rec = document.getElementById('recommendsection3').value;
   const name = document.getElementById('section3nameposition').value;
-  const date = document.getElementById('section3date').value;
+  const dateVal = document.getElementById('section3date').value; // Ambil nilai text dari input
 
-  if(!rec || !name || !date) {
-      alert("Please complete Section 3 before approving.");
+  if(!rec || !name || !dateVal) {
+      alert("Please complete Section 3 (including Date) before approving.");
       return;
   }
 
-  if(!confirm("Submit and Approve this report?\n\nWARNING: Once approved, this record will be LOCKED.")) {
+  if(!confirm("Submit and Approve? Record will be LOCKED.")) {
       return;
   }
 
@@ -451,23 +454,23 @@ document.getElementById("saveComplaint").onclick = async () => {
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAVING...';
 
   try{
+    // FIX TARIKH: Tukar value input text terus ke Date Object
+    const selectedDate = new Date(dateVal);
+
     await db.collection(COLLECTION_NAME).doc(id).set({
       previousmaintenancecost: +document.getElementById('previousmaintenancecost').value || 0,
       estimatedmaintenancecost: +document.getElementById('estimatedmaintenancecost').value || 0,
       recommendsection3: rec,
       section3nameposition: name,
-      section3date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+      section3date: firebase.firestore.Timestamp.fromDate(selectedDate), // Save tarikh yang betul
       
-      // AUTO CHANGE STATUS HERE
       approvalstatus: "Approved",
-      
       updatedBy: auth.currentUser.email,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
 
     toast("Report Approved Successfully!");
     
-    // Refresh & Lock UI
     await loadComplaints(); 
     loadDetail(id); 
 
