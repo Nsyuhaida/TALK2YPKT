@@ -11,14 +11,14 @@
 
 :root{
   --neon-blue: #00f3ff;
-  --neon-gold: #fbbf24; /* Warna khas untuk VVIP */
+  --neon-gold: #fbbf24;
   --bg-dark: #020617;
   --text-light: #e2e8f0;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 
-/* --- BACKGROUND "WOW" (GRID + GRADIENT) --- */
+/* --- BACKGROUND --- */
 body{
   min-height:100vh;
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
@@ -32,235 +32,123 @@ body{
   position: relative;
 }
 
-/* Grid Overlay untuk efek Sci-Fi */
+/* Grid Overlay */
 body::before {
-  content: "";
-  position: absolute;
-  inset: 0;
+  content: ""; position: absolute; inset: 0;
   background-image: 
     linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
+  background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
 .container{width:100%;max-width:420px;z-index:2; padding: 20px;}
 
-/* --- KAD LOGIN DENGAN BORDER BERPUSING --- */
+/* --- KAD LOGIN --- */
 .login-card-wrap {
     position: relative;
-    /* Height auto supaya boleh fit content tambahan */
-    min-height: 580px; 
-    border-radius: 20px;
-    overflow: hidden;
-    padding: 3px; 
-    
-    /* Animasi Masuk */
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    /* Lebihkan sikit height sebab dah tambah logo */
+    min-height: 620px; 
+    border-radius: 20px; overflow: hidden; padding: 3px; 
+    opacity: 0; transform: translateY(30px) scale(0.95);
     animation: cardEntrance 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-/* Cahaya berpusing di belakang */
 .login-card-wrap::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
+    content: ''; position: absolute; top: 50%; left: 50%;
     width: 200%; height: 200%;
     background: conic-gradient(transparent, transparent, transparent, var(--neon-blue));
     animation: rotateBorder 4s linear infinite;
-    transform: translate(-50%, -50%);
-    z-index: 0;
+    transform: translate(-50%, -50%); z-index: 0;
 }
 
-/* Isi dalam kad */
 .card-content {
-    position: relative;
-    height: 100%;
-    background: rgba(15, 23, 42, 0.95); /* Gelap & transparent sikit */
+    position: relative; height: 100%;
+    background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 18px;
-    padding: 40px 30px;
-    text-align: center;
-    z-index: 1;
+    border-radius: 18px; padding: 40px 30px;
+    text-align: center; z-index: 1;
     box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.05);
+}
+
+/* --- LOGO STYLE (BARU) --- */
+.login-logo {
+    width: 100px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 15px rgba(255,255,255,0.2)); /* Glow effect */
+    animation: fadeInLogo 1.5s ease;
 }
 
 /* TYPOGRAPHY */
 h2{
-    font-family: 'Orbitron', sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: var(--neon-blue);
+    font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 700;
+    margin-bottom: 10px; color: var(--neon-blue);
     text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
-p{font-size:14px;opacity:.8;margin-bottom:30px}
+p{font-size:13px;opacity:.8;margin-bottom:25px}
 
-/* FORM STYLES */
-.form-group{text-align:left;margin-bottom:20px; position: relative;}
-
+/* INPUTS */
+.form-group{text-align:left;margin-bottom:18px; position: relative;}
 label{
-    font-size: 12px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    display:block;
-    color: var(--neon-blue);
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 11px; font-weight: 500; margin-bottom: 5px; display:block;
+    color: var(--neon-blue); text-transform: uppercase; letter-spacing: 1px;
 }
-
-/* Input Futuristik */
 input{
-  width:100%;
-  padding:12px 15px;
-  padding-right: 45px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 243, 255, 0.3);
-  background: rgba(0, 6, 20, 0.6);
-  color: #fff;
-  font-size: 15px;
-  transition: 0.3s;
+  width:100%; padding:12px 15px; padding-right: 45px;
+  border-radius: 8px; border: 1px solid rgba(0, 243, 255, 0.3);
+  background: rgba(0, 6, 20, 0.6); color: #fff; font-size: 14px; transition: 0.3s;
 }
-input::placeholder { color: rgba(255,255,255,0.3); }
-
 input:focus{
-    outline: none;
-    border-color: var(--neon-blue);
-    box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-    background: rgba(0, 6, 20, 0.8);
+    outline: none; border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); background: rgba(0, 6, 20, 0.8);
 }
-
-/* Ikon Mata */
 .password-toggle {
-    position: absolute;
-    right: 15px;
-    top: 40px;
-    color: var(--neon-blue);
-    cursor: pointer;
-    font-size: 16px;
-    z-index: 10;
-    opacity: 0.7;
-    transition: 0.3s;
+    position: absolute; right: 15px; top: 38px; color: var(--neon-blue);
+    cursor: pointer; font-size: 16px; z-index: 10; opacity: 0.7; transition: 0.3s;
 }
-.password-toggle:hover { opacity: 1; text-shadow: 0 0 5px var(--neon-blue); }
-
-/* --- FORGOT PASSWORD LINK --- */
 .forgot-link {
-    display: block;
-    text-align: right;
-    margin-top: 8px;
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    cursor: pointer;
-    text-decoration: none;
-    transition: 0.3s;
-}
-.forgot-link:hover {
-    color: var(--neon-blue);
-    text-shadow: 0 0 5px var(--neon-blue);
+    display: block; text-align: right; margin-top: 5px; font-size: 11px;
+    color: rgba(255,255,255,0.6); cursor: pointer; text-decoration: none;
 }
 
-/* BUTANG NEON */
+/* BUTTONS */
 .btn-primary{
-  width:100%;
-  padding:15px;
-  border-radius: 50px;
-  border: none;
-  background: var(--neon-blue);
-  color: #020617;
-  font-weight: 700;
-  font-size: 16px;
-  font-family: 'Orbitron', sans-serif;
-  letter-spacing: 1px;
-  cursor:pointer;
-  margin-top: 15px;
-  transition: 0.3s;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+  width:100%; padding:14px; border-radius: 50px; border: none;
+  background: var(--neon-blue); color: #020617; font-weight: 700; font-size: 15px;
+  font-family: 'Orbitron', sans-serif; letter-spacing: 1px; cursor:pointer;
+  margin-top: 10px; transition: 0.3s; box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
 }
-.btn-primary:hover { 
-    background: #fff; 
-    box-shadow: 0 0 30px var(--neon-blue);
-}
-.btn-primary:active{ transform: scale(0.98); }
+.btn-primary:hover { background: #fff; box-shadow: 0 0 30px var(--neon-blue); }
 
-/* BUTANG GOOGLE HOLOGRAM */
 .btn-google{
-  width:100%;
-  padding:14px;
-  margin-top: 15px;
-  border-radius: 50px;
-  border: 1px solid var(--neon-blue);
-  background: rgba(0, 243, 255, 0.05);
-  color: var(--neon-blue);
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: 0.3s;
+  width:100%; padding:12px; margin-top: 15px; border-radius: 50px;
+  border: 1px solid var(--neon-blue); background: rgba(0, 243, 255, 0.05);
+  color: var(--neon-blue); font-weight: 600; font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
 }
-.btn-google:hover{ 
-    background: rgba(0, 243, 255, 0.15); 
-    box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-}
+.btn-google:hover{ background: rgba(0, 243, 255, 0.15); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
 
-/* --- BUTANG VVIP / EXECUTIVE --- */
+/* VIP SECTION */
 .vip-section {
-    margin-top: 30px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 20px;
+    margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;
 }
 .btn-vip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 12px;
-    border-radius: 50px;
-    text-decoration: none;
-    background: rgba(251, 191, 36, 0.05); /* Gold pudar */
-    border: 1px solid var(--neon-gold);
-    color: var(--neon-gold);
-    font-family: 'Orbitron', sans-serif;
-    font-size: 13px;
-    font-weight: bold;
-    transition: 0.3s;
+    display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+    padding: 12px; border-radius: 50px; text-decoration: none;
+    background: rgba(251, 191, 36, 0.05); border: 1px solid var(--neon-gold);
+    color: var(--neon-gold); font-family: 'Orbitron', sans-serif; font-size: 12px;
+    font-weight: bold; transition: 0.3s;
 }
-.btn-vip:hover {
-    background: var(--neon-gold);
-    color: #000;
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
-}
+.btn-vip:hover { background: var(--neon-gold); color: #000; box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); }
 
-/* SWITCH LINK */
 .switch-link{
-  margin-top:20px;
-  font-size:14px;
-  color: rgba(255,255,255,0.7);
-  cursor:pointer;
-  transition: 0.3s;
+  margin-top:20px; font-size:13px; color: rgba(255,255,255,0.7); cursor:pointer;
 }
 .switch-link span { color: var(--neon-blue); font-weight: 600; }
-.switch-link:hover{ color: #fff; }
-.switch-link:hover span { text-shadow: 0 0 10px var(--neon-blue); }
 
-/* KEYFRAMES */
-@keyframes bgMove{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-@keyframes rotateBorder {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-@keyframes cardEntrance {
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
+@keyframes bgMove{ 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes rotateBorder { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes cardEntrance { to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes fadeInLogo { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
 </style>
 </head>
 
@@ -269,6 +157,9 @@ input:focus{
 <div class="container">
   <div class="login-card-wrap">
       <div class="card-content">
+        
+        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="YPKT Logo" class="login-logo">
+        
         <h2>SYSTEM ACCESS</h2>
         <p>Identify yourself to proceed.</p>
 
@@ -281,7 +172,6 @@ input:focus{
           <label>PASSCODE</label>
           <input id="password" type="password" placeholder="Enter sequence">
           <i class="fa-solid fa-eye password-toggle" id="togglePassword"></i>
-          
           <div class="forgot-link" onclick="forgotPassword()">Forgot Passcode?</div>
         </div>
 
@@ -292,11 +182,12 @@ input:focus{
         </button>
 
         <div class="vip-section">
-            <label style="color: #fbbf24; margin-bottom: 10px; font-size: 11px;">EXECUTIVE / APPROVER ACCESS</label>
+            <label style="color: #fbbf24; margin-bottom: 8px; font-size: 10px;">EXECUTIVE / APPROVER ACCESS</label>
             <a href="approval.html" class="btn-vip">
                 <i class="fa-solid fa-user-tie"></i> APPROVAL PORTAL
             </a>
         </div>
+
         <div class="switch-link" onclick="location.href='signup.html'">
           New unit? <span>Register Sequence</span>
         </div>
@@ -316,10 +207,8 @@ firebase.initializeApp({
 });
 
 const auth = firebase.auth();
-
-// 🔴🔴 CONFIG DOMAIN DI SINI 🔴🔴
 const allowedDomain = "@ypkt.gov.my";
-const myAdminEmail = "user@gmail.com"; // 👈 LETAK EMAIL TESTING AWAK KAT SINI
+const myAdminEmail = "user@gmail.com"; 
 
 // --- 2. TOGGLE PASSWORD ---
 const togglePassword = document.querySelector('#togglePassword');
@@ -335,33 +224,25 @@ togglePassword.addEventListener('click', function (e) {
 // --- 3. FUNCTION CHECK DOMAIN ---
 function checkAccess(user) {
     if (user.email.endsWith(allowedDomain) || user.email === myAdminEmail) {
-        // Lulus: Masuk Dashboard
         window.location.href = "dashboard.html";
     } else {
-        // Gagal: Logout Balik & Alert
         auth.signOut();
         alert("ACCESS DENIED: Only authorized YPKT personnel allowed.");
     }
 }
 
-// --- 4. LOGIN BIASA ---
+// --- 4. LOGIN ---
 async function login(){
   const emailVal = document.getElementById('email').value;
   const passVal = document.getElementById('password').value;
   const btn = document.querySelector('.btn-primary');
 
-  if(!emailVal || !passVal) {
-      alert("Please enter email and password");
-      return;
-  }
+  if(!emailVal || !passVal) { alert("Please enter email and password"); return; }
 
   try {
     btn.innerHTML = "AUTHENTICATING...";
     const userCredential = await auth.signInWithEmailAndPassword(emailVal, passVal);
-    
-    // ✅ Check Domain Sebelum Redirect
     checkAccess(userCredential.user);
-
   } catch(error) {
     btn.innerHTML = "INITIALIZE LOGIN";
     alert("Login Failed: " + error.message);
@@ -373,34 +254,21 @@ async function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
   try {
     const result = await auth.signInWithPopup(provider);
-    
-    // ✅ Check Domain Sebelum Redirect
     checkAccess(result.user);
-
   } catch(error) {
-    console.error(error);
-    alert("Google Login Failed. Error: " + error.message);
+    alert("Google Login Failed: " + error.message);
   }
 }
 
 // --- 6. FORGOT PASSWORD ---
 async function forgotPassword() {
     const emailVal = document.getElementById('email').value;
-
-    if (!emailVal) {
-        alert("Please enter your Email Address in the 'ACCESS ID' box above so we can send the reset link.");
-        return;
-    }
-
+    if (!emailVal) return alert("Please enter your Email Address in the 'ACCESS ID' box first.");
     try {
         await auth.sendPasswordResetEmail(emailVal);
-        alert("Reset link sent! Please check your email inbox (and spam folder) for instructions.");
+        alert("Reset link sent to " + emailVal);
     } catch (error) {
-        if(error.code === 'auth/user-not-found'){
-            alert("Error: No user found with this email.");
-        } else {
-            alert("Error: " + error.message);
-        }
+        alert("Error: " + error.message);
     }
 }
 </script>
