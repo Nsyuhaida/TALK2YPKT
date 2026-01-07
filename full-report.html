@@ -7,6 +7,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -31,7 +32,6 @@ body {
   color: #e2e8f0;
   min-height: 100vh;
 }
-
 body::before {
   content: ""; position: fixed; inset: 0;
   background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
@@ -53,16 +53,12 @@ body::before {
   z-index: 100;
   transition: transform 0.3s ease;
 }
-
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
 .brand {
   font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
   text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
-
-/* Nav Wrapper */
 .nav-links { flex: 1; display: flex; flex-direction: column; }
-
 .nav a {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
   padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
@@ -73,24 +69,16 @@ body::before {
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
 }
 .nav a i { width: 20px; text-align: center; }
-
-/* SIGN OUT BUTTON */
 #logout {
-  margin-top: auto; 
-  color: var(--neon-red);
+  margin-top: auto; color: var(--neon-red);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px; border-radius: 0;
+  padding-top: 20px; border-radius: 0; cursor: pointer;
 }
-#logout:hover {
-  background: rgba(255, 77, 77, 0.1); 
-  border-top-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
-}
+#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; }
 
 /* --- MAIN CONTENT --- */
 .main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
 
-/* MOBILE HEADER */
 .mobile-header {
     width: 100%; display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
 }
@@ -109,39 +97,23 @@ h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-b
 }
 #searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-/* --- ✅ UPDATED TABLE STYLES (FIX FOR SCROLLING) --- */
+/* --- TABLE --- */
 .table-card {
   background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
   border-radius: 16px; border: 1px solid var(--border);
-  padding: 0; 
-  margin-bottom: 30px;
-  max-height: 400px; 
-  overflow-y: auto; /* Scroll Atas Bawah */
-  overflow-x: auto; /* ✅ Scroll Kiri Kanan (PENTING) */
-  -webkit-overflow-scrolling: touch; /* Smooth scroll iPhone */
+  padding: 0; margin-bottom: 30px;
+  max-height: 400px; overflow-y: auto; overflow-x: auto; 
 }
-
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    white-space: nowrap; /* ✅ PENTING: Jangan bagi text turun baris, paksa scroll */
-}
-
+table { width: 100%; border-collapse: collapse; white-space: nowrap; }
 th { 
-    background: rgba(0, 243, 255, 0.1); 
-    position: sticky; top: 0; 
-    color: var(--neon-blue); 
-    padding: 15px; 
-    text-align: left; 
-    font-family: 'Orbitron'; 
-    font-size: 12px; 
-    z-index: 10; /* Pastikan header sentiasa di atas */
+    background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; 
+    color: var(--neon-blue); padding: 15px; text-align: left; 
+    font-family: 'Orbitron'; font-size: 12px; z-index: 10; 
 }
-
 td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; }
 tr:hover { background: rgba(0, 243, 255, 0.05); cursor: pointer; color: #fff; }
 
-/* REPORT CARD */
+/* --- REPORT CARD --- */
 .card {
   background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px);
   padding: 40px; border-radius: 16px; border: 1px solid var(--border);
@@ -170,6 +142,23 @@ li strong { color: #fff; width: 180px; display: inline-block; flex-shrink: 0; }
 }
 .btn:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); }
 
+/* --- MANUAL APPROVAL BOX STYLES --- */
+.manual-approval-box {
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 20px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    margin-top: 10px;
+}
+.manual-row {
+    display: flex; justify-content: space-between; margin-top: 30px;
+}
+.manual-line {
+    border-bottom: 1px solid rgba(255,255,255,0.3); width: 45%; height: 30px;
+}
+.checkbox-group { display:flex; gap: 20px; color: #fff; margin-bottom: 10px; }
+.checkbox-box { width: 20px; height: 20px; border: 1px solid #fff; display: inline-block; margin-right: 8px; }
+
 /* BACK TO TOP */
 #backToTop {
   position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
@@ -184,220 +173,184 @@ li strong { color: #fff; width: 180px; display: inline-block; flex-shrink: 0; }
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
-/* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
-    .sidebar {
-        position: fixed; left: -100%; top: 0; bottom: 0;
-        width: 80%; max-width: 300px;
-        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
-    }
+    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
     .sidebar.active { left: 0; }
-    
-    .sidebar-overlay {
-        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-        z-index: 90; display: none; backdrop-filter: blur(3px);
-    }
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
     .sidebar-overlay.active { display: block; }
-
     .main { padding: 20px; }
     .mobile-header { display: flex; }
-    
     h1 { font-size: 22px; }
     li { flex-direction: column; }
     li strong { width: 100%; margin-bottom: 2px; }
 }
 
 /* ============================
-   PRINT SETTINGS (COMPACT A4)
+   PRINT SETTINGS (A4 FORMAL)
    ============================ */
 @media print {
-  @page { margin: 5mm; size: A4 portrait; }
+  @page { margin: 10mm; size: A4 portrait; }
 
-  /* Reset & Hide UI */
-  body { background: white !important; -webkit-print-color-adjust: exact; }
-  body::before, .sidebar, .search-container, .table-card, .btn, #backToTop, h1, .mobile-header { display: none !important; }
-  .app, .main { display: block !important; padding: 0 !important; margin: 0 !important; width: 100% !important; height: auto !important; }
-
-  /* Main Card */
+  /* HIDE EVERYTHING EXCEPT THE REPORT CARD */
+  body * { visibility: hidden; }
+  .card, .card * { visibility: visible; }
   .card { 
-      display: block !important;
-      border: 2px solid #000 !important;
-      background: white !important;
-      color: black !important;
-      padding: 10px !important; 
-      width: 100% !important;
-      margin: 0 !important;
-      box-shadow: none !important;
+      position: absolute; left: 0; top: 0; width: 100%; 
+      margin: 0; padding: 0; border: none; 
+      background: white !important; color: black !important; box-shadow: none !important; 
   }
 
+  /* RESET COLORS FOR PRINT */
+  body { background: white !important; font-family: 'Times New Roman', serif; }
+  
   /* HEADER */
   .card h2 { 
       color: black !important; 
       border-bottom: 2px solid black !important;
       font-size: 16pt !important;
       text-align: center;
-      margin-bottom: 10px !important;
-      padding-bottom: 5px !important;
+      margin-bottom: 15px !important;
+      font-family: Arial, sans-serif !important;
   }
-  .card h2 i { display: none !important; }
+  .card h2 i { display: none; }
 
   /* SECTION HEADERS */
   .card h3 { 
-      color: white !important; 
-      background: #000 !important; 
-      padding: 3px 5px !important;
-      margin-top: 8px !important;
-      margin-bottom: 0 !important;
-      font-size: 10pt !important; 
-      font-weight: bold !important;
+      color: black !important; 
+      background: #eee !important; 
       border: 1px solid #000 !important;
-      -webkit-print-color-adjust: exact; 
+      padding: 5px !important;
+      margin-top: 15px !important;
+      font-size: 11pt !important; 
+      font-weight: bold !important;
       text-transform: uppercase;
+      font-family: Arial, sans-serif !important;
   }
 
-  /* LIST ITEMS */
+  /* LIST DATA */
   ul { 
-      padding: 0 !important; 
-      margin: 0 !important;
       border: 1px solid #000 !important;
-      border-top: none !important;
+      padding: 0 !important; margin: 0 !important;
+      background: none !important;
   }
-    
   li { 
       color: black !important; 
       border-bottom: 1px solid #ccc !important;
-      padding: 2px 5px !important;
-      font-size: 9pt !important;
+      padding: 5px !important;
+      font-size: 10pt !important;
       display: flex !important;
       flex-direction: row !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      width: 100% !important;
-      line-height: 1.1 !important;
   }
-    
   li:last-child { border-bottom: none !important; }
+  li strong { color: #000 !important; width: 35% !important; font-weight: bold !important; }
+  li span { width: 65% !important; }
 
-  li strong { 
-      color: #000 !important; 
-      width: 35% !important; 
-      font-weight: bold !important;
-      text-transform: uppercase;
-      font-size: 9pt !important;
-      margin-bottom: 0 !important;
+  /* MANUAL APPROVAL BOX (PRINT STYLE) */
+  .manual-approval-box {
+      border: 1px solid #000 !important;
+      background: none !important;
+      padding: 10px !important;
+      margin-top: 5px !important;
+      color: black !important;
+      display: block !important;
+      page-break-inside: avoid;
   }
-    
-  li span {
-      width: 65% !important;
-      text-align: right; 
-      font-size: 9pt !important;
-  }
-    
-  .print-grid { display: block !important; width: 100% !important; }
-  .print-col-left, .print-col-right { width: 100% !important; margin: 0 !important; }
+  .checkbox-group { color: black !important; margin-bottom: 15px !important; }
+  .checkbox-box { border: 1px solid #000 !important; }
+  .manual-line { border-bottom: 1px dotted #000 !important; } /* Dotted lines for writing */
+  
+  /* HIDE BUTTONS */
+  .btn, #backToTop { display: none !important; }
 }
 </style>
 </head>
 
 <body>
-<div class="app">
 
-<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div id="authLoader" style="position:fixed; inset:0; background:#020617; z-index:9999; display:flex; align-items:center; justify-content:center;">
+    <div style="color:#00f3ff; font-family:'Orbitron';">AUTHENTICATING...</div>
+</div>
 
-<aside class="sidebar" id="sidebar">
-  <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
-  <div class="brand">TALK2YPKT ADMIN</div>
-  
-  <div class="nav nav-links">
-    <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-    <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
-    <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
-    <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
-    <a href="full-report.html" class="active"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
-    <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
-  </div>
-
-  <div class="nav">
-    <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
-  </div>
-</aside>
-
-<main class="main">
+<div class="app" id="appContent" style="opacity:0; transition: opacity 0.5s;">
     
-<div class="mobile-header">
-    <button class="mobile-toggle" onclick="toggleSidebar()">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-    <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">ARCHIVE</div>
-    <div style="width:24px;"></div>
-</div>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-<h1><i class="fa-solid fa-folder-open"></i> FULL REPORT ARCHIVE</h1>
-
-<div class="search-container">
-  <input type="text" id="searchInput" placeholder="Search Database (ID, User, Asset Type)...">
-</div>
-
-<div class="table-card">
-<table id="complaintTable">
-<thead>
-<tr>
-  <th>ID REF</th>
-  <th>REPORTED BY</th>
-  <th>ASSET TYPE</th>
-  <th>STATUS</th>
-</tr>
-</thead>
-<tbody>
-<tr><td colspan="4" style="text-align:center; padding:20px;">Connecting to database...</td></tr>
-</tbody>
-</table>
-</div>
-
-<div class="card" id="reportCard">
-    <h2>
-        <span>REPORT ID: <span id="rid"></span></span>
-    </h2>
-
-    <div class="print-grid">
+    <aside class="sidebar" id="sidebar">
+        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
+        <div class="brand">TALK2YPKT ADMIN</div>
         
-        <div class="print-col-left">
-            <h3>SECTION 1: COMPLAINT DETAILS</h3>
+        <div class="nav nav-links">
+            <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
+            <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
+            <a href="full-report.html" class="active"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
+            <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+        </div>
+
+        <div class="nav">
+            <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="mobile-header">
+            <button class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">ARCHIVE</div>
+            <div style="width:24px;"></div>
+        </div>
+
+        <h1><i class="fa-solid fa-folder-open"></i> FULL REPORT ARCHIVE</h1>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search Database (ID, User, Asset Type)...">
+        </div>
+
+        <div class="table-card">
+            <table id="complaintTable">
+                <thead>
+                    <tr>
+                        <th>ID REF</th>
+                        <th>REPORTED BY</th>
+                        <th>ASSET TYPE</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="4" style="text-align:center; padding:20px;">Connecting...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" id="reportCard">
+            <h2>REPORT ID: <span id="rid"></span></h2>
+
+            <h3>SECTION 1: BUTIRAN ADUAN (COMPLAINT)</h3>
             <ul id="r_section1"></ul>
 
-            <h3>SECTION 2: USER RECOMMENDATION</h3>
+            <h3>SECTION 2: SYOR PEGAWAI (RECOMMENDATION)</h3>
             <ul id="r_section2"></ul>
-        </div>
-
-        <div class="print-col-right">
-            <h3>SECTION 3: ADMIN ASSESSMENT</h3>
+            
+            <h3>SECTION 3: ULASAN ADMIN (ASSESSMENT)</h3>
             <ul id="r_section3"></ul>
 
-            <h3>SECTION 4: FINAL APPROVAL</h3>
-            <ul id="r_section4"></ul>
+            <h3>SECTION 4: KELULUSAN PENGARAH (APPROVAL)</h3>
+            
+            <div id="section4Container"></div>
+
+            <button class="btn" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> PRINT DOCUMENT
+            </button>
         </div>
-
-    </div>
-
-    <button class="btn" onclick="window.print()">
-        <i class="fa-solid fa-print"></i> PRINT DOCUMENT
-    </button>
-</div>
-</main>
+    </main>
 </div>
 
-<button id="backToTop" title="Return to Top">
-    <i class="fa-solid fa-arrow-up"></i>
-</button>
+<button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>
-// --- SIDEBAR TOGGLE ---
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-    document.querySelector('.sidebar-overlay').classList.toggle('active');
-}
-
-// --- FIREBASE CONFIG ---
+// --- FIREBASE SETUP ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -405,12 +358,22 @@ const firebaseConfig={
 };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
+const auth=firebase.auth();
 
-// --- LOGOUT LOGIC ---
-document.getElementById("logout").addEventListener("click",()=>{
-  localStorage.removeItem("admin_logged_in");
-  window.location.href="login.html";
+// AUTH CHECK
+auth.onAuthStateChanged((user) => {
+    if (user && user.email.endsWith('@ypkt.gov.my')) {
+        document.getElementById("authLoader").style.display="none";
+        document.getElementById("appContent").style.opacity="1";
+        loadComplaints();
+    } else {
+        window.location.href = "login.html";
+    }
 });
+
+document.getElementById("logout").onclick = () => {
+    auth.signOut().then(() => window.location.href="login.html");
+};
 
 // --- HELPER FUNCTIONS ---
 function dt(v){
@@ -424,9 +387,7 @@ function renderList(id, items){
     let parts = i.split(": ");
     let label = parts[0];
     let value = parts.slice(1).join(": ");
-    
     if(!value || value.trim() === "") value = "-";
-
     const li = document.createElement("li");
     li.innerHTML = `<strong>${label}</strong> <span>${value}</span>`;
     ul.appendChild(li);
@@ -438,24 +399,23 @@ let complaints=[];
 
 async function loadComplaints(){
   try {
-      const snap = await db.collection("complaint").orderBy("reportdatesection1","desc").get();
+      const snap = await db.collection("complaint").orderBy("updatedAt","desc").get();
       complaints = snap.docs.map(d => ({id:d.id, ...d.data()}));
       renderTable();
   } catch (e) {
       console.error(e);
-      document.querySelector("#complaintTable tbody").innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ff4d4d;">Error loading data.</td></tr>';
+      document.querySelector("#complaintTable tbody").innerHTML = '<tr><td colspan="4" style="text-align:center;">Error loading data.</td></tr>';
   }
 }
 
 function renderTable(filter=""){
   const tbody = document.querySelector("#complaintTable tbody");
   tbody.innerHTML = "";
-  const f = filter.toLowerCase();
   
   const list = complaints.filter(c => 
-    c.id.toLowerCase().includes(f) ||
-    (c.lastUser||"").toLowerCase().includes(f) ||
-    (c.assettype||"").toLowerCase().includes(f)
+    c.id.toLowerCase().includes(filter.toLowerCase()) ||
+    (c.lastUser||"").toLowerCase().includes(filter.toLowerCase()) ||
+    (c.assettype||"").toLowerCase().includes(filter.toLowerCase())
   );
 
   if(list.length === 0){
@@ -465,19 +425,23 @@ function renderTable(filter=""){
 
   list.forEach(c => {
     const tr = document.createElement("tr");
-    let statusColor = c.approvalstatus === 'Approve' ? '#00ff9d' : (c.approvalstatus === 'Not approve' ? '#ff4d4d' : '#ccc');
+    let s = c.approvalstatus || "Pending";
+    let color = '#ccc';
+    if(s === 'Approve') color = '#00ff9d';
+    if(s === 'Not approve') color = '#ff4d4d';
 
     tr.innerHTML = `
       <td style="font-family:'Orbitron'; color:var(--neon-blue);">${c.id}</td>
       <td>${c.lastUser||"-"}</td>
       <td>${c.assettype||"-"}</td>
-      <td style="color:${statusColor}; font-weight:bold;">${c.approvalstatus||"Pending"}</td>`;
+      <td style="color:${color}; font-weight:bold;">${s}</td>`;
     
     tr.onclick = () => showReport(c.id);
     tbody.appendChild(tr);
   });
 }
 
+// --- FUNGSI PALING PENTING (LOGIC SECTION 4) ---
 function showReport(id){
   const c = complaints.find(x => x.id === id);
   if(!c) return;
@@ -486,57 +450,108 @@ function showReport(id){
   card.style.display = "block";
   document.getElementById("rid").textContent = c.id;
 
+  // ISI DATA SECTION 1-3
   renderList("r_section1",[
     `Asset Type: ${c.assettype||"-"}`,
     `Serial Number: ${c.serialNumber||"-"}`,
-    `Last User: ${c.lastUser||"-"}`,
+    `Reported By: ${c.lastUser||"-"}`,
     `Damage Date: ${dt(c.damagedate)}`,
-    `Damage Description: ${c.damagedescription||"-"}`,
+    `Description: ${c.damagedescription||"-"}`,
     `Report Date: ${dt(c.reportdatesection1)}`
   ]);
   renderList("r_section2",[
     `Recommendation: ${c.recommendationsection2||"-"}`,
-    `Name & Position: ${c.section2nameposition||"-"}`,
+    `Officer Name: ${c.section2nameposition||"-"}`,
     `Date Submitted: ${dt(c.section2date)}`
   ]);
   renderList("r_section3",[
-    `Previous Cost: RM ${c.previousmaintenancecost||0}`,
+    `Previous Maintenance Cost: RM ${c.previousmaintenancecost||0}`,
     `Estimated Cost: RM ${c.estimatedmaintenancecost||0}`,
-    `Admin Rec: ${c.recommendsection3||"-"}`,
+    `Admin Action/Proposal: ${c.recommendsection3||"-"}`,
     `Admin Name: ${c.section3nameposition||"-"}`,
     `Assessment Date: ${dt(c.section3date)}`
   ]);
-  renderList("r_section4",[
-    `Approval Status: ${c.approvalstatus||"-"}`,
-    `Approval Comment: ${c.approvalcomment||"-"}`,
-    `Approver Name: ${c.approvername||"-"}`,
-    `Approver Position: ${c.approverposition||"-"}`,
-    `Approval Date: ${dt(c.approvaldate)}`
-  ]);
+
+  // --- LOGIC HYBRID SECTION 4 ---
+  const container = document.getElementById("section4Container");
+  const status = c.approvalstatus || "Pending";
+
+  // CHECK: KALAU PENDING -> KELUAR BORANG KOSONG UNTUK SIGN MANUAL
+  if(status === "Pending") {
+      container.innerHTML = `
+        <div class="manual-approval-box">
+            <div class="checkbox-group">
+                <div><span class="checkbox-box"></span> LULUS / APPROVED</div>
+                <div style="width:20px;"></div>
+                <div><span class="checkbox-box"></span> TOLAK / REJECTED</div>
+            </div>
+            
+            <p style="margin-top:15px; margin-bottom:5px;"><strong>ULASAN (COMMENTS):</strong></p>
+            <div style="border-bottom: 1px dotted #999; height: 30px;"></div>
+            <div style="border-bottom: 1px dotted #999; height: 30px;"></div>
+            <div style="border-bottom: 1px dotted #999; height: 30px;"></div>
+
+            <div class="manual-row">
+                <div style="width: 45%;">
+                    <div style="height:60px; border-bottom:1px solid #999;"></div>
+                    <p style="text-align:center; font-size:12px; margin-top:5px;">Tandatangan & Cop (Signature & Stamp)</p>
+                </div>
+                <div style="width: 45%;">
+                    <div style="height:60px; border-bottom:1px solid #999;"></div>
+                    <p style="text-align:center; font-size:12px; margin-top:5px;">Tarikh (Date)</p>
+                </div>
+            </div>
+        </div>
+        <p style="color:#aaa; font-style:italic; font-size:12px; margin-top:10px; text-align:center;">
+            *Status sistem adalah PENDING. Sila cetak untuk kelulusan manual.*
+        </p>
+      `;
+  } 
+  // CHECK: KALAU DAH ADA STATUS (APPROVE/REJECT) -> KELUAR DATA DARI DATABASE
+  else {
+      let statusColor = status === 'Approve' ? 'green' : 'red';
+      let html = `<ul>`;
+      html += `<li><strong>Approval Status:</strong> <span style="color:${statusColor}; font-weight:bold; text-transform:uppercase;">${status}</span></li>`;
+      html += `<li><strong>Approver Name:</strong> <span>${c.approvername||"-"}</span></li>`;
+      html += `<li><strong>Position:</strong> <span>${c.approverposition||"-"}</span></li>`;
+      html += `<li><strong>Approval Date:</strong> <span>${dt(c.approvaldate)}</span></li>`;
+      html += `<li><strong>Comments:</strong> <span>${c.approvalcomment||"-"}</span></li>`;
+      html += `</ul>`;
+
+      // Tambah COP DIGITAL kalau Approved
+      if(status === "Approve"){
+          html += `
+            <div style="margin-top:20px; text-align:right; padding-right:40px;">
+                <div style="display:inline-block; border:3px double ${statusColor}; color:${statusColor}; padding:10px 20px; font-weight:bold; transform:rotate(-3deg); font-family:'Courier New', monospace; font-size:18px;">
+                    DIGITALLY SIGNED<br>
+                    YPKT ADMIN SYSTEM<br>
+                    ${dt(c.approvaldate).split(',')[0]}
+                </div>
+            </div>
+          `;
+      }
+      container.innerHTML = html;
+  }
 
   card.scrollIntoView({behavior: "smooth", block: "start"});
 }
 
-document.getElementById("searchInput").addEventListener("input", e => {
-  renderTable(e.target.value);
-});
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
 
-// --- BACK TO TOP LOGIC ---
+// SEARCH
+document.getElementById("searchInput").addEventListener("input", e => renderTable(e.target.value));
+
+// BACK TO TOP
 const backToTopBtn = document.getElementById("backToTop");
-window.onscroll = function() {
-  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-    backToTopBtn.classList.add("show");
-  } else {
-    backToTopBtn.classList.remove("show");
-  }
+window.onscroll = () => {
+    if (window.scrollY > 200) backToTopBtn.classList.add("show");
+    else backToTopBtn.classList.remove("show");
 };
-backToTopBtn.onclick = function() {
-  window.scrollTo({top: 0, behavior: 'smooth'});
-};
+backToTopBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
-// INITIALIZE
-loadComplaints();
 </script>
 </body>
 </html>
-
