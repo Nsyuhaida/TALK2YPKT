@@ -12,13 +12,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* --- DESIGN SAMA MACAM SEBELUM INI --- */
+/* --- IMPORT FONTS --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap');
 
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
-  --neon-orange: #ff9500;
   --bg-dark: #020617;
   --glass: rgba(15, 23, 42, 0.95);
   --border: rgba(0, 243, 255, 0.2);
@@ -26,6 +25,7 @@
 
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior: smooth; }
 
+/* BACKGROUND */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
   background-size: 400% 400%;
@@ -41,9 +41,10 @@ body::before {
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
-.app { display:flex; min-height:100vh; position: relative; z-index: 1; opacity: 0; transition: opacity 0.5s; }
+.app { display:flex; min-height:100vh; position: relative; z-index: 1; opacity: 0; transition: opacity 0.5s; } /* App hidden by default */
 .app.loaded { opacity: 1; }
 
+/* --- LOADING OVERLAY --- */
 #authLoader {
     position: fixed; inset: 0; background: #020617; z-index: 9999;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -54,18 +55,27 @@ body::before {
 }
 .loader-text { font-family: 'Orbitron'; color: var(--neon-blue); letter-spacing: 2px; animation: pulse 1.5s infinite; }
 
+/* --- SIDEBAR --- */
 .sidebar {
-  width: 260px; background: var(--glass); backdrop-filter: blur(15px);
-  border-right: 1px solid var(--border); padding: 30px 20px;
-  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
-  z-index: 100; transition: transform 0.3s ease;
+  width: 260px; 
+  background: var(--glass); 
+  backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border); 
+  padding: 30px 20px;
+  display: flex; flex-direction: column; 
+  position: sticky; top: 0; height: 100vh;
+  z-index: 100;
+  transition: transform 0.3s ease;
 }
+
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
 .brand {
   font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
   text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
+
 .nav-links { flex: 1; display: flex; flex-direction: column; }
+
 .nav a {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
   padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
@@ -75,13 +85,23 @@ body::before {
   background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
 }
-#logout { margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; cursor: pointer; }
+.nav a i { width: 20px; text-align: center; }
 
+#logout {
+  margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px; border-radius: 0; cursor: pointer;
+}
+#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; border-top-color: rgba(255, 255, 255, 0.3); }
+
+/* --- MAIN CONTENT --- */
 .main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
+
 .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; }
+.mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px; }
+
 h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
 
+/* SEARCH & TABLE */
 .search-container { margin-bottom: 25px; }
 #searchInput {
   width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4);
@@ -101,20 +121,24 @@ th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--
 td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; }
 tr:hover { background: rgba(0, 243, 255, 0.05); cursor: pointer; color: #fff; }
 
+/* FORM */
 .card {
   background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px);
   padding: 40px; border-radius: 16px; border: 1px solid var(--border);
   box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
   display: none; animation: fadeIn 0.5s ease; margin-bottom: 50px;
 }
+
 h3 {
   font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 25px; 
   margin-bottom: 15px; font-size: 14px; letter-spacing: 1px;
   border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;
   display: flex; align-items: center; gap: 10px;
 }
+
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .full-width { grid-column: span 2; }
+
 label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
 .input {
@@ -123,38 +147,60 @@ label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bo
   color: #fff; outline: none; transition: 0.3s;
 }
 .input:not([readonly]):focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 157, 0.2); background: rgba(0,0,0,0.5); }
-.input[readonly] { background: rgba(255, 255, 255, 0.02); border-color: transparent; color: var(--neon-blue); cursor: not-allowed; opacity: 0.7; }
+.input[readonly] { background: rgba(255, 255, 255, 0.02); border-color: transparent; color: var(--neon-blue); cursor: default; }
 textarea.input { resize: vertical; min-height: 80px; }
+select.input { background-color: #020617; } 
 
 .btn-primary {
   width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer;
-  background: var(--neon-green); color: #000; font-family: 'Orbitron'; font-weight: bold;
+  background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold;
   margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 10px;
   transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
 }
-.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-green); }
+.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
-.status-badge { padding: 5px 12px; border-radius: 4px; font-weight: bold; font-family: 'Orbitron'; font-size: 0.8em; letter-spacing: 1px;}
-
-.toast { position: fixed; top: 20px; right: 20px; opacity: 0; z-index: 9999; padding: 15px 25px; border-radius: 8px; font-family: 'Orbitron'; color: var(--neon-green); background: rgba(0,255,157,0.1); border: 1px solid var(--neon-green); transition: 0.3s; transform: translateY(-20px); }
+/* TOAST */
+.toast {
+  position: fixed; top: 20px; right: 20px;
+  background: rgba(0, 255, 157, 0.1); color: var(--neon-green); border: 1px solid var(--neon-green);
+  padding: 15px 25px; border-radius: 8px; backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
+  opacity: 0; transform: translateY(-20px); transition: 0.3s; z-index: 9999;
+  font-family: 'Orbitron';
+}
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.error { border-color: #ff4d4d; color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
 
+/* BACK TO TOP */
+#backToTop {
+  position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+  background: var(--neon-blue); color: #000; border-radius: 50%; border: none; 
+  cursor: pointer; display: flex; justify-content: center; align-items: center;
+  font-size: 20px; box-shadow: 0 0 20px var(--neon-blue);
+  opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 100;
+}
+#backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+#backToTop:hover { transform: translateY(-5px); background: #fff; }
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; }
+    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
     .sidebar.active { left: 0; }
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; }
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
     .sidebar-overlay.active { display: block; }
-    .main { padding: 20px; }
+    .main { padding: 20px; width: 100%; }
     .mobile-header { display: flex; }
-    .form-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 20px; margin-bottom: 15px; }
+    .form-grid { grid-template-columns: 1fr; gap: 15px; }
     .full-width { grid-column: span 1; }
+    .card { padding: 20px; }
 }
 
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes pulse { 50% { opacity: 0.5; } }
-@keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 </style>
 </head>
 
@@ -162,7 +208,7 @@ textarea.input { resize: vertical; min-height: 80px; }
 
 <div id="authLoader">
     <div class="loader-spinner"></div>
-    <div class="loader-text">AUTHENTICATING...</div>
+    <div class="loader-text">AUTHENTICATING ACCESS...</div>
 </div>
 
 <div class="app" id="appContent">
@@ -180,12 +226,17 @@ textarea.input { resize: vertical; min-height: 80px; }
             <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
             <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
         </div>
-        <div class="nav"><a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a></div>
+
+        <div class="nav">
+            <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
+        </div>
     </aside>
 
     <main class="main">
         <div class="mobile-header">
-            <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <button class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">DATA TERMINAL</div>
             <div style="width:24px;"></div>
         </div>
@@ -197,17 +248,15 @@ textarea.input { resize: vertical; min-height: 80px; }
         </div>
 
         <div class="table-card" id="complaintList">
-            <div style="padding:20px; text-align:center; color:#777;">Initializing database...</div>
+            <div style="padding:20px; text-align:center; color:#777;">Initializing database connection...</div>
         </div>
 
         <div id="complaintDetail" class="card">
-            
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--neon-blue); padding-bottom:15px; margin-bottom:20px;">
-                <h2 style="font-family:'Orbitron'; color:#fff; font-size: 1.2rem;">RECORD DETAILS</h2>
-                <div id="statusHeader" class="status-badge" style="background:#333; color:#fff;">LOADING...</div>
-            </div>
+            <h2 style="font-family:'Orbitron'; color:#fff; border-bottom:2px solid var(--neon-blue); padding-bottom:10px; margin-bottom:20px;">
+                UPDATE RECORD
+            </h2>
 
-            <h3><i class="fa-solid fa-lock"></i> SEC.1: USER REPORT (VIEW ONLY)</h3>
+            <h3><i class="fa-solid fa-lock"></i> SEC.1: USER REPORT (LOCKED)</h3>
             <div class="form-grid">
                 <div><label>Asset Type</label><input class="input" id="assettype" readonly></div>
                 <div><label>Serial Number</label><input class="input" id="SerialNumber" readonly></div>
@@ -217,42 +266,57 @@ textarea.input { resize: vertical; min-height: 80px; }
                 <div class="full-width"><label>Damage Description</label><textarea class="input" id="damagedescription" readonly></textarea></div>
             </div>
 
-            <h3><i class="fa-solid fa-clipboard-check"></i> SEC.2: USER RECOMMENDATION (VIEW ONLY)</h3>
+            <h3><i class="fa-solid fa-clipboard-check"></i> SEC.2: USER RECOMMENDATION (LOCKED)</h3>
             <div class="form-grid">
                 <div class="full-width"><label>User Recommendation</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
-                <div><label>Officer Name</label><input class="input" id="section2nameposition" readonly></div>
+                <div><label>Officer Name & Position</label><input class="input" id="section2nameposition" readonly></div>
                 <div><label>Submission Date</label><input class="input" type="datetime-local" id="section2date" readonly></div>
             </div>
 
-            <h3 style="color:var(--neon-green); border-color: var(--neon-green); margin-top: 40px;">
-                <i class="fa-solid fa-screwdriver-wrench"></i> SEC.3: ADMIN ASSESSMENT
+            <h3 style="color:var(--neon-green); border-color: var(--neon-green);">
+                <i class="fa-solid fa-screwdriver-wrench"></i> SEC.3: ADMIN ASSESSMENT (EDITABLE)
             </h3>
-            
-            <div id="lockedBanner" style="display:none; background:rgba(0, 255, 157, 0.1); color:var(--neon-green); border:1px solid var(--neon-green); padding:10px; border-radius:5px; margin-bottom:20px; font-size:12px; text-align:center;">
-                <i class="fa-solid fa-lock"></i> RECORD IS APPROVED & LOCKED. VIEW ONLY MODE.
+            <div class="form-grid">
+                <div><label>Previous Cost (RM)</label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
+                <div><label>Est. Maintenance Cost (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
+                <div class="full-width"><label>Admin Action / Recommendation</label><textarea class="input" id="recommendsection3" placeholder="Enter technical assessment..."></textarea></div>
+                <div><label>Admin Name & Position</label><input class="input" id="section3nameposition"></div>
+                <div><label>Assessment Date</label><input class="input" type="datetime-local" id="section3date"></div>
             </div>
 
+            <h3 style="color:var(--neon-green); border-color: var(--neon-green);">
+                <i class="fa-solid fa-stamp"></i> SEC.4: FINAL APPROVAL (EDITABLE)
+            </h3>
             <div class="form-grid">
-                <div><label>Previous Cost (RM)</label><input class="input admin-input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
-                <div><label>Est. Maintenance Cost (RM)</label><input class="input admin-input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
-                <div class="full-width"><label>Admin Action / Technical Assessment</label><textarea class="input admin-input" id="recommendsection3" placeholder="Enter technical details here..."></textarea></div>
-                <div><label>Admin Name & Position</label><input class="input admin-input" id="section3nameposition" placeholder="e.g. Cik Ashri (Tech Officer)"></div>
-                <div><label>Assessment Date</label><input class="input admin-input" type="datetime-local" id="section3date"></div>
+                <div>
+                    <label>Approval Status</label>
+                    <select class="input" id="approvalstatus">
+                      <option>Approve</option>
+                      <option>Not approve</option>
+                      <option>Pending</option>
+                    </select>
+                </div>
+                <div><label>Approver Name</label><input class="input" id="approvername"></div>
+                <div><label>Approver Position</label><input class="input" id="approverposition"></div>
+                <div><label>Approval Date</label><input class="input" type="datetime-local" id="approvaldate"></div>
+                <div class="full-width"><label>Approval Comments</label><textarea class="input" id="approvalcomment" placeholder="Final remarks..."></textarea></div>
             </div>
 
             <button class="btn-primary" id="saveComplaint">
-                <i class="fa-solid fa-check-circle"></i> SUBMIT & APPROVE
+                <i class="fa-solid fa-floppy-disk"></i> UPDATE DATABASE
             </button>
         </div>
-
     </main>
 </div>
 
 <div id="toast" class="toast"></div>
+<button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>
-// --- CONFIG ---
-const COLLECTION_NAME = "complaint";
+// --- KONFIGURASI PENTING ---
+const COLLECTION_NAME = "complaint"; // PASTIKAN EJAAN INI SAMA DENGAN DATABASE ANDA
+
+// --- FIREBASE CONFIG (Sila pastikan ini betul) ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -262,40 +326,44 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// --- AUTH ---
+// --- AUTH GUARD (PENYELAMAT DARI ERROR) ---
+// Ini adalah bahagian paling penting yang hilang sebelum ini.
 auth.onAuthStateChanged((user) => {
     const loader = document.getElementById("authLoader");
     const app = document.getElementById("appContent");
+
     if (user) {
+        // User dah login, check email domain
+        console.log("Logged in as:", user.email);
+        
         if (!user.email.endsWith('@ypkt.gov.my')) {
             alert("ACCESS DENIED: Only YPKT Admin authorized.");
             auth.signOut().then(() => window.location.href = "login.html");
             return;
         }
+
+        // Login Sah! Tunjukkan App & Load Data
         loader.style.display = "none";
         app.classList.add("loaded");
-        loadComplaints();
+        toast("Connected as: " + user.email);
+        loadComplaints(); // Mula tarik data
+
     } else {
+        // Tak login lagi -> Tendang ke Login Page
+        console.warn("No user detected. Redirecting...");
         window.location.href = "login.html";
     }
 });
-document.getElementById("logout").onclick=()=>auth.signOut().then(()=>window.location.href="login.html");
 
-// --- HELPER DATE FORMATTER ---
-// Tukar format Firestore ke value Input HTML (YYYY-MM-DDTHH:mm)
-const dt = (t) => {
-    if (!t) return "";
-    try {
-        const d = t.toDate(); // Tukar Firestore Timestamp ke JS Date
-        // Kita guna teknik offset supaya tak lari timezone
-        const offset = d.getTimezoneOffset() * 60000; 
-        const localISOTime = (new Date(d - offset)).toISOString().slice(0, 16);
-        return localISOTime;
-    } catch (e) {
-        return "";
+// Logout Logic
+document.getElementById("logout").onclick = () => {
+    if(confirm("Are you sure you want to sign out?")){
+        auth.signOut().then(() => window.location.href="login.html");
     }
 };
 
+// --- HELPER FUNCTIONS ---
+const dt=t=>t&&t.toDate?t.toDate().toISOString().slice(0,16):"";
 const toast=(msg,err=false)=>{
   const t=document.getElementById("toast");
   t.innerHTML = err ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`;
@@ -303,31 +371,23 @@ const toast=(msg,err=false)=>{
   setTimeout(() => t.classList.remove("show"), 3000);
 }
 
-// --- MAIN LOGIC ---
+// --- DATA LOGIC ---
 let complaints=[];
 
-// 1. Load Data (FIX: Order by report date so new items show up!)
+// 1. Load Data
 async function loadComplaints(){
   try {
-      // SAYA UBAH ORDERBY KEPADA 'reportdatesection1' (Tarikh Aduan)
-      // Ini memastikan data Syamimi keluar walaupun dia belum ada 'updatedAt'
-      const s = await db.collection(COLLECTION_NAME).orderBy('reportdatesection1', 'desc').get();
-      
+      const s=await db.collection(COLLECTION_NAME).get(); // Guna variable collection name
       complaints=s.docs.map(d=>({id:d.id,...d.data()}));
       renderTable(complaints);
   } catch (err) {
-      console.error(err);
-      // Kalau error index, kita try fetch semua dulu
-      if(err.code === 'failed-precondition') {
-           console.log("Index missing, loading raw...");
-           const s = await db.collection(COLLECTION_NAME).get();
-           complaints = s.docs.map(d=>({id:d.id,...d.data()}));
-           // Sort manual dalam javascript
-           complaints.sort((a,b) => (b.reportdatesection1 || 0) - (a.reportdatesection1 || 0));
-           renderTable(complaints);
-      } else {
-        document.getElementById("complaintList").innerHTML = `<div style="padding:20px; color:#ff4d4d; text-align:center;">Database Error: ${err.message}</div>`;
-      }
+      console.error("Load Error:", err);
+      // Jika permission error, dia akan keluar di console
+      document.getElementById("complaintList").innerHTML = 
+        `<div style="padding:20px; color:#ff4d4d; text-align:center;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Error loading data.<br>
+            <small>${err.message}</small>
+         </div>`;
   }
 }
 
@@ -335,30 +395,22 @@ async function loadComplaints(){
 function renderTable(list){
   const container = document.getElementById("complaintList");
   if(list.length === 0) {
-      container.innerHTML = "<div style='padding:20px; text-align:center; color:#888;'>No records found.</div>";
+      container.innerHTML = "<div style='padding:20px; text-align:center; color:#888;'>No records found in database.</div>";
       return;
   }
-   
-  let h = "<div class='table-wrapper'><table><thead><tr><th>ID REF</th><th>REPORTED BY</th><th>STATUS</th></tr></thead><tbody>";
   
+  let h = "<div class='table-wrapper'><table><thead><tr><th>ID REF</th><th>USER</th><th>STATUS</th></tr></thead><tbody>";
   list.forEach(c => {
-    // CHECK CONTENT SECTION 3 UTK STATUS
-    let hasAdminContent = c.recommendsection3 && c.recommendsection3.trim().length > 0;
-    let isApproved = c.approvalstatus === 'Approved' || hasAdminContent;
-
-    let statusLabel = isApproved ? "Approved" : "Pending";
-    let color = isApproved ? "#00ff9d" : "#ff9500"; 
-    
+    let color = c.approvalstatus === 'Approve' ? '#00ff9d' : (c.approvalstatus === 'Not approve' ? '#ff4d4d' : '#ccc');
     h += `<tr data-id="${c.id}">
       <td style="font-family:'Orbitron'; color:var(--neon-blue)">${c.id}</td>
       <td>${c.lastUser||"-"}</td>
-      <td style="color:${color}; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${statusLabel}</td>
+      <td style="color:${color}; font-weight:bold;">${c.approvalstatus||"Pending"}</td>
     </tr>`;
   });
-  
   h += "</tbody></table></div>";
   container.innerHTML = h;
-   
+  
   container.querySelectorAll("tr[data-id]").forEach(r => {
     r.onclick = () => loadDetail(r.dataset.id);
   });
@@ -374,14 +426,16 @@ document.getElementById("searchInput").oninput = (e) => {
 async function loadDetail(id){
   const docRef = await db.collection(COLLECTION_NAME).doc(id).get();
   if(!docRef.exists) return;
-   
+  
   const d = docRef.data();
   const form = document.getElementById("complaintDetail");
   
   form.style.display="block";
   form.dataset.id = id;
 
+  // Populate Fields
   const setVal = (eid, val) => document.getElementById(eid).value = val || "";
+  
   setVal('assettype', d.assettype);
   setVal('SerialNumber', d.serialNumber);
   setVal('lastUser', d.lastUser);
@@ -392,101 +446,84 @@ async function loadDetail(id){
   setVal('section2nameposition', d.section2nameposition);
   setVal('section2date', dt(d.section2date));
 
-  // Admin Section
+  // Admin Fields
   setVal('previousmaintenancecost', d.previousmaintenancecost);
   setVal('estimatedmaintenancecost', d.estimatedmaintenancecost);
   setVal('recommendsection3', d.recommendsection3);
   setVal('section3nameposition', d.section3nameposition);
-  setVal('section3date', dt(d.section3date)); // Guna fungsi dt() yang dah dibetulkan
-
-  // LOGIC LOCK
-  const statusHeader = document.getElementById("statusHeader");
-  const saveBtn = document.getElementById("saveComplaint");
-  const lockedBanner = document.getElementById("lockedBanner");
-  const adminInputs = document.querySelectorAll('.admin-input');
-
-  let hasAdminContent = d.recommendsection3 && d.recommendsection3.trim().length > 0;
-  let isLocked = d.approvalstatus === 'Approved' || hasAdminContent;
-
-  if (isLocked) {
-      statusHeader.innerText = "APPROVED";
-      statusHeader.style.background = "var(--neon-green)";
-      statusHeader.style.color = "#000";
-      adminInputs.forEach(input => input.setAttribute('readonly', true));
-      saveBtn.style.display = "none";
-      lockedBanner.style.display = "block";
-  } else {
-      statusHeader.innerText = "PENDING ACTION";
-      statusHeader.style.background = "var(--neon-orange)";
-      statusHeader.style.color = "#000";
-      adminInputs.forEach(input => input.removeAttribute('readonly'));
-      saveBtn.style.display = "flex";
-      lockedBanner.style.display = "none";
-  }
+  setVal('section3date', dt(d.section3date));
+  setVal('approvalstatus', d.approvalstatus || "Pending");
+  setVal('approvalcomment', d.approvalcomment);
+  setVal('approvername', d.approvername);
+  setVal('approverposition', d.approverposition);
+  setVal('approvaldate', dt(d.approvaldate));
 
   form.scrollIntoView({behavior: "smooth", block: "start"});
+
+  // Mobile Sidebar Toggle Close
   if(window.innerWidth < 768) {
       document.getElementById('sidebar').classList.remove('active');
       document.querySelector('.sidebar-overlay').classList.remove('active');
   }
 }
 
-// 5. Submit Logic (FIX: Date Saving)
+// 5. Update Database
 document.getElementById("saveComplaint").onclick = async () => {
   const id = document.getElementById("complaintDetail").dataset.id;
   if(!id) return;
-
-  const rec = document.getElementById('recommendsection3').value;
-  const name = document.getElementById('section3nameposition').value;
-  const dateVal = document.getElementById('section3date').value; // Ambil nilai text dari input
-
-  if(!rec || !name || !dateVal) {
-      alert("Please complete Section 3 (including Date) before approving.");
-      return;
-  }
-
-  if(!confirm("Submit and Approve? Record will be LOCKED.")) {
-      return;
-  }
 
   const btn = document.getElementById("saveComplaint");
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAVING...';
 
+  // Helper untuk get value
+  const getVal = (id) => document.getElementById(id).value;
+  
   try{
-    // FIX TARIKH: Tukar value input text terus ke Date Object
-    const selectedDate = new Date(dateVal);
-
     await db.collection(COLLECTION_NAME).doc(id).set({
-      previousmaintenancecost: +document.getElementById('previousmaintenancecost').value || 0,
-      estimatedmaintenancecost: +document.getElementById('estimatedmaintenancecost').value || 0,
-      recommendsection3: rec,
-      section3nameposition: name,
-      section3date: firebase.firestore.Timestamp.fromDate(selectedDate), // Save tarikh yang betul
+      previousmaintenancecost: +getVal('previousmaintenancecost') || 0,
+      estimatedmaintenancecost: +getVal('estimatedmaintenancecost') || 0,
+      recommendsection3: getVal('recommendsection3'),
+      section3nameposition: getVal('section3nameposition'),
+      section3date: getVal('section3date') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('section3date'))) : null,
       
-      approvalstatus: "Approved",
-      updatedBy: auth.currentUser.email,
+      approvalstatus: getVal('approvalstatus'),
+      approvalcomment: getVal('approvalcomment'),
+      approvername: getVal('approvername'),
+      approverposition: getVal('approverposition'),
+      approvaldate: getVal('approvaldate') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('approvaldate'))) : null,
+      
+      updatedBy: auth.currentUser.email, // Rekod siapa yang update
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
 
-    toast("Report Approved Successfully!");
-    
-    await loadComplaints(); 
-    loadDetail(id); 
-
+    toast("Database Updated Successfully");
+    loadComplaints(); // Refresh data
   } catch(e){
     console.error(e);
-    toast("Error: " + e.message, true);
+    if(e.code === 'permission-denied'){
+        toast("Access Denied: Check Rules/Login", true);
+    } else {
+        toast("Update Failed: " + e.message, true);
+    }
   }
 
   btn.disabled = false;
-  btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> SUBMIT & APPROVE';
+  btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> UPDATE DATABASE';
 };
 
+// UI Toggles
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
     document.querySelector('.sidebar-overlay').classList.toggle('active');
 }
+
+const backToTopBtn = document.getElementById("backToTop");
+window.onscroll = () => {
+  backToTopBtn.classList.toggle("show", window.scrollY > 200);
+};
+backToTopBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
+
 </script>
 </body>
 </html>
