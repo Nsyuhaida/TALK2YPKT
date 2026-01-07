@@ -284,26 +284,8 @@ select.input { background-color: #020617; }
                 <div><label>Assessment Date</label><input class="input" type="datetime-local" id="section3date"></div>
             </div>
 
-            <h3 style="color:var(--neon-green); border-color: var(--neon-green);">
-                <i class="fa-solid fa-stamp"></i> SEC.4: FINAL APPROVAL (EDITABLE)
-            </h3>
-            <div class="form-grid">
-                <div>
-                    <label>Approval Status</label>
-                    <select class="input" id="approvalstatus">
-                      <option>Approve</option>
-                      <option>Not approve</option>
-                      <option>Pending</option>
-                    </select>
-                </div>
-                <div><label>Approver Name</label><input class="input" id="approvername"></div>
-                <div><label>Approver Position</label><input class="input" id="approverposition"></div>
-                <div><label>Approval Date</label><input class="input" type="datetime-local" id="approvaldate"></div>
-                <div class="full-width"><label>Approval Comments</label><textarea class="input" id="approvalcomment" placeholder="Final remarks..."></textarea></div>
-            </div>
-
             <button class="btn-primary" id="saveComplaint">
-                <i class="fa-solid fa-floppy-disk"></i> UPDATE DATABASE
+                <i class="fa-solid fa-floppy-disk"></i> UPDATE & APPROVE
             </button>
         </div>
     </main>
@@ -358,8 +340,7 @@ document.getElementById("logout").onclick = () => {
     }
 };
 
-// --- HELPER FUNCTIONS (DIBAIKI UNTUK MASALAH DATE) ---
-// Fungsi dt ini telah diubah supaya masa tidak lari 8 jam
+// --- HELPER FUNCTIONS (LOCAL TIME FIX) ---
 const dt = (t) => {
   if (!t || !t.toDate) return "";
   const d = t.toDate();
@@ -454,11 +435,8 @@ async function loadDetail(id){
   setVal('recommendsection3', d.recommendsection3);
   setVal('section3nameposition', d.section3nameposition);
   setVal('section3date', dt(d.section3date));
-  setVal('approvalstatus', d.approvalstatus || "Pending");
-  setVal('approvalcomment', d.approvalcomment);
-  setVal('approvername', d.approvername);
-  setVal('approverposition', d.approverposition);
-  setVal('approvaldate', dt(d.approvaldate));
+  
+  // NOTE: Section 4 data is no longer loaded into UI since UI is removed.
 
   form.scrollIntoView({behavior: "smooth", block: "start"});
 
@@ -468,14 +446,14 @@ async function loadDetail(id){
   }
 }
 
-// 5. Update Database
+// 5. Update Database (AUTO APPROVE LOGIC ADDED HERE)
 document.getElementById("saveComplaint").onclick = async () => {
   const id = document.getElementById("complaintDetail").dataset.id;
   if(!id) return;
 
   const btn = document.getElementById("saveComplaint");
   btn.disabled = true;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAVING...';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAVING & APPROVING...';
 
   const getVal = (id) => document.getElementById(id).value;
   
@@ -487,17 +465,22 @@ document.getElementById("saveComplaint").onclick = async () => {
       section3nameposition: getVal('section3nameposition'),
       section3date: getVal('section3date') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('section3date'))) : null,
       
-      approvalstatus: getVal('approvalstatus'),
-      approvalcomment: getVal('approvalcomment'),
-      approvername: getVal('approvername'),
-      approverposition: getVal('approverposition'),
-      approvaldate: getVal('approvaldate') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('approvaldate'))) : null,
+      // --- AUTO APPROVE SECTION ---
+      // Hardcode status to 'Approve'
+      approvalstatus: "Approve",
+      // Set approver to current logged in admin
+      approvername: auth.currentUser.email, 
+      approverposition: "Admin", // Or empty string if preferred
+      // Set approval date to NOW
+      approvaldate: firebase.firestore.FieldValue.serverTimestamp(),
+      approvalcomment: "Auto-approved via Admin Terminal",
+      // ----------------------------
       
       updatedBy: auth.currentUser.email,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
 
-    toast("Database Updated Successfully");
+    toast("Record Updated & Approved");
     loadComplaints(); 
   } catch(e){
     console.error(e);
@@ -509,7 +492,7 @@ document.getElementById("saveComplaint").onclick = async () => {
   }
 
   btn.disabled = false;
-  btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> UPDATE DATABASE';
+  btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> UPDATE & APPROVE';
 };
 
 // UI Toggles
