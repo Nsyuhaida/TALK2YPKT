@@ -314,9 +314,9 @@ select.input { background-color: #020617; }
 
 <script>
 // --- KONFIGURASI PENTING ---
-const COLLECTION_NAME = "complaint"; // PASTIKAN EJAAN INI SAMA DENGAN DATABASE ANDA
+const COLLECTION_NAME = "complaint"; 
 
-// --- FIREBASE CONFIG (Sila pastikan ini betul) ---
+// --- FIREBASE CONFIG ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -326,14 +326,12 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// --- AUTH GUARD (PENYELAMAT DARI ERROR) ---
-// Ini adalah bahagian paling penting yang hilang sebelum ini.
+// --- AUTH GUARD ---
 auth.onAuthStateChanged((user) => {
     const loader = document.getElementById("authLoader");
     const app = document.getElementById("appContent");
 
     if (user) {
-        // User dah login, check email domain
         console.log("Logged in as:", user.email);
         
         if (!user.email.endsWith('@ypkt.gov.my')) {
@@ -342,14 +340,12 @@ auth.onAuthStateChanged((user) => {
             return;
         }
 
-        // Login Sah! Tunjukkan App & Load Data
         loader.style.display = "none";
         app.classList.add("loaded");
         toast("Connected as: " + user.email);
-        loadComplaints(); // Mula tarik data
+        loadComplaints(); 
 
     } else {
-        // Tak login lagi -> Tendang ke Login Page
         console.warn("No user detected. Redirecting...");
         window.location.href = "login.html";
     }
@@ -362,8 +358,15 @@ document.getElementById("logout").onclick = () => {
     }
 };
 
-// --- HELPER FUNCTIONS ---
-const dt=t=>t&&t.toDate?t.toDate().toISOString().slice(0,16):"";
+// --- HELPER FUNCTIONS (DIBAIKI UNTUK MASALAH DATE) ---
+// Fungsi dt ini telah diubah supaya masa tidak lari 8 jam
+const dt = (t) => {
+  if (!t || !t.toDate) return "";
+  const d = t.toDate();
+  const localDate = new Date(d.getTime() - (d.getTimezoneOffset() * 60000));
+  return localDate.toISOString().slice(0, 16);
+};
+
 const toast=(msg,err=false)=>{
   const t=document.getElementById("toast");
   t.innerHTML = err ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`;
@@ -377,12 +380,11 @@ let complaints=[];
 // 1. Load Data
 async function loadComplaints(){
   try {
-      const s=await db.collection(COLLECTION_NAME).get(); // Guna variable collection name
+      const s=await db.collection(COLLECTION_NAME).get(); 
       complaints=s.docs.map(d=>({id:d.id,...d.data()}));
       renderTable(complaints);
   } catch (err) {
       console.error("Load Error:", err);
-      // Jika permission error, dia akan keluar di console
       document.getElementById("complaintList").innerHTML = 
         `<div style="padding:20px; color:#ff4d4d; text-align:center;">
             <i class="fa-solid fa-triangle-exclamation"></i> Error loading data.<br>
@@ -460,7 +462,6 @@ async function loadDetail(id){
 
   form.scrollIntoView({behavior: "smooth", block: "start"});
 
-  // Mobile Sidebar Toggle Close
   if(window.innerWidth < 768) {
       document.getElementById('sidebar').classList.remove('active');
       document.querySelector('.sidebar-overlay').classList.remove('active');
@@ -476,7 +477,6 @@ document.getElementById("saveComplaint").onclick = async () => {
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAVING...';
 
-  // Helper untuk get value
   const getVal = (id) => document.getElementById(id).value;
   
   try{
@@ -493,12 +493,12 @@ document.getElementById("saveComplaint").onclick = async () => {
       approverposition: getVal('approverposition'),
       approvaldate: getVal('approvaldate') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('approvaldate'))) : null,
       
-      updatedBy: auth.currentUser.email, // Rekod siapa yang update
+      updatedBy: auth.currentUser.email,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
 
     toast("Database Updated Successfully");
-    loadComplaints(); // Refresh data
+    loadComplaints(); 
   } catch(e){
     console.error(e);
     if(e.code === 'permission-denied'){
