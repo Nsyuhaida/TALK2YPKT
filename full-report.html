@@ -1,194 +1,27 @@
-<!DOCTYPE html>
-<html lang="ms">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Pemeriksaan Penuh</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script>
+    // Fungsi Buka Modal (Panggil function ini bila tekan button 'View Report')
+    function openFullReport(data) {
+        // 1. Set Data Bahagian 1-3
+        document.getElementById('viewId').innerText = data.id || '-';
+        document.getElementById('viewNama').innerText = data.nama_aset || '-';
+        document.getElementById('viewLokasi').innerText = data.lokasi || '-';
 
-    <style>
-        /* --- CSS KHAS UNTUK PRINT --- */
-        @media print {
-            /* Sembunyikan semua benda dalam body */
-            body * {
-                visibility: hidden;
-            }
+        // 2. Set Data Bahagian 4
+        // Kalau ada data, dia papar teks. Kalau tak ada (null/empty), dia jadi kosong je.
+        document.getElementById('viewUlasan').innerText = data.ulasan_teknikal || ''; 
+        document.getElementById('viewSyor').innerText = data.syor || '';
 
-            /* Tunjukkan HANYA kawasan yang ada ID 'printArea' */
-            #printArea, #printArea * {
-                visibility: visible;
-            }
+        // 3. Tunjuk Modal
+        document.getElementById('fullReportModal').classList.remove('hidden');
+    }
 
-            /* Pastikan Laporan berada tepat di penjuru kertas */
-            #printArea {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                border: none !important; /* Hilang border masa print */
-                box-shadow: none !important; /* Hilang bayang */
-            }
+    // Fungsi Tutup Modal
+    function closeReportModal() {
+        document.getElementById('fullReportModal').classList.add('hidden');
+    }
 
-            /* Hilangkan butang-butang masa print (sebagai langkah berjaga-jaga) */
-            .no-print {
-                display: none !important;
-            }
-
-            /* Pastikan background putih bersih */
-            body {
-                background-color: white;
-            }
-        }
-    </style>
-</head>
-<body class="bg-gray-100 p-10">
-
-    <div class="max-w-4xl mx-auto mb-5 no-print">
-        <h1 class="text-2xl font-bold mb-4">Sistem Pengurusan Laporan</h1>
-        <p class="mb-4">Tekan butang di bawah untuk lihat contoh bila data Bahagian 4 kosong vs ada isi.</p>
-        
-        <button onclick="openReportModal(sampleDataEmpty)" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-            Test: Data Bahagian 4 KOSONG (Cik Ashri Isi Manual)
-        </button>
-
-        <button onclick="openReportModal(sampleDataFilled)" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ml-2">
-            Test: Data Bahagian 4 ADA ISI
-        </button>
-    </div>
-
-    <div id="reportModalBackdrop" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4 overflow-y-auto">
-        
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl flex flex-col max-h-[90vh]">
-            
-            <div class="flex justify-between items-center p-4 border-b no-print">
-                <h3 class="font-bold text-lg">Paparan Laporan Penuh</h3>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-red-500">
-                    <i class="fas fa-times fa-lg"></i>
-                </button>
-            </div>
-
-            <div class="overflow-y-auto p-8 bg-gray-50 flex-grow">
-                
-                <div id="printArea" class="bg-white p-8 border border-gray-300 shadow-sm mx-auto max-w-[210mm] min-h-[297mm]">
-                    
-                    <div class="text-center mb-8 border-b-2 border-black pb-4">
-                        <h1 class="font-bold text-2xl uppercase">Laporan Pemeriksaan Teknikal</h1>
-                        <p class="text-sm text-gray-600 mt-1">ID Rujukan: <span id="rptId" class="font-mono font-bold text-black"></span></p>
-                    </div>
-
-                    <div class="mb-6">
-                        <h2 class="font-bold bg-gray-200 p-2 mb-2 text-sm uppercase border border-gray-400">Bahagian 1: Maklumat Aset</h2>
-                        <p>Nama Aset: <span id="rptNama"></span></p>
-                        <p>Lokasi: <span id="rptLokasi"></span></p>
-                    </div>
-
-                    <div class="mb-6">
-                        <h2 class="font-bold bg-gray-200 p-2 mb-2 text-sm uppercase border border-gray-400">Bahagian 2 & 3: Pemeriksaan Fizikal</h2>
-                        <p class="text-gray-500 italic">[Maklumat bahagian 2 dan 3 dipaparkan di sini...]</p>
-                    </div>
-
-                    <div class="mt-8">
-                        <h2 class="font-bold bg-gray-800 text-white p-2 mb-0 text-sm uppercase border border-black">
-                            BAHAGIAN 4: DAPATAN TEKNIKAL & PENGESAHAN
-                        </h2>
-                        
-                        <div class="border border-black p-4 flex flex-col md:flex-row gap-6 min-h-[200px]">
-                            
-                            <div class="w-full md:w-2/3">
-                                <p class="font-bold underline mb-2">Ulasan Teknikal / Catatan:</p>
-                                
-                                <div id="part4TextContent" class="text-gray-800 whitespace-pre-line text-justify hidden">
-                                    </div>
-
-                                <div id="part4ManualLines" class="block mt-2">
-                                    <p class="text-gray-400 text-xs italic mb-2">(Ruang ini kosong, sila isi secara manual)</p>
-                                    <div class="border-b border-gray-400 border-dotted h-8 w-full"></div>
-                                    <div class="border-b border-gray-400 border-dotted h-8 w-full"></div>
-                                    <div class="border-b border-gray-400 border-dotted h-8 w-full"></div>
-                                    <div class="border-b border-gray-400 border-dotted h-8 w-full"></div>
-                                </div>
-                            </div>
-
-                            <div class="w-full md:w-1/3 flex flex-col justify-end items-center text-center mt-4 md:mt-0">
-                                <div class="h-24 w-full"></div> <div class="w-full border-b border-black mb-2"></div>
-                                <p class="font-bold text-sm">Tandatangan Pegawai Pemeriksa</p>
-                                <p class="text-xs text-gray-500">( Cik Ashri )</p>
-                            </div>
-
-                        </div>
-                    </div>
-                    </div> 
-                </div>
-
-            <div class="p-4 border-t bg-gray-100 flex justify-end gap-3 no-print">
-                <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
-                    Tutup
-                </button>
-                <button onclick="printReport()" class="px-6 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 flex items-center">
-                    <i class="fas fa-print mr-2"></i> Cetak / Print
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Data Contoh 1: Bahagian 4 KOSONG (Simulasi kes Cik Ashri perlu isi manual)
-        const sampleDataEmpty = {
-            id: "RPT-2024-001",
-            nama_aset: "Laptop HP Probook",
-            lokasi: "Pejabat Utama",
-            bahagian4: "" // Data kosong / null
-        };
-
-        // Data Contoh 2: Bahagian 4 ADA ISI (Simulasi bila dah update dalam sistem)
-        const sampleDataFilled = {
-            id: "RPT-2024-002",
-            nama_aset: "Projektor Sony",
-            lokasi: "Bilik Mesyuarat",
-            bahagian4: "Aset didapati rosak pada bahagian kanta utama. Tidak ekonomik untuk dibaiki. Cadangan pelupusan." // Ada data
-        };
-
-        // Fungsi Buka Modal & Masukkan Data
-        function openReportModal(data) {
-            // 1. Masukkan data asas
-            document.getElementById('rptId').innerText = data.id;
-            document.getElementById('rptNama').innerText = data.nama_aset;
-            document.getElementById('rptLokasi').innerText = data.lokasi;
-
-            // 2. LOGIC PENTING BAHAGIAN 4
-            const textDiv = document.getElementById('part4TextContent');
-            const linesDiv = document.getElementById('part4ManualLines');
-
-            if (data.bahagian4 && data.bahagian4.trim() !== "") {
-                // KES A: Ada Data
-                textDiv.innerText = data.bahagian4;
-                textDiv.classList.remove('hidden'); // Tunjuk teks
-                linesDiv.classList.add('hidden');   // Sorok garisan manual
-            } else {
-                // KES B: Tiada Data (Blank)
-                textDiv.innerText = "";
-                textDiv.classList.add('hidden');    // Sorok teks
-                linesDiv.classList.remove('hidden');// Tunjuk garisan manual
-            }
-
-            // 3. Tunjuk Modal
-            document.getElementById('reportModalBackdrop').classList.remove('hidden');
-        }
-
-        // Fungsi Tutup Modal
-        function closeModal() {
-            document.getElementById('reportModalBackdrop').classList.add('hidden');
-        }
-
-        // Fungsi Print
-        function printReport() {
-            window.print();
-        }
-    </script>
-</body>
-</html>
+    // Fungsi Print
+    function printContent() {
+        window.print();
+    }
+</script>
