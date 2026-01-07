@@ -1,608 +1,489 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard | TALK2YPKT ADMIN</title>
+<title>Data Entry Terminal | TALK2YPKT ADMIN</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-/* --- NEXUS THEME VARIABLES --- */
+/* --- DESIGN NEON SAMA SEPERTI SEBELUM INI --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap');
+
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
-  --neon-red: #ff4d4d;
+  --neon-orange: #ff9500; /* Warna Oren untuk Pending */
   --bg-dark: #020617;
-  --glass-panel: rgba(15, 23, 42, 0.85);
-  --glass-border: rgba(0, 243, 255, 0.2);
-  --text-main: #e2e8f0;
-  --text-muted: #94a3b8;
+  --glass: rgba(15, 23, 42, 0.95);
+  --border: rgba(0, 243, 255, 0.2);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior: smooth; }
 
-/* --- BACKGROUND SYSTEM --- */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
   background-size: 400% 400%;
   animation: bgMove 20s ease infinite;
-  color: var(--text-main);
+  color: #e2e8f0;
   min-height: 100vh;
+  overflow-x: hidden;
 }
-
 body::before {
   content: ""; position: fixed; inset: 0;
-  background-image: 
-    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
-.app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+.app { display:flex; min-height:100vh; position: relative; z-index: 1; opacity: 0; transition: opacity 0.5s; }
+.app.loaded { opacity: 1; }
 
-/* --- SIDEBAR --- */
-.sidebar {
-  width: 260px; 
-  background: rgba(15, 23, 42, 0.95); 
-  backdrop-filter: blur(15px);
-  border-right: 1px solid var(--glass-border); 
-  padding: 30px 20px;
-  display: flex; flex-direction: column; 
-  position: sticky; top: 0; height: 100vh;
-  z-index: 100;
-  transition: transform 0.3s ease;
+/* Loader */
+#authLoader {
+    position: fixed; inset: 0; background: #020617; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
+.loader-spinner {
+    width: 50px; height: 50px; border: 3px solid transparent; border-top-color: var(--neon-blue);
+    border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
+}
+.loader-text { font-family: 'Orbitron'; color: var(--neon-blue); letter-spacing: 2px; animation: pulse 1.5s infinite; }
 
+/* Sidebar */
+.sidebar {
+  width: 260px; background: var(--glass); backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border); padding: 30px 20px;
+  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  z-index: 100; transition: transform 0.3s ease;
+}
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
 .brand {
   font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
   text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
 }
-
 .nav-links { flex: 1; display: flex; flex-direction: column; }
-
 .nav a {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
   padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
   font-size: 14px; border: 1px solid transparent;
 }
 .nav a:hover, .nav a.active {
-  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--glass-border);
+  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
 }
-.nav a i { width: 20px; text-align: center; }
+#logout { margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; cursor: pointer; }
 
-#logout {
-  margin-top: auto; color: var(--neon-red);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px; border-radius: 0;
-}
-#logout:hover {
-  background: rgba(255, 77, 77, 0.1); border-top-color: rgba(255, 255, 255, 0.3);
-  color: #fff; border-color: rgba(255, 77, 77, 0.5); box-shadow: none;
-}
+/* Main Content */
+.main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
+.mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; }
+h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
 
-/* --- MAIN CONTENT --- */
-.main { flex: 1; padding: 30px; overflow-x: hidden; width: 100%; }
+/* Search & Table */
+.search-container { margin-bottom: 25px; }
+#searchInput {
+  width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border); border-radius: 50px; color: #fff; outline: none; transition: 0.3s;
+}
+#searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-.mobile-header {
-    width: 100%; display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
+.table-card {
+  background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
+  border-radius: 16px; border: 1px solid var(--border);
+  padding: 0; overflow: hidden; margin-bottom: 30px;
+  max-height: 350px; overflow-y: auto;
 }
-.mobile-toggle {
-    background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px;
-}
+.table-wrapper { width: 100%; overflow-x: auto; }
+table { width:100%; border-collapse: collapse; min-width: 600px; }
+th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; backdrop-filter: blur(5px); white-space: nowrap; }
+td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; }
+tr:hover { background: rgba(0, 243, 255, 0.05); cursor: pointer; color: #fff; }
 
-/* HEADER & INPUT */
-.header {
-  display: flex; justify-content: space-between; align-items: flex-end;
-  margin-bottom: 25px; flex-wrap: wrap; gap: 20px;
-  border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;
+/* Form Card */
+.card {
+  background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px);
+  padding: 40px; border-radius: 16px; border: 1px solid var(--border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+  display: none; animation: fadeIn 0.5s ease; margin-bottom: 50px;
 }
-.header h1 {
-  font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff;
-  text-shadow: 0 0 15px rgba(255,255,255,0.2);
+h3 {
+  font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 25px; 
+  margin-bottom: 15px; font-size: 14px; letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
 }
-.header p { color: var(--neon-blue); font-size: 12px; letter-spacing: 1px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.full-width { grid-column: span 2; }
+label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
 .input {
-  padding: 10px 20px; border-radius: 50px;
-  border: 1px solid var(--glass-border);
-  background: rgba(0,0,0,0.3); color: #fff;
-  width: 250px; outline: none; transition: 0.3s; font-size: 13px;
+  width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+  color: #fff; outline: none; transition: 0.3s;
 }
-.input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+.input:not([readonly]):focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 157, 0.2); background: rgba(0,0,0,0.5); }
+.input[readonly] { background: rgba(255, 255, 255, 0.02); border-color: transparent; color: var(--neon-blue); cursor: not-allowed; opacity: 0.7; }
+textarea.input { resize: vertical; min-height: 80px; }
 
-/* --- PROFILE SECTION --- */
-.compact-profile-wrapper { display: flex; justify-content: space-between; align-items: center; }
-.compact-left { display: flex; align-items: center; gap: 15px; }
+.btn-primary {
+  width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer;
+  background: var(--neon-green); color: #000; font-family: 'Orbitron'; font-weight: bold;
+  margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 10px;
+  transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+}
+.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-green); }
 
-.profile-avatar-small {
-    width: 50px; height: 50px;
-    background: rgba(0, 243, 255, 0.1); border: 2px solid var(--neon-blue);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; color: var(--neon-blue);
-    overflow: hidden; border-radius: 50%;
-    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
-}
+/* Status Labels */
+.status-badge { padding: 5px 12px; border-radius: 4px; font-weight: bold; font-family: 'Orbitron'; font-size: 0.8em; letter-spacing: 1px;}
 
-.badge-role {
-    background: rgba(0, 255, 157, 0.1); color: var(--neon-green);
-    padding: 1px 6px; border-radius: 4px; font-size: 9px; letter-spacing: 1px;
-    border: 1px solid rgba(0, 255, 157, 0.3); font-weight: bold;
-}
-
-.btn-toggle-compact {
-    background: transparent; border: 1px solid rgba(255,255,255,0.2);
-    color: var(--text-muted); padding: 5px 12px; font-size: 10px;
-    font-family: 'Orbitron', sans-serif; cursor: pointer;
-    border-radius: 50px; transition: 0.3s; white-space: nowrap;
-}
-.btn-toggle-compact:hover {
-    border-color: var(--neon-blue); color: var(--neon-blue);
-    background: rgba(0, 243, 255, 0.05);
-}
-
-#metadataPanel {
-    animation: fadeIn 0.4s ease; margin-top: 15px;
-    border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;
-}
-
-/* STATS CARDS */
-.stats-wrapper { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; }
-.stats-card {
-  flex: 1; min-width: 180px;
-  background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
-  padding: 20px; border-radius: 12px;
-  border: 1px solid var(--glass-border); text-align: center;
-  transition: 0.3s; position: relative; overflow: hidden;
-}
-.stats-card:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.4); border-color: var(--neon-blue); }
-.stats-card h2 { font-family: 'Orbitron', sans-serif; font-size: 32px; color: #fff; margin-bottom: 5px; }
-.stats-card span { color: var(--neon-blue); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-
-/* TABLE & CARDS */
-.card {
-  background: var(--glass-panel); backdrop-filter: blur(10px);
-  padding: 20px; border-radius: 16px; margin-bottom: 25px;
-  border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-}
-.card h3 {
-  font-family: 'Orbitron', sans-serif; color: var(--neon-blue);
-  margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 10px; font-size: 16px;
-}
-table { width: 100%; border-collapse: separate; border-spacing: 0 5px; }
-th { text-align: left; padding: 12px; color: rgba(255,255,255,0.6); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-td { background: rgba(255,255,255,0.03); padding: 12px; color: #fff; font-size: 13px; }
-td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
-td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
-tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
-
-/* CHARTS & KPI */
-.summary-wrapper { max-width: 800px; margin: 0 auto; }
-.summary-row { display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap; }
-.summary-chart { width: 280px; position: relative; }
-.summary-kpi {
-  text-align: center; padding: 20px; border-radius: 50%;
-  border: 2px dashed var(--glass-border); width: 160px; height: 160px;
-  display: flex; flex-direction: column; justify-content: center;
-  animation: rotateBorder 20s linear infinite reverse;
-  transition: border-color 0.5s ease; /* Smooth color change */
-}
-.summary-kpi-inner { animation: rotateBorder 20s linear infinite; }
-.summary-kpi h2 { font-size: 36px; color: #fff; font-family: 'Orbitron', sans-serif; }
-.summary-kpi span { font-size: 10px; color: var(--neon-blue); text-transform: uppercase; }
-
-/* UTILS */
-#backToTop {
-  position: fixed; bottom: 30px; right: 30px;
-  width: 50px; height: 50px; background: var(--neon-blue); color: #000;
-  border-radius: 50%; border: none; cursor: pointer;
-  display: flex; justify-content: center; align-items: center; font-size: 20px;
-  opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 100;
-}
-#backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
-
-@keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes rotateBorder { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes fadeIn { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
+.toast { position: fixed; top: 20px; right: 20px; opacity: 0; z-index: 9999; padding: 15px 25px; border-radius: 8px; font-family: 'Orbitron'; color: var(--neon-green); background: rgba(0,255,157,0.1); border: 1px solid var(--neon-green); transition: 0.3s; transform: translateY(-20px); }
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.error { border-color: #ff4d4d; color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
 
 @media (max-width: 768px) {
-    .sidebar { position: fixed; left: -100%; width: 80%; }
+    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; }
     .sidebar.active { left: 0; }
-    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; }
     .sidebar-overlay.active { display: block; }
+    .main { padding: 20px; }
     .mobile-header { display: flex; }
-    .header { flex-direction: column; align-items: flex-start; }
-    .input { width: 100%; }
-    .compact-profile-wrapper { flex-direction: column; align-items: flex-start; gap: 15px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
 }
+
+@keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 50% { opacity: 0.5; } }
+@keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 </style>
 </head>
 
 <body>
 
-<div class="app">
-  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div id="authLoader">
+    <div class="loader-spinner"></div>
+    <div class="loader-text">AUTHENTICATING...</div>
+</div>
 
-  <aside class="sidebar" id="sidebar">
-    <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" class="logo">
-    <div class="brand">TALK2YPKT ADMIN</div>
-    
-    <div class="nav nav-links">
-      <a href="dashboard.html" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-      <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
-      <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
-      <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
-      <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
-      <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
-    </div>
+<div class="app" id="appContent">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <div class="nav">
-      <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
-    </div>
-  </aside>
+    <aside class="sidebar" id="sidebar">
+        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
+        <div class="brand">TALK2YPKT ADMIN</div>
+        
+        <div class="nav nav-links">
+            <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+            <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
+            <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="data-entry.html" class="active"><i class="fa-solid fa-database"></i> Data Entry</a>
+            <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
+            <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+        </div>
+        <div class="nav"><a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a></div>
+    </aside>
 
-  <main class="main">
+    <main class="main">
+        <div class="mobile-header">
+            <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">DATA TERMINAL</div>
+            <div style="width:24px;"></div>
+        </div>
 
-    <div class="mobile-header">
-        <button class="mobile-toggle" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">DASHBOARD</div>
-        <div style="width:24px;"></div>
-    </div>
+        <h1><i class="fa-solid fa-terminal"></i> DATA ENTRY TERMINAL</h1>
 
-    <div class="header">
-      <div>
-        <h1>COMMAND CENTER</h1>
-        <p id="welcomeMsg">Initializing User Protocol...</p>
-      </div>
-      <input id="searchInput" class="input" placeholder="Search Database ID / Asset...">
-    </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search Database (ID / User)...">
+        </div>
 
-    <div class="card" style="border-left: 3px solid var(--neon-blue); padding: 15px 20px;">
-        <div class="compact-profile-wrapper">
-            <div class="compact-left">
-                <div class="profile-avatar-small">
-                    <i class="fa-solid fa-user-astronaut"></i>
-                </div>
-                <div>
-                    <h4 id="displayEmail" style="font-size: 14px; color: #fff; margin-bottom: 2px;">loading...</h4>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="badge-role">ADMIN</span>
-                        <span id="displayUid" style="font-family: 'Courier New', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px;">UID: ...</span>
-                    </div>
-                </div>
+        <div class="table-card" id="complaintList">
+            <div style="padding:20px; text-align:center; color:#777;">Initializing database...</div>
+        </div>
+
+        <div id="complaintDetail" class="card">
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--neon-blue); padding-bottom:15px; margin-bottom:20px;">
+                <h2 style="font-family:'Orbitron'; color:#fff; font-size: 1.2rem;">RECORD DETAILS</h2>
+                <div id="statusHeader" class="status-badge" style="background:#333; color:#fff;">LOADING...</div>
             </div>
-            <button class="btn-toggle-compact" onclick="toggleMetadata()" id="btnToggleMeta">
-                DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>
+
+            <h3><i class="fa-solid fa-lock"></i> SEC.1: USER REPORT (VIEW ONLY)</h3>
+            <div class="form-grid">
+                <div><label>Asset Type</label><input class="input" id="assettype" readonly></div>
+                <div><label>Serial Number</label><input class="input" id="SerialNumber" readonly></div>
+                <div><label>Reported By</label><input class="input" id="lastUser" readonly></div>
+                <div><label>Damage Date</label><input class="input" type="datetime-local" id="damagedate" readonly></div>
+                <div><label>Date Reported</label><input class="input" type="datetime-local" id="reportdatesection1" readonly></div>
+                <div class="full-width"><label>Damage Description</label><textarea class="input" id="damagedescription" readonly></textarea></div>
+            </div>
+
+            <h3><i class="fa-solid fa-clipboard-check"></i> SEC.2: USER RECOMMENDATION (VIEW ONLY)</h3>
+            <div class="form-grid">
+                <div class="full-width"><label>User Recommendation</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
+                <div><label>Officer Name</label><input class="input" id="section2nameposition" readonly></div>
+                <div><label>Submission Date</label><input class="input" type="datetime-local" id="section2date" readonly></div>
+            </div>
+
+            <h3 style="color:var(--neon-green); border-color: var(--neon-green); margin-top: 40px;">
+                <i class="fa-solid fa-screwdriver-wrench"></i> SEC.3: ADMIN ASSESSMENT
+            </h3>
+            
+            <div id="lockedBanner" style="display:none; background:rgba(0, 255, 157, 0.1); color:var(--neon-green); border:1px solid var(--neon-green); padding:10px; border-radius:5px; margin-bottom:20px; font-size:12px; text-align:center;">
+                <i class="fa-solid fa-lock"></i> RECORD IS APPROVED & LOCKED. VIEW ONLY MODE.
+            </div>
+
+            <div class="form-grid">
+                <div><label>Previous Cost (RM)</label><input class="input admin-input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
+                <div><label>Est. Maintenance Cost (RM)</label><input class="input admin-input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
+                <div class="full-width"><label>Admin Action / Technical Assessment</label><textarea class="input admin-input" id="recommendsection3" placeholder="Enter technical details here..."></textarea></div>
+                <div><label>Admin Name & Position</label><input class="input admin-input" id="section3nameposition" placeholder="e.g. Cik Ashri (Tech Officer)"></div>
+                <div><label>Assessment Date</label><input class="input admin-input" type="datetime-local" id="section3date"></div>
+            </div>
+
+            <button class="btn-primary" id="saveComplaint">
+                <i class="fa-solid fa-check-circle"></i> SUBMIT & APPROVE
             </button>
         </div>
 
-        <div id="metadataPanel" style="display: none; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-            <div>
-                <span style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; display: block;">
-                    <i class="fa-solid fa-calendar-plus"></i> Registered
-                </span>
-                <div id="displayJoined" style="font-family: 'Orbitron'; font-size: 12px; color: #fff;">-</div>
-            </div>
-            <div>
-                <span style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; display: block;">
-                    <i class="fa-solid fa-clock"></i> Last Login
-                </span>
-                <div id="displayLastLogin" style="font-family: 'Orbitron'; font-size: 12px; color: var(--neon-green);">-</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="stats-wrapper">
-      <div class="stats-card">
-        <h2 id="totalComplaints">0</h2>
-        <span>Total Reports</span>
-      </div>
-      <div class="stats-card" style="border-color: #00ff9d;">
-        <h2 id="approveCount" style="color: #00ff9d;">0</h2>
-        <span>Approved</span>
-      </div>
-      <div class="stats-card" style="border-color: #ff4d4d;">
-        <h2 id="notApproveCount" style="color: #ff4d4d;">0</h2>
-        <span>Pending / Rejected</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>INCOMING DATA STREAM (REAL-TIME)</h3>
-      <div style="overflow-x:auto;">
-        <table id="dashboardTable">
-          <thead>
-            <tr>
-              <th>REF ID</th>
-              <th>OPERATOR</th>
-              <th>ASSET TYPE</th>
-              <th>TIMESTAMP</th>
-              <th>STATUS</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="5" style="text-align:center; opacity:0.5;">Establishing uplink...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>SYSTEM DIAGNOSTICS</h3>
-      <div class="summary-wrapper">
-        <div class="summary-row">
-          <div class="summary-chart">
-            <canvas id="statusChart"></canvas>
-          </div>
-          
-          <div class="summary-kpi" id="kpiCircle">
-            <div class="summary-kpi-inner">
-                <h2 id="efficiencyValue" style="transition: color 0.5s ease;">0%</h2>
-                <span id="efficiencyLabel">CALCULATING...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </main>
+    </main>
 </div>
 
-<button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
+<div id="toast" class="toast"></div>
 
 <script>
-// --- 1. FIREBASE CONFIG ---
-firebase.initializeApp({
+// --- CONFIG ---
+const COLLECTION_NAME = "complaint";
+const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
   projectId:"e-complaint-8nu9kp"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+const auth=firebase.auth();
+
+// --- AUTH ---
+auth.onAuthStateChanged((user) => {
+    const loader = document.getElementById("authLoader");
+    const app = document.getElementById("appContent");
+    if (user) {
+        if (!user.email.endsWith('@ypkt.gov.my')) {
+            alert("ACCESS DENIED: Only YPKT Admin authorized.");
+            auth.signOut().then(() => window.location.href = "login.html");
+            return;
+        }
+        loader.style.display = "none";
+        app.classList.add("loaded");
+        loadComplaints();
+    } else {
+        window.location.href = "login.html";
+    }
 });
+document.getElementById("logout").onclick=()=>auth.signOut().then(()=>window.location.href="login.html");
 
-const db = firebase.firestore();
+// --- HELPER ---
+const dt=t=>t&&t.toDate?t.toDate().toISOString().slice(0,16):"";
+const toast=(msg,err=false)=>{
+  const t=document.getElementById("toast");
+  t.innerHTML = err ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`;
+  t.className = "toast show" + (err ? " error" : "");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
 
-// --- 2. SIDEBAR LOGIC ---
+// --- MAIN LOGIC ---
+let complaints=[];
+
+// 1. Load Data
+async function loadComplaints(){
+  try {
+      const s=await db.collection(COLLECTION_NAME).orderBy('updatedAt', 'desc').get(); // Order by newest
+      complaints=s.docs.map(d=>({id:d.id,...d.data()}));
+      renderTable(complaints);
+  } catch (err) {
+      console.error(err);
+      document.getElementById("complaintList").innerHTML = `<div style="padding:20px; color:#ff4d4d; text-align:center;">Database Error.</div>`;
+  }
+}
+
+// 2. Render Table (HIJAU vs OREN)
+function renderTable(list){
+  const container = document.getElementById("complaintList");
+  if(list.length === 0) {
+      container.innerHTML = "<div style='padding:20px; text-align:center; color:#888;'>No records found.</div>";
+      return;
+  }
+   
+  let h = "<div class='table-wrapper'><table><thead><tr><th>ID REF</th><th>REPORTED BY</th><th>STATUS</th></tr></thead><tbody>";
+  
+  list.forEach(c => {
+    // Tentukan Status & Warna
+    let status = c.approvalstatus || "Pending"; // Kalau kosong, anggap Pending
+    let color = "";
+    
+    if(status === "Approved") {
+        color = "#00ff9d"; // HIJAU
+    } else {
+        color = "#ff9500"; // OREN (untuk Pending atau Not Approve)
+        status = "Pending"; // Paksa teks jadi Pending untuk keseragaman
+    }
+    
+    h += `<tr data-id="${c.id}">
+      <td style="font-family:'Orbitron'; color:var(--neon-blue)">${c.id}</td>
+      <td>${c.lastUser||"-"}</td>
+      <td style="color:${color}; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${status}</td>
+    </tr>`;
+  });
+  
+  h += "</tbody></table></div>";
+  container.innerHTML = h;
+   
+  container.querySelectorAll("tr[data-id]").forEach(r => {
+    r.onclick = () => loadDetail(r.dataset.id);
+  });
+}
+
+// 3. Search
+document.getElementById("searchInput").oninput = (e) => {
+  const v = e.target.value.toLowerCase();
+  renderTable(complaints.filter(c => c.id.toLowerCase().includes(v) || (c.lastUser||"").toLowerCase().includes(v)));
+};
+
+// 4. Load Detail & LOCK LOGIC
+async function loadDetail(id){
+  const docRef = await db.collection(COLLECTION_NAME).doc(id).get();
+  if(!docRef.exists) return;
+   
+  const d = docRef.data();
+  const form = document.getElementById("complaintDetail");
+  
+  // Reset Form
+  form.style.display="block";
+  form.dataset.id = id;
+
+  // Set Section 1 & 2 (Always Readonly)
+  const setVal = (eid, val) => document.getElementById(eid).value = val || "";
+  setVal('assettype', d.assettype);
+  setVal('SerialNumber', d.serialNumber);
+  setVal('lastUser', d.lastUser);
+  setVal('damagedate', dt(d.damagedate));
+  setVal('damagedescription', d.damagedescription);
+  setVal('reportdatesection1', dt(d.reportdatesection1));
+  setVal('recommendationsection2', d.recommendationsection2);
+  setVal('section2nameposition', d.section2nameposition);
+  setVal('section2date', dt(d.section2date));
+
+  // Set Section 3 (Admin)
+  setVal('previousmaintenancecost', d.previousmaintenancecost);
+  setVal('estimatedmaintenancecost', d.estimatedmaintenancecost);
+  setVal('recommendsection3', d.recommendsection3);
+  setVal('section3nameposition', d.section3nameposition);
+  setVal('section3date', dt(d.section3date));
+
+  // --- LOGIC KUNCI (LOCK) ---
+  const statusHeader = document.getElementById("statusHeader");
+  const saveBtn = document.getElementById("saveComplaint");
+  const lockedBanner = document.getElementById("lockedBanner");
+  const adminInputs = document.querySelectorAll('.admin-input'); // Class khas utk input section 3
+
+  if (d.approvalstatus === 'Approved') {
+      // --- KES: SUDAH APPROVE (HIJAU) ---
+      // 1. Header jadi Hijau
+      statusHeader.innerText = "APPROVED";
+      statusHeader.style.background = "var(--neon-green)";
+      statusHeader.style.color = "#000";
+
+      // 2. Kunci semua input Section 3 (View Only)
+      adminInputs.forEach(input => input.setAttribute('readonly', true));
+
+      // 3. Hilangkan butang simpan & Tunjuk Banner Lock
+      saveBtn.style.display = "none";
+      lockedBanner.style.display = "block";
+
+  } else {
+      // --- KES: PENDING (OREN) ---
+      // 1. Header jadi Oren
+      statusHeader.innerText = "PENDING ACTION";
+      statusHeader.style.background = "var(--neon-orange)";
+      statusHeader.style.color = "#000";
+
+      // 2. Buka kunci input Section 3 (Editable)
+      adminInputs.forEach(input => input.removeAttribute('readonly'));
+
+      // 3. Tunjuk butang simpan & Sorok Banner Lock
+      saveBtn.style.display = "flex";
+      lockedBanner.style.display = "none";
+  }
+
+  form.scrollIntoView({behavior: "smooth", block: "start"});
+  if(window.innerWidth < 768) {
+      document.getElementById('sidebar').classList.remove('active');
+      document.querySelector('.sidebar-overlay').classList.remove('active');
+  }
+}
+
+// 5. Submit Logic (Pending -> Approved)
+document.getElementById("saveComplaint").onclick = async () => {
+  const id = document.getElementById("complaintDetail").dataset.id;
+  if(!id) return;
+
+  // Validation: Pastikan isi
+  const rec = document.getElementById('recommendsection3').value;
+  const name = document.getElementById('section3nameposition').value;
+  const date = document.getElementById('section3date').value;
+
+  if(!rec || !name || !date) {
+      alert("Please complete Section 3 before approving.");
+      return;
+  }
+
+  if(!confirm("Submit and Approve this report?\n\nWARNING: Once approved, this record will be LOCKED.")) {
+      return;
+  }
+
+  const btn = document.getElementById("saveComplaint");
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAVING...';
+
+  try{
+    await db.collection(COLLECTION_NAME).doc(id).set({
+      previousmaintenancecost: +document.getElementById('previousmaintenancecost').value || 0,
+      estimatedmaintenancecost: +document.getElementById('estimatedmaintenancecost').value || 0,
+      recommendsection3: rec,
+      section3nameposition: name,
+      section3date: firebase.firestore.Timestamp.fromDate(new Date(date)),
+      
+      // AUTO CHANGE STATUS HERE
+      approvalstatus: "Approved",
+      
+      updatedBy: auth.currentUser.email,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true});
+
+    toast("Report Approved Successfully!");
+    
+    // Refresh & Lock UI
+    await loadComplaints(); 
+    loadDetail(id); 
+
+  } catch(e){
+    console.error(e);
+    toast("Error: " + e.message, true);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> SUBMIT & APPROVE';
+};
+
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
     document.querySelector('.sidebar-overlay').classList.toggle('active');
 }
-
-// --- 3. AUTH LOGIC (WITH SECURITY CHECK) ---
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    // ----------------------------------------------------------------
-    // 🔒 SECURITY CHECK: HANYA EMAIL YPKT ATAU ADMIN BOLEH MASUK
-    // ----------------------------------------------------------------
-    const allowedDomain = "@ypkt.gov.my";
-    
-    // 🔴 TUKAR EMAIL INI KEPADA EMAIL PERSONAL AWAK UTK TESTING (Contoh: "ali@gmail.com")
-    const myAdminEmail = "user@gmail.com"; 
-
-    // Logic Check
-    if (!user.email.endsWith(allowedDomain) && user.email !== myAdminEmail) {
-        alert("ACCESS DENIED: Please use authorized YPKT email.");
-        firebase.auth().signOut().then(() => {
-            window.location.href = "login.html";
-        });
-        return; // Stop execution here
-    }
-    // ----------------------------------------------------------------
-
-    // Populate User Info
-    document.getElementById("welcomeMsg").innerHTML = `Welcome User ...... <span style="color:var(--neon-blue); font-weight:bold;">${user.email}</span>`;
-    document.getElementById("displayEmail").textContent = user.email;
-    document.getElementById("displayUid").textContent = "UID: " + user.uid;
-
-    const joinedDate = new Date(user.metadata.creationTime).toLocaleDateString("ms-MY", { day: 'numeric', month: 'short', year: 'numeric' });
-    const lastLoginDate = new Date(user.metadata.lastSignInTime).toLocaleString("ms-MY", { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' });
-    document.getElementById("displayJoined").textContent = joinedDate;
-    document.getElementById("displayLastLogin").textContent = lastLoginDate;
-
-    // MULA DENGAR DATA
-    listenToComplaints();
-
-  } else {
-    // Kalau user tak login, tendang ke login page
-    window.location.href = "login.html";
-  }
-});
-
-// --- 4. TOGGLE METADATA ---
-function toggleMetadata() {
-    const panel = document.getElementById("metadataPanel");
-    const btn = document.getElementById("btnToggleMeta");
-    if (panel.style.display === "none") {
-        panel.style.display = "grid"; 
-        btn.innerHTML = `CLOSE <i class="fa-solid fa-chevron-up" style="margin-left:5px;"></i>`;
-        btn.style.color = "var(--neon-blue)";
-        btn.style.borderColor = "var(--neon-blue)";
-    } else {
-        panel.style.display = "none"; 
-        btn.innerHTML = `DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>`;
-        btn.style.color = "var(--text-muted)";
-        btn.style.borderColor = "rgba(255,255,255,0.2)";
-    }
-}
-
-// --- 5. LOGOUT ---
-document.getElementById("logout").addEventListener("click", ()=>{
-  firebase.auth().signOut().then(()=>{ window.location.href="login.html"; });
-});
-
-// --- 6. DATE HELPER ---
-function formatDate(ts){
-  return ts?.toDate ? ts.toDate().toLocaleDateString("ms-MY") : "-";
-}
-
-let complaintsData = [];
-let statusChart;
-
-// --- 7. CORE: REAL-TIME LISTENER & EFFICIENCY LOGIC ---
-function listenToComplaints() {
-  db.collection("complaint")
-    .orderBy("reportdatesection1", "desc")
-    .onSnapshot((snapshot) => {
-        // Ambil Data
-        complaintsData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        
-        // Render UI Biasa
-        renderTable();
-        renderStats();
-        renderDonut();
-
-        // KIRA SYSTEM EFFICIENCY (WOW FACTOR)
-        calculateEfficiency(); 
-    
-    }, (error) => {
-        console.error("Error stream:", error);
-    });
-}
-
-function calculateEfficiency() {
-    const total = complaintsData.length;
-    const approved = complaintsData.filter(c => c.approvalstatus === 'Approve').length;
-    
-    // Kira Peratusan
-    let percent = 0;
-    if (total > 0) {
-        percent = Math.round((approved / total) * 100);
-    }
-
-    // Ambil Elemen UI
-    const valueText = document.getElementById("efficiencyValue");
-    const labelText = document.getElementById("efficiencyLabel");
-    const circleBorder = document.getElementById("kpiCircle");
-    
-    // Set Nilai
-    valueText.textContent = percent + "%";
-    
-    // Logic Warna Cyberpunk
-    if (percent >= 80) {
-        // Hijau Neon (Bagus)
-        valueText.style.color = "#00ff9d"; 
-        valueText.style.textShadow = "0 0 15px rgba(0, 255, 157, 0.5)";
-        circleBorder.style.borderColor = "#00ff9d";
-        labelText.textContent = "SYSTEM OPTIMAL";
-        labelText.style.color = "#00ff9d";
-    } else if (percent >= 50) {
-        // Oren (Sederhana)
-        valueText.style.color = "#ffaa00";
-        valueText.style.textShadow = "0 0 15px rgba(255, 170, 0, 0.5)";
-        circleBorder.style.borderColor = "#ffaa00";
-        labelText.textContent = "SYSTEM STABLE";
-        labelText.style.color = "#ffaa00";
-    } else {
-        // Merah (Bahaya)
-        valueText.style.color = "#ff4d4d";
-        valueText.style.textShadow = "0 0 15px rgba(255, 77, 77, 0.5)";
-        circleBorder.style.borderColor = "#ff4d4d";
-        labelText.textContent = "ATTENTION NEEDED";
-        labelText.style.color = "#ff4d4d";
-    }
-}
-
-// --- 8. RENDER TABLE ---
-function renderTable(){
-  const tb = document.querySelector("#dashboardTable tbody");
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  tb.innerHTML = "";
-
-  const filtered = complaintsData.filter(c => 
-      c.id.toLowerCase().includes(search) ||
-      (c.lastUser||"").toLowerCase().includes(search) ||
-      (c.assettype||"").toLowerCase().includes(search)
-  );
-
-  if(filtered.length === 0){
-      tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">No matching data stream detected.</td></tr>`;
-      return;
-  }
-
-  filtered.forEach(c=>{
-    let statusColor = '#fff';
-    if(c.approvalstatus === 'Approve') statusColor = '#00ff9d';
-    else statusColor = '#ffaa00';
-
-    tb.innerHTML += `
-      <tr>
-        <td style="font-family:'Orbitron'; color:var(--neon-blue);">${c.id}</td>
-        <td>${c.lastUser || "-"}</td>
-        <td>${c.assettype || "-"}</td>
-        <td>${formatDate(c.damagedate)}</td>
-        <td style="color:${statusColor}; font-weight:bold;">${c.approvalstatus || "PENDING"}</td>
-      </tr>`;
-    });
-}
-
-// --- 9. RENDER STATS CARDS ---
-function renderStats(){
-  document.getElementById("totalComplaints").textContent = complaintsData.length;
-  document.getElementById("approveCount").textContent = 
-    complaintsData.filter(c=>c.approvalstatus==="Approve").length;
-  document.getElementById("notApproveCount").textContent = 
-    complaintsData.filter(c=>c.approvalstatus!=="Approve").length;
-}
-
-// --- 10. RENDER CHART JS ---
-function renderDonut(){
-  const approve = complaintsData.filter(c=>c.approvalstatus==="Approve").length;
-  const pending = complaintsData.length - approve;
-
-  if(statusChart) statusChart.destroy();
-  Chart.defaults.color = '#94a3b8';
-  Chart.defaults.font.family = 'Poppins';
-
-  statusChart = new Chart(document.getElementById("statusChart"),{
-    type:"doughnut",
-    data:{
-      labels:["Approved","Pending"],
-      datasets:[{
-        data:[approve,pending],
-        backgroundColor:["#00ff9d","#ff6600"],
-        borderColor: "#020617",
-        borderWidth: 2,
-        hoverOffset: 10
-      }]
-    },
-    options:{
-      cutout:"70%",
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins:{
-          legend:{
-              position:"bottom",
-              labels: { padding: 20, usePointStyle: true }
-          }
-      }
-    }
-  });
-}
-
-document.getElementById("searchInput").addEventListener("input", renderTable);
-
-const backToTopBtn = document.getElementById("backToTop");
-window.onscroll = function() {
-  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-    backToTopBtn.classList.add("show");
-  } else {
-    backToTopBtn.classList.remove("show");
-  }
-};
-backToTopBtn.onclick = function() {
-  window.scrollTo({top: 0, behavior: 'smooth'});
-};
 </script>
-
 </body>
 </html>
-
