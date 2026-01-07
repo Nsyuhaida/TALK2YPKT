@@ -41,7 +41,7 @@ body::before {
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
-.app { display:flex; min-height:100vh; position: relative; z-index: 1; opacity: 0; transition: opacity 0.5s; }
+.app { display:flex; min-height:100vh; position: relative; z-index: 1; opacity: 0; transition: opacity 0.5s; } /* App hidden by default */
 .app.loaded { opacity: 1; }
 
 /* --- LOADING OVERLAY --- */
@@ -85,6 +85,7 @@ body::before {
   background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
 }
+.nav a i { width: 20px; text-align: center; }
 
 #logout {
   margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -148,14 +149,16 @@ label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bo
 .input:not([readonly]):focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 157, 0.2); background: rgba(0,0,0,0.5); }
 .input[readonly] { background: rgba(255, 255, 255, 0.02); border-color: transparent; color: var(--neon-blue); cursor: default; }
 textarea.input { resize: vertical; min-height: 80px; }
+select.input { background-color: #020617; } 
 
 .btn-primary {
   width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer;
-  background: var(--neon-green); color: #000; font-family: 'Orbitron'; font-weight: bold;
+  background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold;
   margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 10px;
   transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
 }
-.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-green); }
+.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
 
 /* TOAST */
 .toast {
@@ -169,15 +172,29 @@ textarea.input { resize: vertical; min-height: 80px; }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.error { border-color: #ff4d4d; color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
 
+/* BACK TO TOP */
+#backToTop {
+  position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
+  background: var(--neon-blue); color: #000; border-radius: 50%; border: none; 
+  cursor: pointer; display: flex; justify-content: center; align-items: center;
+  font-size: 20px; box-shadow: 0 0 20px var(--neon-blue);
+  opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 100;
+}
+#backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+#backToTop:hover { transform: translateY(-5px); background: #fff; }
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
-    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; }
+    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
     .sidebar.active { left: 0; }
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; }
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
     .sidebar-overlay.active { display: block; }
-    .main { padding: 20px; }
+    .main { padding: 20px; width: 100%; }
     .mobile-header { display: flex; }
-    .form-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 20px; margin-bottom: 15px; }
+    .form-grid { grid-template-columns: 1fr; gap: 15px; }
     .full-width { grid-column: span 1; }
+    .card { padding: 20px; }
 }
 
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
@@ -191,7 +208,7 @@ textarea.input { resize: vertical; min-height: 80px; }
 
 <div id="authLoader">
     <div class="loader-spinner"></div>
-    <div class="loader-text">AUTHENTICATING...</div>
+    <div class="loader-text">AUTHENTICATING ACCESS...</div>
 </div>
 
 <div class="app" id="appContent">
@@ -209,12 +226,17 @@ textarea.input { resize: vertical; min-height: 80px; }
             <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
             <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
         </div>
-        <div class="nav"><a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a></div>
+
+        <div class="nav">
+            <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
+        </div>
     </aside>
 
     <main class="main">
         <div class="mobile-header">
-            <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <button class="mobile-toggle" onclick="toggleSidebar()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
             <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">DATA TERMINAL</div>
             <div style="width:24px;"></div>
         </div>
@@ -226,7 +248,7 @@ textarea.input { resize: vertical; min-height: 80px; }
         </div>
 
         <div class="table-card" id="complaintList">
-            <div style="padding:20px; text-align:center; color:#777;">Initializing database...</div>
+            <div style="padding:20px; text-align:center; color:#777;">Initializing database connection...</div>
         </div>
 
         <div id="complaintDetail" class="card">
@@ -234,7 +256,7 @@ textarea.input { resize: vertical; min-height: 80px; }
                 UPDATE RECORD
             </h2>
 
-            <h3><i class="fa-solid fa-lock"></i> SEC.1: USER REPORT (VIEW ONLY)</h3>
+            <h3><i class="fa-solid fa-lock"></i> SEC.1: USER REPORT (LOCKED)</h3>
             <div class="form-grid">
                 <div><label>Asset Type</label><input class="input" id="assettype" readonly></div>
                 <div><label>Serial Number</label><input class="input" id="SerialNumber" readonly></div>
@@ -244,37 +266,57 @@ textarea.input { resize: vertical; min-height: 80px; }
                 <div class="full-width"><label>Damage Description</label><textarea class="input" id="damagedescription" readonly></textarea></div>
             </div>
 
-            <h3><i class="fa-solid fa-clipboard-check"></i> SEC.2: USER RECOMMENDATION (VIEW ONLY)</h3>
+            <h3><i class="fa-solid fa-clipboard-check"></i> SEC.2: USER RECOMMENDATION (LOCKED)</h3>
             <div class="form-grid">
                 <div class="full-width"><label>User Recommendation</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
-                <div><label>Officer Name</label><input class="input" id="section2nameposition" readonly></div>
+                <div><label>Officer Name & Position</label><input class="input" id="section2nameposition" readonly></div>
                 <div><label>Submission Date</label><input class="input" type="datetime-local" id="section2date" readonly></div>
             </div>
 
             <h3 style="color:var(--neon-green); border-color: var(--neon-green);">
-                <i class="fa-solid fa-screwdriver-wrench"></i> SEC.3: ADMIN ASSESSMENT
+                <i class="fa-solid fa-screwdriver-wrench"></i> SEC.3: ADMIN ASSESSMENT (EDITABLE)
             </h3>
             <div class="form-grid">
                 <div><label>Previous Cost (RM)</label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
                 <div><label>Est. Maintenance Cost (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
-                <div class="full-width"><label>Admin Action / Technical Assessment</label><textarea class="input" id="recommendsection3" placeholder="Enter technical assessment here..."></textarea></div>
-                <div><label>Admin Name & Position</label><input class="input" id="section3nameposition" placeholder="e.g. Cik Ashri (Tech Officer)"></div>
+                <div class="full-width"><label>Admin Action / Recommendation</label><textarea class="input" id="recommendsection3" placeholder="Enter technical assessment..."></textarea></div>
+                <div><label>Admin Name & Position</label><input class="input" id="section3nameposition"></div>
                 <div><label>Assessment Date</label><input class="input" type="datetime-local" id="section3date"></div>
             </div>
 
+            <h3 style="color:var(--neon-green); border-color: var(--neon-green);">
+                <i class="fa-solid fa-stamp"></i> SEC.4: FINAL APPROVAL (EDITABLE)
+            </h3>
+            <div class="form-grid">
+                <div>
+                    <label>Approval Status</label>
+                    <select class="input" id="approvalstatus">
+                      <option>Approve</option>
+                      <option>Not approve</option>
+                      <option>Pending</option>
+                    </select>
+                </div>
+                <div><label>Approver Name</label><input class="input" id="approvername"></div>
+                <div><label>Approver Position</label><input class="input" id="approverposition"></div>
+                <div><label>Approval Date</label><input class="input" type="datetime-local" id="approvaldate"></div>
+                <div class="full-width"><label>Approval Comments</label><textarea class="input" id="approvalcomment" placeholder="Final remarks..."></textarea></div>
+            </div>
+
             <button class="btn-primary" id="saveComplaint">
-                <i class="fa-solid fa-check-circle"></i> SUBMIT & APPROVE
+                <i class="fa-solid fa-floppy-disk"></i> UPDATE DATABASE
             </button>
         </div>
-
     </main>
 </div>
 
 <div id="toast" class="toast"></div>
+<button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
 
 <script>
-// --- CONFIG ---
-const COLLECTION_NAME = "complaint";
+// --- KONFIGURASI PENTING ---
+const COLLECTION_NAME = "complaint"; // PASTIKAN EJAAN INI SAMA DENGAN DATABASE ANDA
+
+// --- FIREBASE CONFIG (Sila pastikan ini betul) ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -284,26 +326,43 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// --- AUTH ---
+// --- AUTH GUARD (PENYELAMAT DARI ERROR) ---
+// Ini adalah bahagian paling penting yang hilang sebelum ini.
 auth.onAuthStateChanged((user) => {
     const loader = document.getElementById("authLoader");
     const app = document.getElementById("appContent");
+
     if (user) {
+        // User dah login, check email domain
+        console.log("Logged in as:", user.email);
+        
         if (!user.email.endsWith('@ypkt.gov.my')) {
             alert("ACCESS DENIED: Only YPKT Admin authorized.");
             auth.signOut().then(() => window.location.href = "login.html");
             return;
         }
+
+        // Login Sah! Tunjukkan App & Load Data
         loader.style.display = "none";
         app.classList.add("loaded");
-        loadComplaints();
+        toast("Connected as: " + user.email);
+        loadComplaints(); // Mula tarik data
+
     } else {
+        // Tak login lagi -> Tendang ke Login Page
+        console.warn("No user detected. Redirecting...");
         window.location.href = "login.html";
     }
 });
-document.getElementById("logout").onclick=()=>auth.signOut().then(()=>window.location.href="login.html");
 
-// --- HELPER ---
+// Logout Logic
+document.getElementById("logout").onclick = () => {
+    if(confirm("Are you sure you want to sign out?")){
+        auth.signOut().then(() => window.location.href="login.html");
+    }
+};
+
+// --- HELPER FUNCTIONS ---
 const dt=t=>t&&t.toDate?t.toDate().toISOString().slice(0,16):"";
 const toast=(msg,err=false)=>{
   const t=document.getElementById("toast");
@@ -312,18 +371,23 @@ const toast=(msg,err=false)=>{
   setTimeout(() => t.classList.remove("show"), 3000);
 }
 
-// --- MAIN LOGIC ---
+// --- DATA LOGIC ---
 let complaints=[];
 
 // 1. Load Data
 async function loadComplaints(){
   try {
-      const s=await db.collection(COLLECTION_NAME).orderBy('updatedAt', 'desc').get();
+      const s=await db.collection(COLLECTION_NAME).get(); // Guna variable collection name
       complaints=s.docs.map(d=>({id:d.id,...d.data()}));
       renderTable(complaints);
   } catch (err) {
-      console.error(err);
-      document.getElementById("complaintList").innerHTML = `<div style="padding:20px; color:#ff4d4d; text-align:center;">Database Error.</div>`;
+      console.error("Load Error:", err);
+      // Jika permission error, dia akan keluar di console
+      document.getElementById("complaintList").innerHTML = 
+        `<div style="padding:20px; color:#ff4d4d; text-align:center;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Error loading data.<br>
+            <small>${err.message}</small>
+         </div>`;
   }
 }
 
@@ -331,26 +395,22 @@ async function loadComplaints(){
 function renderTable(list){
   const container = document.getElementById("complaintList");
   if(list.length === 0) {
-      container.innerHTML = "<div style='padding:20px; text-align:center; color:#888;'>No records found.</div>";
+      container.innerHTML = "<div style='padding:20px; text-align:center; color:#888;'>No records found in database.</div>";
       return;
   }
-   
+  
   let h = "<div class='table-wrapper'><table><thead><tr><th>ID REF</th><th>USER</th><th>STATUS</th></tr></thead><tbody>";
   list.forEach(c => {
-    // Check status: Kalau "Approved" (hijau), kalau lain (oren/kelabu)
-    let isApproved = c.approvalstatus === 'Approved';
-    let color = isApproved ? '#00ff9d' : '#ff9500'; 
-    let displayStatus = isApproved ? "Approved" : "Pending";
-
+    let color = c.approvalstatus === 'Approve' ? '#00ff9d' : (c.approvalstatus === 'Not approve' ? '#ff4d4d' : '#ccc');
     h += `<tr data-id="${c.id}">
       <td style="font-family:'Orbitron'; color:var(--neon-blue)">${c.id}</td>
       <td>${c.lastUser||"-"}</td>
-      <td style="color:${color}; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">${displayStatus}</td>
+      <td style="color:${color}; font-weight:bold;">${c.approvalstatus||"Pending"}</td>
     </tr>`;
   });
   h += "</tbody></table></div>";
   container.innerHTML = h;
-   
+  
   container.querySelectorAll("tr[data-id]").forEach(r => {
     r.onclick = () => loadDetail(r.dataset.id);
   });
@@ -366,14 +426,16 @@ document.getElementById("searchInput").oninput = (e) => {
 async function loadDetail(id){
   const docRef = await db.collection(COLLECTION_NAME).doc(id).get();
   if(!docRef.exists) return;
-   
+  
   const d = docRef.data();
   const form = document.getElementById("complaintDetail");
   
   form.style.display="block";
   form.dataset.id = id;
 
+  // Populate Fields
   const setVal = (eid, val) => document.getElementById(eid).value = val || "";
+  
   setVal('assettype', d.assettype);
   setVal('SerialNumber', d.serialNumber);
   setVal('lastUser', d.lastUser);
@@ -384,23 +446,28 @@ async function loadDetail(id){
   setVal('section2nameposition', d.section2nameposition);
   setVal('section2date', dt(d.section2date));
 
-  // Admin Section 3
+  // Admin Fields
   setVal('previousmaintenancecost', d.previousmaintenancecost);
   setVal('estimatedmaintenancecost', d.estimatedmaintenancecost);
   setVal('recommendsection3', d.recommendsection3);
   setVal('section3nameposition', d.section3nameposition);
   setVal('section3date', dt(d.section3date));
-
-  // Section 4 dah dibuang, so tak perlu populate data approvalstatus
+  setVal('approvalstatus', d.approvalstatus || "Pending");
+  setVal('approvalcomment', d.approvalcomment);
+  setVal('approvername', d.approvername);
+  setVal('approverposition', d.approverposition);
+  setVal('approvaldate', dt(d.approvaldate));
 
   form.scrollIntoView({behavior: "smooth", block: "start"});
+
+  // Mobile Sidebar Toggle Close
   if(window.innerWidth < 768) {
       document.getElementById('sidebar').classList.remove('active');
       document.querySelector('.sidebar-overlay').classList.remove('active');
   }
 }
 
-// 5. Submit Logic (AUTO APPROVE)
+// 5. Update Database
 document.getElementById("saveComplaint").onclick = async () => {
   const id = document.getElementById("complaintDetail").dataset.id;
   if(!id) return;
@@ -409,42 +476,54 @@ document.getElementById("saveComplaint").onclick = async () => {
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SAVING...';
 
+  // Helper untuk get value
   const getVal = (id) => document.getElementById(id).value;
   
   try{
     await db.collection(COLLECTION_NAME).doc(id).set({
-      // Data Section 3
       previousmaintenancecost: +getVal('previousmaintenancecost') || 0,
       estimatedmaintenancecost: +getVal('estimatedmaintenancecost') || 0,
       recommendsection3: getVal('recommendsection3'),
       section3nameposition: getVal('section3nameposition'),
       section3date: getVal('section3date') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('section3date'))) : null,
       
-      // AUTO SET STATUS KE APPROVED
-      approvalstatus: "Approved", 
+      approvalstatus: getVal('approvalstatus'),
+      approvalcomment: getVal('approvalcomment'),
+      approvername: getVal('approvername'),
+      approverposition: getVal('approverposition'),
+      approvaldate: getVal('approvaldate') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('approvaldate'))) : null,
       
-      updatedBy: auth.currentUser.email,
+      updatedBy: auth.currentUser.email, // Rekod siapa yang update
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     },{merge:true});
 
-    toast("Report Approved Successfully!");
-    
-    // Refresh Table
-    loadComplaints(); 
-
+    toast("Database Updated Successfully");
+    loadComplaints(); // Refresh data
   } catch(e){
     console.error(e);
-    toast("Error: " + e.message, true);
+    if(e.code === 'permission-denied'){
+        toast("Access Denied: Check Rules/Login", true);
+    } else {
+        toast("Update Failed: " + e.message, true);
+    }
   }
 
   btn.disabled = false;
-  btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> SUBMIT & APPROVE';
+  btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> UPDATE DATABASE';
 };
 
+// UI Toggles
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
     document.querySelector('.sidebar-overlay').classList.toggle('active');
 }
+
+const backToTopBtn = document.getElementById("backToTop");
+window.onscroll = () => {
+  backToTopBtn.classList.toggle("show", window.scrollY > 200);
+};
+backToTopBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
+
 </script>
 </body>
 </html>
