@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>System Access | Admin Login</title>
+<title>Login | TALK2YPKT Admin</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -46,7 +46,6 @@ body::before {
 /* --- KAD LOGIN --- */
 .login-card-wrap {
     position: relative;
-    /* Height dilaraskan sedikit sebab Google button dah tiada */
     min-height: 560px; 
     border-radius: 20px; overflow: hidden; padding: 3px; 
     opacity: 0; transform: translateY(30px) scale(0.95);
@@ -65,16 +64,16 @@ body::before {
     position: relative; height: 100%;
     background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(10px);
-    border-radius: 18px; padding: 40px 30px;
+    border-radius: 18px; padding: 30px 30px; /* Padding atas dikurangkan sikit */
     text-align: center; z-index: 1;
     box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.05);
 }
 
-/* --- LOGO STYLE --- */
+/* --- LOGO STYLE (DIKECILKAN) --- */
 .login-logo {
-    width: 100px;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 15px rgba(255,255,255,0.2)); /* Glow effect */
+    width: 80px; /* Saiz logo dikecilkan */
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
     animation: fadeInLogo 1.5s ease;
 }
 
@@ -121,7 +120,7 @@ input:focus{
 
 /* VIP SECTION */
 .vip-section {
-    margin-top: 35px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;
+    margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;
 }
 .btn-vip {
     display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
@@ -152,7 +151,7 @@ input:focus{
         
         <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="YPKT Logo" class="login-logo">
         
-        <h2>SYSTEM ACCESS</h2>
+        <h2>TALK2YPKT</h2>
         <p>Identify yourself to proceed.</p>
 
         <div class="form-group">
