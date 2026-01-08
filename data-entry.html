@@ -11,11 +11,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-/* --- IMPORT FONTS --- */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap');
-
+/* --- 1. DESIGN SYSTEM (SAMA MACAM DASHBOARD) --- */
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
@@ -28,7 +27,6 @@
 
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior: smooth; }
 
-/* BACKGROUND */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
   background-size: 400% 400%; animation: bgMove 20s ease infinite;
@@ -43,7 +41,7 @@ body::before {
 
 .app { display:flex; min-height:100vh; position: relative; z-index: 1; }
 
-/* --- SIDEBAR (IKUT DESIGN ASAL) --- */
+/* --- 2. SIDEBAR & HAMBURGER --- */
 .sidebar {
   width: 260px; 
   background: var(--glass); 
@@ -53,8 +51,9 @@ body::before {
   display: flex; flex-direction: column; 
   position: sticky; top: 0; height: 100vh;
   z-index: 100;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, left 0.3s ease; /* Smooth slide for mobile */
 }
+
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
 .brand {
   font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
@@ -76,76 +75,109 @@ body::before {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 20px; border-radius: 0; cursor: pointer;
 }
-#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; }
 
-/* --- MAIN CONTENT --- */
-.main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
+/* OVERLAY GELAP UNTUK MOBILE */
+.sidebar-overlay { 
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
+    z-index: 90; display: none; backdrop-filter: blur(5px); 
+}
+.sidebar-overlay.active { display: block; }
+
+/* --- 3. MAIN CONTENT --- */
+.main { flex:1; padding:30px; width: 100%; overflow-x: hidden; }
+
+/* MOBILE HEADER (HAMBURGER) */
 .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px; }
+.mobile-toggle { 
+    background: none; border: none; color: var(--neon-blue); 
+    font-size: 24px; cursor: pointer; padding: 5px; 
+}
 
 h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
 
-/* SEARCH & TABLE */
+/* SEARCH INPUT */
 .search-container { margin-bottom: 25px; }
-#searchInput { width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 50px; color: #fff; outline: none; transition: 0.3s; }
+#searchInput { 
+    width: 100%; max-width: 600px; padding: 12px 20px; 
+    background: rgba(0,0,0,0.4); border: 1px solid var(--border); 
+    border-radius: 50px; color: #fff; outline: none; transition: 0.3s; 
+}
 #searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-.table-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid var(--border); padding: 0; overflow: hidden; margin-bottom: 30px; max-height: 350px; overflow-y: auto; }
-table { width:100%; border-collapse: collapse; min-width: 600px; }
-th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; }
-td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; cursor: pointer; }
+/* --- 4. TABLE RESPONSIVE (SCROLL TEPI) --- */
+.table-card { 
+    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); 
+    border-radius: 16px; border: 1px solid var(--border); 
+    padding: 0; margin-bottom: 30px; 
+    max-height: 400px; 
+    overflow-y: auto; /* Scroll atas bawah */
+    overflow-x: auto; /* Scroll tepi (PENTING UTK PHONE) */
+}
+table { width:100%; border-collapse: collapse; min-width: 600px; /* Paksa table lebar supaya boleh scroll */ }
+th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; white-space: nowrap; }
+td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; cursor: pointer; white-space: nowrap; }
 tr:hover { background: rgba(0, 243, 255, 0.05); color: #fff; }
 
-/* FORM CARD */
-.card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); padding: 40px; border-radius: 16px; border: 1px solid var(--border); display: none; margin-bottom: 50px; animation: fadeIn 0.5s ease; }
+/* FORM STYLE */
+.card { 
+    background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); padding: 40px; 
+    border-radius: 16px; border: 1px solid var(--border); 
+    display: none; margin-bottom: 50px; animation: fadeIn 0.5s ease; 
+}
+h2 { font-family:'Orbitron'; color:#fff; border-bottom:2px solid var(--neon-blue); padding-bottom:10px; margin-bottom:20px; font-size: 20px; }
 h3 { font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 25px; margin-bottom: 15px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .full-width { grid-column: span 2; }
-label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; }
+
+label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
 .input { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; outline: none; transition: 0.3s; }
 .input:focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 157, 0.2); }
-.input[readonly] { background: rgba(255, 255, 255, 0.02); color: var(--neon-blue); border-color: transparent; }
+.input[readonly] { background: rgba(255, 255, 255, 0.03); color: var(--neon-blue); border-color: transparent; }
 
-/* STATUS BOX (NEW LOGIC) */
-.status-box {
-    margin-top: 30px; padding: 20px; border-radius: 10px;
+/* DECISION BOX (LOGIC BARU) */
+.decision-box {
+    grid-column: span 2;
+    margin-top: 25px; padding: 20px;
     border: 1px solid var(--neon-gold);
     background: rgba(251, 191, 36, 0.05);
+    border-radius: 8px;
 }
-.status-box h4 { color: var(--neon-gold); font-family: 'Orbitron'; margin-bottom: 10px; font-size: 14px; }
-.status-box p { font-size: 12px; color: #94a3b8; margin-bottom: 15px; }
+.decision-title { color: var(--neon-gold); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.decision-select { background: #000; border: 1px solid var(--neon-gold); color: var(--neon-gold); font-weight: bold; cursor: pointer; }
+.info-text { margin-top:10px; font-size:11px; color:#94a3b8; line-height: 1.4; }
 
-.btn-primary { width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer; background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold; margin-top: 20px; transition:0.3s; }
-.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); }
+.btn-primary { width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer; background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold; margin-top: 20px; transition:0.3s; font-size: 16px; }
+.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); transform: scale(1.02); }
 
-/* LOADER */
-#authLoader { position: fixed; inset: 0; background: #020617; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.loader-spinner { width: 50px; height: 50px; border: 3px solid transparent; border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+/* --- 5. MEDIA QUERIES (UNTUK PHONE) --- */
+@media (max-width: 768px) {
+    /* Sidebar sorok ke kiri */
+    .sidebar { position: fixed; left: -100%; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
+    /* Sidebar bila active (muncul) */
+    .sidebar.active { left: 0; }
+    
+    .mobile-header { display: flex; } /* Tunjuk Hamburger */
+    .main { padding: 20px; }
+    
+    /* Form jadi satu column memanjang ke bawah */
+    .form-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
+    .decision-box { grid-column: span 1; }
+    
+    /* Adjust text size */
+    h1 { font-size: 22px; }
+    .card { padding: 20px; }
+}
 
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-@media (max-width: 768px) {
-    .sidebar { position: fixed; left: -100%; width: 80%; }
-    .sidebar.active { left: 0; }
-    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; }
-    .sidebar-overlay.active { display: block; }
-    .mobile-header { display: flex; }
-    .form-grid { grid-template-columns: 1fr; }
-    .full-width { grid-column: span 1; }
-}
 </style>
 </head>
 
 <body>
 
-<div id="authLoader">
-    <div class="loader-spinner"></div>
-    <div style="font-family:'Orbitron'; color:var(--neon-blue);">LOADING TERMINAL...</div>
-</div>
-
-<div class="app" id="appContent">
+<div class="app">
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar" id="sidebar">
@@ -176,81 +208,82 @@ label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bo
         <h1><i class="fa-solid fa-terminal"></i> DATA ENTRY TERMINAL</h1>
 
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search Database (ID / User)...">
+            <input type="text" id="searchInput" placeholder="Cari (ID / Nama User)...">
         </div>
 
         <div class="table-card" id="complaintList">
-            <div style="padding:20px; text-align:center; color:#777;">Loading...</div>
+            <div style="padding:20px; text-align:center; color:#777;">Loading Data...</div>
         </div>
 
         <div id="complaintDetail" class="card">
-            <h2 style="font-family:'Orbitron'; color:#fff; border-bottom:2px solid var(--neon-blue); padding-bottom:10px; margin-bottom:20px;">
-                UPDATE RECORD
-            </h2>
+            <h2>UPDATE RECORD</h2>
 
-            <h3>SEC.1: USER REPORT (READ ONLY)</h3>
+            <h3>SEC.1: MAKLUMAT PENGADU (READ ONLY)</h3>
             <div class="form-grid">
-                <div><label>Asset Type</label><input class="input" id="assettype" readonly></div>
-                <div><label>Serial No.</label><input class="input" id="SerialNumber" readonly></div>
-                <div><label>Reported By</label><input class="input" id="lastUser" readonly></div>
-                <div><label>Damage Date</label><input class="input" id="damagedate" readonly></div>
-                <div class="full-width"><label>Damage Description</label><textarea class="input" id="damagedescription" readonly></textarea></div>
+                <div><label>Jenis Aset</label><input class="input" id="assettype" readonly></div>
+                <div><label>No. Siri</label><input class="input" id="SerialNumber" readonly></div>
+                <div><label>Dilapor Oleh</label><input class="input" id="lastUser" readonly></div>
+                <div><label>Tarikh Rosak</label><input class="input" id="damagedate" readonly></div>
+                <div class="full-width"><label>Kerosakan</label><textarea class="input" id="damagedescription" readonly></textarea></div>
             </div>
 
-            <h3>SEC.2: OFFICER RECOMMENDATION (READ ONLY)</h3>
+            <h3>SEC.2: ULASAN PEGAWAI (READ ONLY)</h3>
             <div class="form-grid">
-                <div class="full-width"><label>Recommendation</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
-                <div><label>Officer Name</label><input class="input" id="section2nameposition" readonly></div>
-                <div><label>Date</label><input class="input" id="section2date" readonly></div>
+                <div class="full-width"><label>Ulasan Pegawai Penyiasat</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
+                <div><label>Nama Pegawai</label><input class="input" id="section2nameposition" readonly></div>
+                <div><label>Tarikh</label><input class="input" id="section2date" readonly></div>
             </div>
 
             <h3 style="color:var(--neon-green); border-color: var(--neon-green);">
-                SEC.3: ADMIN ASSESSMENT (IT DEPARTMENT)
+                SEC.3: PENILAIAN TEKNIKAL (ADMIN IT)
             </h3>
             <div class="form-grid">
-                <div><label>Previous Cost (RM)</label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
-                <div><label>Estimated Cost (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
-                <div class="full-width"><label>Technical Action / Comment</label><textarea class="input" id="recommendsection3" placeholder="Enter technical details..."></textarea></div>
-                <div><label>IT Officer Name</label><input class="input" id="section3nameposition"></div>
-                <div><label>Date</label><input class="input" type="datetime-local" id="section3date"></div>
-            </div>
+                <div><label>Kos Terdahulu (RM)</label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
+                <div><label>Anggaran Kos (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
+                <div class="full-width"><label>Tindakan Teknikal / Ulasan</label><textarea class="input" id="recommendsection3" placeholder="Masukkan ulasan teknikal..."></textarea></div>
+                <div><label>Nama Pegawai IT</label><input class="input" id="section3nameposition"></div>
+                <div><label>Tarikh</label><input class="input" type="datetime-local" id="section3date"></div>
 
-            <div class="status-box">
-                <h4><i class="fa-solid fa-gavel"></i> APPROVAL MODE SELECTION</h4>
-                <p>Sila pilih kaedah kelulusan untuk borang ini:</p>
-                
-                <div class="form-group">
-                    <label style="color:var(--neon-gold);">SECTION 4 ACTION:</label>
-                    <select id="approvalMode" class="input" style="border:1px solid var(--neon-gold); color:var(--neon-gold);">
-                        <option value="Pending">PENDING (Tunggu Pengarah Approve Online)</option>
-                        <option value="Hardcopy">COMPLETED (Borang Fizikal / Hardcopy Signed)</option>
+                <div class="decision-box">
+                    <div class="decision-title"><i class="fa-solid fa-gavel"></i> TINDAKAN KELULUSAN (SECTION 4)</div>
+                    <p style="font-size:12px; color:#ccc; margin-bottom:10px;">Sila pilih kaedah kelulusan seterusnya:</p>
+                    
+                    <select id="approvalMode" class="input decision-select">
+                        <option value="Pending">1. PROSES ONLINE (Hantar ke Dashboard Pengarah)</option>
+                        <option value="Hardcopy">2. PROSES HARDCOPY (Borang Fizikal Selesai)</option>
                     </select>
+                    
+                    <div class="info-text">
+                        <i class="fa-solid fa-circle-info"></i> <b>Nota:</b><br>
+                        • <b>Online:</b> Status kekal "Pending". Pengarah perlu sign digital.<br>
+                        • <b>Hardcopy:</b> Status jadi "Approve" automatik. Tandatangan digital dikosongkan.
+                    </div>
                 </div>
-                <p style="margin-top:10px; font-size:10px; color:#fff;">* Jika pilih <b>Hardcopy</b>, sistem akan automatik set status ke "Approve" tanpa tandatangan digital.</p>
             </div>
 
             <button class="btn-primary" id="saveComplaint">
-                <i class="fa-solid fa-floppy-disk"></i> SAVE & UPDATE
+                <i class="fa-solid fa-floppy-disk"></i> KEMASKINI & SIMPAN
             </button>
         </div>
     </main>
 </div>
 
 <script>
-// --- FIREBASE SETUP ---
+// --- CONFIG FIREBASE ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
   projectId:"e-complaint-8nu9kp"
 };
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// AUTH
+// --- AUTH CHECK ---
 auth.onAuthStateChanged((user) => {
     if (user && user.email.endsWith('@ypkt.gov.my')) {
-        document.getElementById("authLoader").style.display="none";
         loadComplaints();
     } else {
         window.location.href = "login.html";
@@ -258,23 +291,31 @@ auth.onAuthStateChanged((user) => {
 });
 document.getElementById("logout").onclick = () => auth.signOut();
 
-// UTILS
+// --- SIDEBAR FUNCTION (MOBILE) ---
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+// --- UTILS DATE ---
 const dt = (t) => {
     if (!t || !t.toDate) return "";
     const d = t.toDate();
-    const localDate = new Date(d.getTime() - (d.getTimezoneOffset() * 60000));
-    return localDate.toISOString().slice(0, 16);
+    const offset = d.getTimezoneOffset() * 60000;
+    const local = new Date(d.getTime() - offset);
+    return local.toISOString().slice(0, 16);
 };
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-    document.querySelector('.sidebar-overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none';
+const displayDate = (t) => {
+    if (!t || !t.toDate) return "-";
+    return t.toDate().toLocaleString('ms-MY');
 }
 
-// DATA
+// --- DATA LOGIC ---
 let complaints=[];
+
 async function loadComplaints(){
     try {
-        const s = await db.collection("complaint").orderBy("updatedAt", "desc").get();
+        const s = await db.collection("complaint").orderBy("updatedAt", "desc").limit(50).get();
         complaints = s.docs.map(d => ({id:d.id, ...d.data()}));
         renderTable(complaints);
     } catch(e) { console.error(e); }
@@ -282,16 +323,17 @@ async function loadComplaints(){
 
 function renderTable(list){
     const div = document.getElementById("complaintList");
-    if(list.length === 0) { div.innerHTML = "<div style='padding:20px;text-align:center'>No Data</div>"; return; }
+    if(list.length === 0) { div.innerHTML = "<div style='padding:20px;text-align:center'>Tiada Rekod</div>"; return; }
     
-    let h = "<table><thead><tr><th>REF ID</th><th>USER</th><th>STATUS</th></tr></thead><tbody>";
+    let h = "<table><thead><tr><th>ID</th><th>PENGADU</th><th>STATUS</th></tr></thead><tbody>";
     list.forEach(c => {
         let s = c.approvalstatus || "Pending";
         let color = (s === 'Approve') ? '#00ff9d' : (s === 'Reject' ? '#ff4d4d' : '#ccc');
+        
         h += `<tr onclick="loadDetail('${c.id}')">
             <td style="color:var(--neon-blue);font-family:'Orbitron'">${c.id}</td>
             <td>${c.lastUser||"-"}</td>
-            <td style="color:${color};font-weight:bold">${s}</td>
+            <td style="color:${color};font-weight:bold;font-size:11px;">${s.toUpperCase()}</td>
         </tr>`;
     });
     h += "</tbody></table>";
@@ -300,10 +342,13 @@ function renderTable(list){
 
 document.getElementById("searchInput").oninput = (e) => {
     const v = e.target.value.toLowerCase();
-    renderTable(complaints.filter(c => c.id.toLowerCase().includes(v) || (c.lastUser||"").toLowerCase().includes(v)));
+    renderTable(complaints.filter(c => 
+        c.id.toLowerCase().includes(v) || 
+        (c.lastUser||"").toLowerCase().includes(v)
+    ));
 };
 
-// LOAD DETAIL
+// --- LOAD DETAIL & FIX SECTION 2 ---
 async function loadDetail(id){
     const d = complaints.find(c => c.id === id);
     if(!d) return;
@@ -314,32 +359,48 @@ async function loadDetail(id){
 
     const setVal = (eid, val) => document.getElementById(eid).value = val || "";
     
+    // SEC 1
     setVal('assettype', d.assettype);
     setVal('SerialNumber', d.serialNumber);
     setVal('lastUser', d.lastUser);
-    setVal('damagedate', dt(d.damagedate));
+    setVal('damagedate', displayDate(d.damagedate));
     setVal('damagedescription', d.damagedescription);
-    setVal('reportdatesection1', dt(d.reportdatesection1));
-    setVal('recommendationsection2', d.recommendationsection2);
-    setVal('section2nameposition', d.section2nameposition);
-    setVal('section2date', dt(d.section2date));
 
-    // Admin Fields
+    // SEC 2 (PASTIKAN FIELD NAME BETUL DI SINI)
+    setVal('recommendationsection2', d.recommendationsection2 || d.section2recommendation); // Cuba dua-dua nama field
+    setVal('section2nameposition', d.section2nameposition);
+    setVal('section2date', displayDate(d.section2date));
+
+    // SEC 3 (IT INPUT)
     setVal('previousmaintenancecost', d.previousmaintenancecost);
     setVal('estimatedmaintenancecost', d.estimatedmaintenancecost);
     setVal('recommendsection3', d.recommendsection3);
     setVal('section3nameposition', d.section3nameposition);
-    setVal('section3date', dt(d.section3date));
+    
+    // Set Date Default to NOW if empty
+    if(d.section3date) {
+        document.getElementById('section3date').value = dt(d.section3date);
+    } else {
+        const now = new Date();
+        const offset = now.getTimezoneOffset() * 60000;
+        document.getElementById('section3date').value = new Date(now - offset).toISOString().slice(0, 16);
+    }
 
-    // SET DROPDOWN LOGIC
-    // Jika status Approve TAPI tiada signature -> Bermakna Hardcopy
+    // LOGIC CHECK STATUS UNTUK DROPDOWN
+    // Kalau dah Approve TAPI signature kosong -> Hardcopy
     const isHardcopy = (d.approvalstatus === 'Approve' && !d.approverSignature);
     document.getElementById("approvalMode").value = isHardcopy ? "Hardcopy" : "Pending";
 
+    // Scroll ke form
     form.scrollIntoView({behavior: "smooth"});
+    // Tutup sidebar kalau di mobile lepas click
+    if(window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('active');
+        document.querySelector('.sidebar-overlay').classList.remove('active');
+    }
 }
 
-// SAVE DATA
+// --- SAVE FUNCTION ---
 document.getElementById("saveComplaint").onclick = async () => {
     const id = document.getElementById("complaintDetail").dataset.id;
     if(!id) return;
@@ -357,22 +418,26 @@ document.getElementById("saveComplaint").onclick = async () => {
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // LOGIC PENENTU: ONLINE KE HARDCOPY?
+    // LOGIC PENTING:
     if (mode === "Hardcopy") {
-        // Kalau pilih Hardcopy, paksa jadi Approve & kosongkan signature
+        // Jika Hardcopy: Terus APPROVE & Kosongkan Signature
         updateData.approvalstatus = "Approve";
         updateData.approvername = "Manual (Hardcopy)";
-        updateData.approverposition = "Manual"; 
+        updateData.approverposition = "Manual";
         updateData.approvaldate = firebase.firestore.FieldValue.serverTimestamp();
-        updateData.approvalcomment = "Completed via Hardcopy";
+        updateData.approvalcomment = "Selesai secara Manual/Hardcopy.";
         updateData.approverSignature = ""; // Kosongkan signature utk trigger logic dashboard
     } 
-    // Jika pilih "Pending", kita biarkan status asal (jangan kacau kalau dah approved online)
-    // Cuma update data Section 3 sahaja.
+    // Jika "Pending", status tak diusik, tunggu Pengarah approve online.
 
     try {
         await db.collection("complaint").doc(id).set(updateData, {merge:true});
-        Swal.fire("Success", "Data Updated Successfully", "success");
+        Swal.fire({
+            title: "Berjaya!",
+            text: "Data telah dikemaskini.",
+            icon: "success",
+            background: '#0f172a', color: '#fff'
+        });
         loadComplaints();
     } catch(e) {
         Swal.fire("Error", e.message, "error");
