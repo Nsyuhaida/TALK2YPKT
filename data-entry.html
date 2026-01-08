@@ -8,6 +8,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -19,6 +20,7 @@
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
   --neon-gold: #fbbf24;
+  --neon-red: #ff4d4d;
   --bg-dark: #020617;
   --glass: rgba(15, 23, 42, 0.95);
   --border: rgba(0, 243, 255, 0.2);
@@ -29,11 +31,8 @@
 /* BACKGROUND */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
-  background-size: 400% 400%;
-  animation: bgMove 20s ease infinite;
-  color: #e2e8f0;
-  min-height: 100vh;
-  overflow-x: hidden;
+  background-size: 400% 400%; animation: bgMove 20s ease infinite;
+  color: #e2e8f0; min-height: 100vh; overflow-x: hidden;
 }
 body::before {
   content: ""; position: fixed; inset: 0;
@@ -42,177 +41,75 @@ body::before {
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
-.app { display:flex; min-height:100vh; position: relative; z-index: 1; opacity: 0; transition: opacity 0.5s; } /* App hidden by default */
-.app.loaded { opacity: 1; }
-
-/* --- LOADING OVERLAY --- */
-#authLoader {
-    position: fixed; inset: 0; background: #020617; z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.loader-spinner {
-    width: 50px; height: 50px; border: 3px solid transparent; border-top-color: var(--neon-blue);
-    border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px;
-}
-.loader-text { font-family: 'Orbitron'; color: var(--neon-blue); letter-spacing: 2px; animation: pulse 1.5s infinite; }
+.app { display:flex; min-height:100vh; position: relative; z-index: 1; }
 
 /* --- SIDEBAR --- */
 .sidebar {
-  width: 260px; 
-  background: var(--glass); 
-  backdrop-filter: blur(15px);
-  border-right: 1px solid var(--border); 
-  padding: 30px 20px;
-  display: flex; flex-direction: column; 
-  position: sticky; top: 0; height: 100vh;
-  z-index: 100;
-  transition: transform 0.3s ease;
+  width: 260px; background: var(--glass); backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border); padding: 30px 20px;
+  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  z-index: 100; transition: transform 0.3s ease;
 }
-
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
-.brand {
-  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
-  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
-}
-
+.brand { font-family: 'Orbitron'; font-size: 18px; font-weight: 700; text-align: center; color: var(--neon-blue); margin-bottom: 40px; letter-spacing: 2px; }
 .nav-links { flex: 1; display: flex; flex-direction: column; }
-
 .nav a {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
-  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
-  font-size: 14px; border: 1px solid transparent;
+  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-size: 14px;
 }
-.nav a:hover, .nav a.active {
-  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
-}
-.nav a i { width: 20px; text-align: center; }
-
-#logout {
-  margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px; border-radius: 0; cursor: pointer;
-}
-#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; border-top-color: rgba(255, 255, 255, 0.3); }
+.nav a:hover, .nav a.active { background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border); box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); }
+#logout { margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; cursor: pointer; }
 
 /* --- MAIN CONTENT --- */
 .main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
-
 .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px; }
 
-h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
-
 /* SEARCH & TABLE */
 .search-container { margin-bottom: 25px; }
-#searchInput {
-  width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4);
-  border: 1px solid var(--border); border-radius: 50px; color: #fff; outline: none; transition: 0.3s;
-}
-#searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
-
-.table-card {
-  background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
-  border-radius: 16px; border: 1px solid var(--border);
-  padding: 0; overflow: hidden; margin-bottom: 30px;
-  max-height: 350px; overflow-y: auto;
-}
-.table-wrapper { width: 100%; overflow-x: auto; }
+#searchInput { width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 50px; color: #fff; outline: none; transition: 0.3s; }
+.table-card { background: rgba(15, 23, 42, 0.6); border-radius: 16px; border: 1px solid var(--border); padding: 0; overflow: hidden; margin-bottom: 30px; max-height: 350px; overflow-y: auto; }
 table { width:100%; border-collapse: collapse; min-width: 600px; }
-th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; backdrop-filter: blur(5px); white-space: nowrap; }
-td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; }
-tr:hover { background: rgba(0, 243, 255, 0.05); cursor: pointer; color: #fff; }
+th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; }
+td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; cursor: pointer; }
+tr:hover { background: rgba(0, 243, 255, 0.05); color: #fff; }
 
-/* FORM */
-.card {
-  background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px);
-  padding: 40px; border-radius: 16px; border: 1px solid var(--border);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
-  display: none; animation: fadeIn 0.5s ease; margin-bottom: 50px;
-}
-
-h3 {
-  font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 25px; 
-  margin-bottom: 15px; font-size: 14px; letter-spacing: 1px;
-  border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;
-  display: flex; align-items: center; gap: 10px;
-}
-
+/* FORM CARD */
+.card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); padding: 40px; border-radius: 16px; border: 1px solid var(--border); display: none; margin-bottom: 50px; }
+h3 { font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 25px; margin-bottom: 15px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .full-width { grid-column: span 2; }
+label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; }
+.input { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; outline: none; }
+.input[readonly] { background: rgba(255, 255, 255, 0.02); color: var(--neon-blue); border-color: transparent; }
 
-label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-
-.input {
-  width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
-  color: #fff; outline: none; transition: 0.3s;
-}
-.input:not([readonly]):focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 157, 0.2); background: rgba(0,0,0,0.5); }
-.input[readonly] { background: rgba(255, 255, 255, 0.02); border-color: transparent; color: var(--neon-blue); cursor: default; }
-textarea.input { resize: vertical; min-height: 80px; }
-select.input { background-color: #020617; } 
-
-.btn-primary {
-  width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer;
-  background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold;
-  margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 10px;
-  transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
-}
-.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
-
-/* STATUS BOX (NEW) */
+/* STATUS BOX (NEW LOGIC) */
 .status-box {
-    margin-top: 25px; padding: 20px; border-radius: 12px;
+    margin-top: 30px; padding: 20px; border-radius: 10px;
     border: 1px solid var(--neon-gold);
     background: rgba(251, 191, 36, 0.05);
 }
-.status-box h4 {
-    color: var(--neon-gold); font-family: 'Orbitron'; font-size: 13px; margin-bottom: 10px;
-}
-.status-box p { font-size: 11px; color: #94a3b8; margin-bottom: 15px; }
+.status-box h4 { color: var(--neon-gold); font-family: 'Orbitron'; margin-bottom: 10px; }
+.status-box p { font-size: 12px; color: #aaa; margin-bottom: 15px; }
 
-/* TOAST */
-.toast {
-  position: fixed; top: 20px; right: 20px;
-  background: rgba(0, 255, 157, 0.1); color: var(--neon-green); border: 1px solid var(--neon-green);
-  padding: 15px 25px; border-radius: 8px; backdrop-filter: blur(10px);
-  box-shadow: 0 0 20px rgba(0, 255, 157, 0.2);
-  opacity: 0; transform: translateY(-20px); transition: 0.3s; z-index: 9999;
-  font-family: 'Orbitron';
-}
-.toast.show { opacity: 1; transform: translateY(0); }
-.toast.error { border-color: #ff4d4d; color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
+.btn-primary { width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer; background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold; margin-top: 20px; }
 
-/* BACK TO TOP */
-#backToTop {
-  position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px;
-  background: var(--neon-blue); color: #000; border-radius: 50%; border: none; 
-  cursor: pointer; display: flex; justify-content: center; align-items: center;
-  font-size: 20px; box-shadow: 0 0 20px var(--neon-blue);
-  opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 100;
-}
-#backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
-#backToTop:hover { transform: translateY(-5px); background: #fff; }
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
-    .sidebar.active { left: 0; }
-    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
-    .sidebar-overlay.active { display: block; }
-    .main { padding: 20px; width: 100%; }
-    .mobile-header { display: flex; }
-    h1 { font-size: 20px; margin-bottom: 15px; }
-    .form-grid { grid-template-columns: 1fr; gap: 15px; }
-    .full-width { grid-column: span 1; }
-    .card { padding: 20px; }
-}
+/* LOADER */
+#authLoader { position: fixed; inset: 0; background: #020617; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.loader-spinner { width: 50px; height: 50px; border: 3px solid transparent; border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
 
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 @keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pulse { 50% { opacity: 0.5; } }
+
+@media (max-width: 768px) {
+    .sidebar { position: fixed; left: -100%; width: 80%; }
+    .sidebar.active { left: 0; }
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; }
+    .sidebar-overlay.active { display: block; }
+    .mobile-header { display: flex; }
+    .form-grid { grid-template-columns: 1fr; }
+    .full-width { grid-column: span 1; }
+}
 </style>
 </head>
 
@@ -220,16 +117,15 @@ select.input { background-color: #020617; }
 
 <div id="authLoader">
     <div class="loader-spinner"></div>
-    <div class="loader-text">AUTHENTICATING ACCESS...</div>
+    <div style="font-family:'Orbitron'; color:var(--neon-blue);">LOADING TERMINAL...</div>
 </div>
 
 <div class="app" id="appContent">
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar" id="sidebar">
-        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
+        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo" class="logo">
         <div class="brand">TALK2YPKT ADMIN</div>
-        
         <div class="nav nav-links">
             <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
             <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
@@ -238,7 +134,6 @@ select.input { background-color: #020617; }
             <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
             <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
         </div>
-
         <div class="nav">
             <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
         </div>
@@ -246,9 +141,7 @@ select.input { background-color: #020617; }
 
     <main class="main">
         <div class="mobile-header">
-            <button class="mobile-toggle" onclick="toggleSidebar()">
-                <i class="fa-solid fa-bars"></i>
-            </button>
+            <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
             <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">DATA TERMINAL</div>
             <div style="width:24px;"></div>
         </div>
@@ -260,7 +153,7 @@ select.input { background-color: #020617; }
         </div>
 
         <div class="table-card" id="complaintList">
-            <div style="padding:20px; text-align:center; color:#777;">Initializing database connection...</div>
+            <div style="padding:20px; text-align:center; color:#777;">Loading...</div>
         </div>
 
         <div id="complaintDetail" class="card">
@@ -268,62 +161,56 @@ select.input { background-color: #020617; }
                 UPDATE RECORD
             </h2>
 
-            <h3><i class="fa-solid fa-lock"></i> SEC.1: USER REPORT (LOCKED)</h3>
+            <h3>SEC.1: USER REPORT (READ ONLY)</h3>
             <div class="form-grid">
                 <div><label>Asset Type</label><input class="input" id="assettype" readonly></div>
-                <div><label>Serial Number</label><input class="input" id="SerialNumber" readonly></div>
+                <div><label>Serial No.</label><input class="input" id="SerialNumber" readonly></div>
                 <div><label>Reported By</label><input class="input" id="lastUser" readonly></div>
-                <div><label>Damage Date</label><input class="input" type="datetime-local" id="damagedate" readonly></div>
-                <div><label>Date Reported</label><input class="input" type="datetime-local" id="reportdatesection1" readonly></div>
+                <div><label>Damage Date</label><input class="input" id="damagedate" readonly></div>
                 <div class="full-width"><label>Damage Description</label><textarea class="input" id="damagedescription" readonly></textarea></div>
             </div>
 
-            <h3><i class="fa-solid fa-clipboard-check"></i> SEC.2: USER RECOMMENDATION (LOCKED)</h3>
+            <h3>SEC.2: OFFICER RECOMMENDATION (READ ONLY)</h3>
             <div class="form-grid">
-                <div class="full-width"><label>User Recommendation</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
-                <div><label>Officer Name & Position</label><input class="input" id="section2nameposition" readonly></div>
-                <div><label>Submission Date</label><input class="input" type="datetime-local" id="section2date" readonly></div>
+                <div class="full-width"><label>Recommendation</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
+                <div><label>Officer Name</label><input class="input" id="section2nameposition" readonly></div>
+                <div><label>Date</label><input class="input" id="section2date" readonly></div>
             </div>
 
             <h3 style="color:var(--neon-green); border-color: var(--neon-green);">
-                <i class="fa-solid fa-screwdriver-wrench"></i> SEC.3: ADMIN ASSESSMENT (EDITABLE)
+                SEC.3: ADMIN ASSESSMENT (IT DEPARTMENT)
             </h3>
             <div class="form-grid">
                 <div><label>Previous Cost (RM)</label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
-                <div><label>Est. Maintenance Cost (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
-                <div class="full-width"><label>Admin Action / Recommendation</label><textarea class="input" id="recommendsection3" placeholder="Enter technical assessment..."></textarea></div>
-                <div><label>Admin Name & Position</label><input class="input" id="section3nameposition"></div>
-                <div><label>Assessment Date</label><input class="input" type="datetime-local" id="section3date"></div>
+                <div><label>Estimated Cost (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
+                <div class="full-width"><label>Technical Action / Comment</label><textarea class="input" id="recommendsection3" placeholder="Enter technical details..."></textarea></div>
+                <div><label>IT Officer Name</label><input class="input" id="section3nameposition"></div>
+                <div><label>Date</label><input class="input" type="datetime-local" id="section3date"></div>
             </div>
 
             <div class="status-box">
-                <h4><i class="fa-solid fa-stamp"></i> SYSTEM STATUS (MANUAL CLOSE)</h4>
-                <p>Use this option <b>ONLY</b> if the Director has signed the hardcopy. Leave as "Pending" for Online Approval.</p>
+                <h4><i class="fa-solid fa-gavel"></i> APPROVAL MODE SELECTION</h4>
+                <p>Sila pilih kaedah kelulusan untuk borang ini:</p>
                 
                 <div class="form-group">
-                    <label style="color: #fbbf24;">APPROVAL STATUS</label>
-                    <select id="finalStatus" class="input" style="border-color: #fbbf24; color: #fbbf24;">
-                        <option value="Pending">Pending / Waiting for Online Approval</option>
-                        <option value="Approved (Hardcopy)">Completed (Hardcopy Signed)</option>
+                    <label style="color:var(--neon-gold);">SECTION 4 ACTION:</label>
+                    <select id="approvalMode" class="input" style="border:1px solid var(--neon-gold); color:var(--neon-gold);">
+                        <option value="Pending">PENDING (Tunggu Pengarah Approve Online)</option>
+                        <option value="Hardcopy">COMPLETED (Borang Fizikal / Hardcopy Signed)</option>
                     </select>
                 </div>
+                <p style="margin-top:10px; font-size:10px; color:#fff;">* Jika pilih <b>Hardcopy</b>, sistem akan automatik set status ke "Approve" tanpa tandatangan digital.</p>
             </div>
 
             <button class="btn-primary" id="saveComplaint">
-                <i class="fa-solid fa-floppy-disk"></i> UPDATE RECORD
+                <i class="fa-solid fa-floppy-disk"></i> SAVE & UPDATE
             </button>
         </div>
     </main>
 </div>
 
-<div id="toast" class="toast"></div>
-<button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
-
 <script>
-// --- KONFIGURASI PENTING ---
-const COLLECTION_NAME = "complaint"; 
-
-// --- FIREBASE CONFIG ---
+// --- FIREBASE SETUP ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -333,198 +220,138 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// --- AUTH GUARD ---
+// AUTH
 auth.onAuthStateChanged((user) => {
-    const loader = document.getElementById("authLoader");
-    const app = document.getElementById("appContent");
-
-    if (user) {
-        if (!user.email.endsWith('@ypkt.gov.my')) {
-            alert("ACCESS DENIED: Only YPKT Admin authorized.");
-            auth.signOut().then(() => window.location.href = "login.html");
-            return;
-        }
-        loader.style.display = "none";
-        app.classList.add("loaded");
-        toast("Connected as: " + user.email);
-        loadComplaints(); 
+    if (user && user.email.endsWith('@ypkt.gov.my')) {
+        document.getElementById("authLoader").style.display="none";
+        loadComplaints();
     } else {
         window.location.href = "login.html";
     }
 });
+document.getElementById("logout").onclick = () => auth.signOut();
 
-document.getElementById("logout").onclick = () => {
-    if(confirm("Are you sure you want to sign out?")){
-        auth.signOut().then(() => window.location.href="login.html");
-    }
-};
-
+// UTILS
 const dt = (t) => {
-  if (!t || !t.toDate) return "";
-  const d = t.toDate();
-  const localDate = new Date(d.getTime() - (d.getTimezoneOffset() * 60000));
-  return localDate.toISOString().slice(0, 16);
+    if (!t || !t.toDate) return "";
+    const d = t.toDate();
+    const localDate = new Date(d.getTime() - (d.getTimezoneOffset() * 60000));
+    return localDate.toISOString().slice(0, 16);
 };
-
-const toast=(msg,err=false)=>{
-  const t=document.getElementById("toast");
-  t.innerHTML = err ? `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}` : `<i class="fa-solid fa-check-circle"></i> ${msg}`;
-  t.className = "toast show" + (err ? " error" : "");
-  setTimeout(() => t.classList.remove("show"), 3000);
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none';
 }
 
-// --- DATA LOGIC ---
+// DATA
 let complaints=[];
-
 async function loadComplaints(){
-  try {
-      const s=await db.collection(COLLECTION_NAME).orderBy("updatedAt", "desc").get(); 
-      complaints=s.docs.map(d=>({id:d.id,...d.data()}));
-      renderTable(complaints);
-  } catch (err) {
-      console.error("Load Error:", err);
-  }
+    try {
+        const s = await db.collection("complaint").orderBy("updatedAt", "desc").get();
+        complaints = s.docs.map(d => ({id:d.id, ...d.data()}));
+        renderTable(complaints);
+    } catch(e) { console.error(e); }
 }
 
 function renderTable(list){
-  const container = document.getElementById("complaintList");
-  if(list.length === 0) {
-      container.innerHTML = "<div style='padding:20px; text-align:center; color:#888;'>No records found.</div>";
-      return;
-  }
-  
-  let h = "<div class='table-wrapper'><table><thead><tr><th>ID REF</th><th>USER</th><th>STATUS</th></tr></thead><tbody>";
-  list.forEach(c => {
-    // Color logic
-    let s = c.approvalstatus || "Pending";
-    let color = '#ccc';
-    if(s.includes('Approve') || s.includes('Completed')) color = '#00ff9d';
-    if(s.includes('Reject')) color = '#ff4d4d';
-
-    h += `<tr data-id="${c.id}">
-      <td style="font-family:'Orbitron'; color:var(--neon-blue)">${c.id}</td>
-      <td>${c.lastUser||"-"}</td>
-      <td style="color:${color}; font-weight:bold;">${s}</td>
-    </tr>`;
-  });
-  h += "</tbody></table></div>";
-  container.innerHTML = h;
-  
-  container.querySelectorAll("tr[data-id]").forEach(r => {
-    r.onclick = () => loadDetail(r.dataset.id);
-  });
+    const div = document.getElementById("complaintList");
+    if(list.length === 0) { div.innerHTML = "<div style='padding:20px;text-align:center'>No Data</div>"; return; }
+    
+    let h = "<table><thead><tr><th>REF ID</th><th>USER</th><th>STATUS</th></tr></thead><tbody>";
+    list.forEach(c => {
+        let s = c.approvalstatus || "Pending";
+        let color = (s === 'Approve') ? '#00ff9d' : (s === 'Reject' ? '#ff4d4d' : '#ccc');
+        h += `<tr onclick="loadDetail('${c.id}')">
+            <td style="color:var(--neon-blue);font-family:'Orbitron'">${c.id}</td>
+            <td>${c.lastUser||"-"}</td>
+            <td style="color:${color};font-weight:bold">${s}</td>
+        </tr>`;
+    });
+    h += "</tbody></table>";
+    div.innerHTML = h;
 }
 
 document.getElementById("searchInput").oninput = (e) => {
-  const v = e.target.value.toLowerCase();
-  renderTable(complaints.filter(c => c.id.toLowerCase().includes(v) || (c.lastUser||"").toLowerCase().includes(v)));
+    const v = e.target.value.toLowerCase();
+    renderTable(complaints.filter(c => c.id.toLowerCase().includes(v) || (c.lastUser||"").toLowerCase().includes(v)));
 };
 
-// 4. Load Detail
+// LOAD DETAIL
 async function loadDetail(id){
-  const docRef = await db.collection(COLLECTION_NAME).doc(id).get();
-  if(!docRef.exists) return;
-  
-  const d = docRef.data();
-  const form = document.getElementById("complaintDetail");
-  
-  form.style.display="block";
-  form.dataset.id = id;
+    const d = complaints.find(c => c.id === id);
+    if(!d) return;
 
-  const setVal = (eid, val) => document.getElementById(eid).value = val || "";
-  
-  setVal('assettype', d.assettype);
-  setVal('SerialNumber', d.serialNumber);
-  setVal('lastUser', d.lastUser);
-  setVal('damagedate', dt(d.damagedate));
-  setVal('damagedescription', d.damagedescription);
-  setVal('reportdatesection1', dt(d.reportdatesection1));
-  setVal('recommendationsection2', d.recommendationsection2);
-  setVal('section2nameposition', d.section2nameposition);
-  setVal('section2date', dt(d.section2date));
+    const form = document.getElementById("complaintDetail");
+    form.style.display="block";
+    form.dataset.id = id;
 
-  // Admin Fields
-  setVal('previousmaintenancecost', d.previousmaintenancecost);
-  setVal('estimatedmaintenancecost', d.estimatedmaintenancecost);
-  setVal('recommendsection3', d.recommendsection3);
-  setVal('section3nameposition', d.section3nameposition);
-  setVal('section3date', dt(d.section3date));
+    const setVal = (eid, val) => document.getElementById(eid).value = val || "";
+    
+    setVal('assettype', d.assettype);
+    setVal('SerialNumber', d.serialNumber);
+    setVal('lastUser', d.lastUser);
+    setVal('damagedate', dt(d.damagedate));
+    setVal('damagedescription', d.damagedescription);
+    setVal('reportdatesection1', dt(d.reportdatesection1));
+    setVal('recommendationsection2', d.recommendationsection2);
+    setVal('section2nameposition', d.section2nameposition);
+    setVal('section2date', dt(d.section2date));
 
-  // Manual Status Logic
-  // Kalau status dah "Approved (Hardcopy)", set dropdown. Kalau lain, biar "Pending".
-  if(d.approvalstatus === "Approved (Hardcopy)") {
-      document.getElementById('finalStatus').value = "Approved (Hardcopy)";
-  } else {
-      document.getElementById('finalStatus').value = "Pending";
-  }
+    // Admin Fields
+    setVal('previousmaintenancecost', d.previousmaintenancecost);
+    setVal('estimatedmaintenancecost', d.estimatedmaintenancecost);
+    setVal('recommendsection3', d.recommendsection3);
+    setVal('section3nameposition', d.section3nameposition);
+    setVal('section3date', dt(d.section3date));
 
-  form.scrollIntoView({behavior: "smooth", block: "start"});
+    // SET DROPDOWN LOGIC
+    // Jika status Approve TAPI tiada signature -> Bermakna Hardcopy
+    const isHardcopy = (d.approvalstatus === 'Approve' && !d.approverSignature);
+    document.getElementById("approvalMode").value = isHardcopy ? "Hardcopy" : "Pending";
 
-  if(window.innerWidth < 768) {
-      toggleSidebar();
-  }
+    form.scrollIntoView({behavior: "smooth"});
 }
 
-// 5. Update Database (HYBRID LOGIC)
+// SAVE DATA
 document.getElementById("saveComplaint").onclick = async () => {
-  const id = document.getElementById("complaintDetail").dataset.id;
-  if(!id) return;
+    const id = document.getElementById("complaintDetail").dataset.id;
+    if(!id) return;
 
-  const btn = document.getElementById("saveComplaint");
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> UPDATING...';
+    const getVal = (id) => document.getElementById(id).value;
+    const mode = document.getElementById("approvalMode").value;
 
-  const getVal = (id) => document.getElementById(id).value;
-  
-  try{
-    // Base Data (Section 3)
     let updateData = {
-      previousmaintenancecost: +getVal('previousmaintenancecost') || 0,
-      estimatedmaintenancecost: +getVal('estimatedmaintenancecost') || 0,
-      recommendsection3: getVal('recommendsection3'),
-      section3nameposition: getVal('section3nameposition'),
-      section3date: getVal('section3date') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('section3date'))) : null,
-      updatedBy: auth.currentUser.email,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        previousmaintenancecost: +getVal('previousmaintenancecost') || 0,
+        estimatedmaintenancecost: +getVal('estimatedmaintenancecost') || 0,
+        recommendsection3: getVal('recommendsection3'),
+        section3nameposition: getVal('section3nameposition'),
+        section3date: getVal('section3date') ? firebase.firestore.Timestamp.fromDate(new Date(getVal('section3date'))) : null,
+        updatedBy: auth.currentUser.email,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // MANUAL CLOSURE LOGIC
-    // Jika admin pilih "Approved (Hardcopy)", kita paksa update status.
-    // Jika admin pilih "Pending", kita JANGAN ubah status (sebab mungkin dah approve online).
-    const manualStatus = document.getElementById('finalStatus').value;
-
-    if(manualStatus === "Approved (Hardcopy)") {
-        updateData.approvalstatus = "Approved (Hardcopy)";
+    // LOGIC PENENTU: ONLINE KE HARDCOPY?
+    if (mode === "Hardcopy") {
+        // Kalau pilih Hardcopy, paksa jadi Approve & kosongkan signature
+        updateData.approvalstatus = "Approve";
         updateData.approvername = "Manual (Hardcopy)";
+        updateData.approverposition = "Manual"; 
         updateData.approvaldate = firebase.firestore.FieldValue.serverTimestamp();
-        updateData.approvalcomment = "Disahkan melalui borang fizikal.";
+        updateData.approvalcomment = "Completed via Hardcopy";
+        updateData.approverSignature = ""; // Kosongkan signature utk trigger logic dashboard
+    } 
+    // Jika pilih "Pending", kita biarkan status asal (jangan kacau kalau dah approved online)
+    // Cuma update data Section 3 sahaja.
+
+    try {
+        await db.collection("complaint").doc(id).set(updateData, {merge:true});
+        Swal.fire("Success", "Data Updated Successfully", "success");
+        loadComplaints();
+    } catch(e) {
+        Swal.fire("Error", e.message, "error");
     }
-
-    await db.collection(COLLECTION_NAME).doc(id).set(updateData, {merge:true});
-
-    toast("Record Updated Successfully");
-    loadComplaints(); 
-  } catch(e){
-    console.error(e);
-    toast("Update Failed: " + e.message, true);
-  }
-
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> UPDATE RECORD';
 };
-
-// UI Toggles
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-    document.querySelector('.sidebar-overlay').classList.toggle('active');
-}
-
-const backToTopBtn = document.getElementById("backToTop");
-window.onscroll = () => {
-  backToTopBtn.classList.toggle("show", window.scrollY > 200);
-};
-backToTopBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
-
 </script>
+
 </body>
 </html>
