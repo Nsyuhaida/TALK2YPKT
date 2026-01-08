@@ -43,44 +43,67 @@ body::before {
 
 .app { display:flex; min-height:100vh; position: relative; z-index: 1; }
 
-/* --- SIDEBAR --- */
+/* --- SIDEBAR (IKUT DESIGN ASAL) --- */
 .sidebar {
-  width: 260px; background: var(--glass); backdrop-filter: blur(15px);
-  border-right: 1px solid var(--border); padding: 30px 20px;
-  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
-  z-index: 100; transition: transform 0.3s ease;
+  width: 260px; 
+  background: var(--glass); 
+  backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border); 
+  padding: 30px 20px;
+  display: flex; flex-direction: column; 
+  position: sticky; top: 0; height: 100vh;
+  z-index: 100;
+  transition: transform 0.3s ease;
 }
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
-.brand { font-family: 'Orbitron'; font-size: 18px; font-weight: 700; text-align: center; color: var(--neon-blue); margin-bottom: 40px; letter-spacing: 2px; }
+.brand {
+  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
+  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
+}
 .nav-links { flex: 1; display: flex; flex-direction: column; }
 .nav a {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
-  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-size: 14px;
+  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
+  font-size: 14px; border: 1px solid transparent;
 }
-.nav a:hover, .nav a.active { background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border); box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); }
-#logout { margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; cursor: pointer; }
+.nav a:hover, .nav a.active {
+  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+}
+.nav a i { width: 20px; text-align: center; }
+#logout {
+  margin-top: auto; color: var(--neon-red);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px; border-radius: 0; cursor: pointer;
+}
+#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; }
 
 /* --- MAIN CONTENT --- */
 .main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
 .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px; }
 
+h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
+
 /* SEARCH & TABLE */
 .search-container { margin-bottom: 25px; }
 #searchInput { width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 50px; color: #fff; outline: none; transition: 0.3s; }
-.table-card { background: rgba(15, 23, 42, 0.6); border-radius: 16px; border: 1px solid var(--border); padding: 0; overflow: hidden; margin-bottom: 30px; max-height: 350px; overflow-y: auto; }
+#searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+
+.table-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid var(--border); padding: 0; overflow: hidden; margin-bottom: 30px; max-height: 350px; overflow-y: auto; }
 table { width:100%; border-collapse: collapse; min-width: 600px; }
 th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; }
 td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; cursor: pointer; }
 tr:hover { background: rgba(0, 243, 255, 0.05); color: #fff; }
 
 /* FORM CARD */
-.card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); padding: 40px; border-radius: 16px; border: 1px solid var(--border); display: none; margin-bottom: 50px; }
+.card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); padding: 40px; border-radius: 16px; border: 1px solid var(--border); display: none; margin-bottom: 50px; animation: fadeIn 0.5s ease; }
 h3 { font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 25px; margin-bottom: 15px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .full-width { grid-column: span 2; }
 label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; }
-.input { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; outline: none; }
+.input { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; outline: none; transition: 0.3s; }
+.input:focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 157, 0.2); }
 .input[readonly] { background: rgba(255, 255, 255, 0.02); color: var(--neon-blue); border-color: transparent; }
 
 /* STATUS BOX (NEW LOGIC) */
@@ -89,16 +112,18 @@ label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bo
     border: 1px solid var(--neon-gold);
     background: rgba(251, 191, 36, 0.05);
 }
-.status-box h4 { color: var(--neon-gold); font-family: 'Orbitron'; margin-bottom: 10px; }
-.status-box p { font-size: 12px; color: #aaa; margin-bottom: 15px; }
+.status-box h4 { color: var(--neon-gold); font-family: 'Orbitron'; margin-bottom: 10px; font-size: 14px; }
+.status-box p { font-size: 12px; color: #94a3b8; margin-bottom: 15px; }
 
-.btn-primary { width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer; background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold; margin-top: 20px; }
+.btn-primary { width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer; background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold; margin-top: 20px; transition:0.3s; }
+.btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); }
 
 /* LOADER */
 #authLoader { position: fixed; inset: 0; background: #020617; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .loader-spinner { width: 50px; height: 50px; border: 3px solid transparent; border-top-color: var(--neon-blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
 
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 768px) {
@@ -124,8 +149,9 @@ label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bo
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar" id="sidebar">
-        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo" class="logo">
+        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
         <div class="brand">TALK2YPKT ADMIN</div>
+        
         <div class="nav nav-links">
             <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
             <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
@@ -134,6 +160,7 @@ label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bo
             <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
             <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
         </div>
+
         <div class="nav">
             <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
         </div>
