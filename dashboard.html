@@ -3,240 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard | TALK2YPKT ADMIN</title>
+<title>Admin Dashboard | TALK2YPKT</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-/* --- NEXUS THEME VARIABLES --- */
+/* --- NEXUS THEME --- */
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
+  --neon-gold: #ffaa00; /* Warna utk Hardcopy */
   --neon-red: #ff4d4d;
   --bg-dark: #020617;
   --glass-panel: rgba(15, 23, 42, 0.85);
   --glass-border: rgba(0, 243, 255, 0.2);
   --text-main: #e2e8f0;
-  --text-muted: #94a3b8;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
-/* --- BACKGROUND SYSTEM --- */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
-  background-size: 400% 400%;
-  animation: bgMove 20s ease infinite;
-  color: var(--text-main);
-  min-height: 100vh;
+  background-size: 400% 400%; animation: bgMove 20s ease infinite;
+  color: var(--text-main); min-height: 100vh;
 }
-
 body::before {
   content: ""; position: fixed; inset: 0;
-  background-image: 
-    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
 .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
-/* --- SIDEBAR --- */
+/* SIDEBAR */
 .sidebar {
-  width: 260px; 
-  background: rgba(15, 23, 42, 0.95); 
-  backdrop-filter: blur(15px);
-  border-right: 1px solid var(--glass-border); 
-  padding: 30px 20px;
-  display: flex; flex-direction: column; 
-  position: sticky; top: 0; height: 100vh;
-  z-index: 100;
-  transition: transform 0.3s ease;
+  width: 260px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px);
+  border-right: 1px solid var(--glass-border); padding: 30px 20px;
+  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; z-index: 100;
+  transition: 0.3s;
 }
-
-.logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
-.brand {
-  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
-  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
-}
-
-.nav-links { flex: 1; display: flex; flex-direction: column; }
-
+.logo { width: 70px; display: block; margin: 0 auto 15px; }
+.brand { font-family: 'Orbitron'; font-size: 18px; text-align: center; color: var(--neon-blue); margin-bottom: 40px; letter-spacing: 2px; }
 .nav a {
-  display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
-  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
-  font-size: 14px; border: 1px solid transparent;
+  display: flex; align-items: center; gap: 12px; text-decoration: none; color: #aaa;
+  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-size: 14px;
 }
-.nav a:hover, .nav a.active {
-  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--glass-border);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
-}
-.nav a i { width: 20px; text-align: center; }
+.nav a:hover, .nav a.active { background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--glass-border); box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); }
+#logout { margin-top: auto; color: var(--neon-red); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
 
-#logout {
-  margin-top: auto; color: var(--neon-red);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px; border-radius: 0;
-}
-#logout:hover {
-  background: rgba(255, 77, 77, 0.1); border-top-color: rgba(255, 255, 255, 0.3);
-  color: #fff; border-color: rgba(255, 77, 77, 0.5); box-shadow: none;
-}
-
-/* --- MAIN CONTENT --- */
+/* MAIN */
 .main { flex: 1; padding: 30px; overflow-x: hidden; width: 100%; }
+.mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; }
 
-.mobile-header {
-    width: 100%; display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
-}
-.mobile-toggle {
-    background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px;
-}
-
-/* HEADER & INPUT */
-.header {
-  display: flex; justify-content: space-between; align-items: flex-end;
-  margin-bottom: 25px; flex-wrap: wrap; gap: 20px;
-  border-bottom: 1px solid var(--glass-border); padding-bottom: 15px;
-}
-.header h1 {
-  font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff;
-  text-shadow: 0 0 15px rgba(255,255,255,0.2);
-}
-.header p { color: var(--neon-blue); font-size: 12px; letter-spacing: 1px; }
-
-.input {
-  padding: 10px 20px; border-radius: 50px;
-  border: 1px solid var(--glass-border);
-  background: rgba(0,0,0,0.3); color: #fff;
-  width: 250px; outline: none; transition: 0.3s; font-size: 13px;
-}
-.input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
-
-/* --- PROFILE SECTION --- */
-.compact-profile-wrapper { display: flex; justify-content: space-between; align-items: center; }
-.compact-left { display: flex; align-items: center; gap: 15px; }
-
-.profile-avatar-small {
-    width: 50px; height: 50px;
-    background: rgba(0, 243, 255, 0.1); border: 2px solid var(--neon-blue);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; color: var(--neon-blue);
-    overflow: hidden; border-radius: 50%;
-    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
-}
-
-.badge-role {
-    background: rgba(0, 255, 157, 0.1); color: var(--neon-green);
-    padding: 1px 6px; border-radius: 4px; font-size: 9px; letter-spacing: 1px;
-    border: 1px solid rgba(0, 255, 157, 0.3); font-weight: bold;
-}
-
-.btn-toggle-compact {
-    background: transparent; border: 1px solid rgba(255,255,255,0.2);
-    color: var(--text-muted); padding: 5px 12px; font-size: 10px;
-    font-family: 'Orbitron', sans-serif; cursor: pointer;
-    border-radius: 50px; transition: 0.3s; white-space: nowrap;
-}
-.btn-toggle-compact:hover {
-    border-color: var(--neon-blue); color: var(--neon-blue);
-    background: rgba(0, 243, 255, 0.05);
-}
-
-#metadataPanel {
-    animation: fadeIn 0.4s ease; margin-top: 15px;
-    border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px;
-}
-
-/* STATS CARDS */
-.stats-wrapper { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; }
+/* STATS CARDS (GRID 4) */
+.stats-wrapper { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; }
 .stats-card {
-  flex: 1; min-width: 180px;
   background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px);
-  padding: 20px; border-radius: 12px;
-  border: 1px solid var(--glass-border); text-align: center;
-  transition: 0.3s; position: relative; overflow: hidden;
+  padding: 20px; border-radius: 12px; border: 1px solid var(--glass-border);
+  text-align: center; transition: 0.3s; position: relative; overflow: hidden;
 }
-.stats-card:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.4); border-color: var(--neon-blue); }
-.stats-card h2 { font-family: 'Orbitron', sans-serif; font-size: 32px; color: #fff; margin-bottom: 5px; }
-.stats-card span { color: var(--neon-blue); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.stats-card:hover { transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
+.stats-card h2 { font-family: 'Orbitron'; font-size: 36px; color: #fff; margin-bottom: 5px; }
+.stats-card span { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
 
-/* TABLE & CARDS */
-.card {
-  background: var(--glass-panel); backdrop-filter: blur(10px);
-  padding: 20px; border-radius: 16px; margin-bottom: 25px;
-  border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-}
-.card h3 {
-  font-family: 'Orbitron', sans-serif; color: var(--neon-blue);
-  margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding-bottom: 10px; font-size: 16px;
-}
+/* TABLE */
+.card { background: var(--glass-panel); padding: 20px; border-radius: 16px; margin-bottom: 25px; border: 1px solid var(--glass-border); }
+.card h3 { font-family: 'Orbitron'; color: var(--neon-blue); margin-bottom: 15px; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
 table { width: 100%; border-collapse: separate; border-spacing: 0 5px; }
-th { text-align: left; padding: 12px; color: rgba(255,255,255,0.6); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+th { text-align: left; padding: 12px; color: #aaa; font-size: 11px; text-transform: uppercase; }
 td { background: rgba(255,255,255,0.03); padding: 12px; color: #fff; font-size: 13px; }
 td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
 td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
-tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 
-/* CHARTS & KPI */
-.summary-wrapper { max-width: 800px; margin: 0 auto; }
-.summary-row { display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap; }
-.summary-chart { width: 280px; position: relative; }
-.summary-kpi {
-  text-align: center; padding: 20px; border-radius: 50%;
-  border: 2px dashed var(--glass-border); width: 160px; height: 160px;
-  display: flex; flex-direction: column; justify-content: center;
-  animation: rotateBorder 20s linear infinite reverse;
-  transition: border-color 0.5s ease; /* Smooth color change */
-}
-.summary-kpi-inner { animation: rotateBorder 20s linear infinite; }
-.summary-kpi h2 { font-size: 36px; color: #fff; font-family: 'Orbitron', sans-serif; }
-.summary-kpi span { font-size: 10px; color: var(--neon-blue); text-transform: uppercase; }
+/* STATUS BADGES */
+.badge { padding: 5px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
+.badge-online { background: rgba(0, 255, 157, 0.15); color: #00ff9d; border: 1px solid #00ff9d; }
+.badge-manual { background: rgba(255, 170, 0, 0.15); color: #ffaa00; border: 1px solid #ffaa00; }
+.badge-pending { background: rgba(255, 77, 77, 0.15); color: #ff4d4d; border: 1px solid #ff4d4d; }
+.badge-neutral { background: rgba(255, 255, 255, 0.1); color: #ccc; border: 1px solid #666; }
 
-/* UTILS */
-#backToTop {
-  position: fixed; bottom: 30px; right: 30px;
-  width: 50px; height: 50px; background: var(--neon-blue); color: #000;
-  border-radius: 50%; border: none; cursor: pointer;
-  display: flex; justify-content: center; align-items: center; font-size: 20px;
-  opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; z-index: 100;
-}
-#backToTop.show { opacity: 1; visibility: visible; transform: translateY(0); }
+/* CHART AREA */
+.summary-wrapper { display: flex; justify-content: center; align-items: center; height: 300px; }
 
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-@keyframes rotateBorder { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes fadeIn { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
-
 @media (max-width: 768px) {
     .sidebar { position: fixed; left: -100%; width: 80%; }
     .sidebar.active { left: 0; }
-    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
-    .sidebar-overlay.active { display: block; }
     .mobile-header { display: flex; }
-    .header { flex-direction: column; align-items: flex-start; }
-    .input { width: 100%; }
-    .compact-profile-wrapper { flex-direction: column; align-items: flex-start; gap: 15px; }
 }
 </style>
 </head>
-
 <body>
 
 <div class="app">
-  <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+  <div class="sidebar-overlay" onclick="toggleSidebar()" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:none; z-index:90;"></div>
 
   <aside class="sidebar" id="sidebar">
     <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" class="logo">
     <div class="brand">TALK2YPKT ADMIN</div>
-    
-    <div class="nav nav-links">
+    <div class="nav">
       <a href="dashboard.html" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
       <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
       <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
@@ -244,363 +117,212 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
       <a href="full-report.html"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
       <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
     </div>
-
-    <div class="nav">
-      <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
-    </div>
+    <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
   </aside>
 
   <main class="main">
-
     <div class="mobile-header">
-        <button class="mobile-toggle" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+        <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
         <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">DASHBOARD</div>
         <div style="width:24px;"></div>
     </div>
 
-    <div class="header">
-      <div>
-        <h1>COMMAND CENTER</h1>
-        <p id="welcomeMsg">Initializing User Protocol...</p>
-      </div>
-      <input id="searchInput" class="input" placeholder="Search Database ID / Asset...">
-    </div>
-
-    <div class="card" style="border-left: 3px solid var(--neon-blue); padding: 15px 20px;">
-        <div class="compact-profile-wrapper">
-            <div class="compact-left">
-                <div class="profile-avatar-small">
-                    <i class="fa-solid fa-user-astronaut"></i>
-                </div>
-                <div>
-                    <h4 id="displayEmail" style="font-size: 14px; color: #fff; margin-bottom: 2px;">loading...</h4>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="badge-role">ADMIN</span>
-                        <span id="displayUid" style="font-family: 'Courier New', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px;">UID: ...</span>
-                    </div>
-                </div>
-            </div>
-            <button class="btn-toggle-compact" onclick="toggleMetadata()" id="btnToggleMeta">
-                DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>
-            </button>
-        </div>
-
-        <div id="metadataPanel" style="display: none; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-            <div>
-                <span style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; display: block;">
-                    <i class="fa-solid fa-calendar-plus"></i> Registered
-                </span>
-                <div id="displayJoined" style="font-family: 'Orbitron'; font-size: 12px; color: #fff;">-</div>
-            </div>
-            <div>
-                <span style="font-size: 9px; color: var(--text-muted); text-transform: uppercase; display: block;">
-                    <i class="fa-solid fa-clock"></i> Last Login
-                </span>
-                <div id="displayLastLogin" style="font-family: 'Orbitron'; font-size: 12px; color: var(--neon-green);">-</div>
-            </div>
-        </div>
-    </div>
-
     <div class="stats-wrapper">
       <div class="stats-card">
-        <h2 id="totalComplaints">0</h2>
-        <span>Total Reports</span>
+        <h2 id="cTotal">0</h2>
+        <span style="color:var(--neon-blue);">TOTAL REPORTS</span>
       </div>
-      <div class="stats-card" style="border-color: #00ff9d;">
-        <h2 id="approveCount" style="color: #00ff9d;">0</h2>
-        <span>Approved</span>
+      <div class="stats-card" style="border-color: var(--neon-green);">
+        <h2 id="cOnline" style="color:var(--neon-green);">0</h2>
+        <span style="color:var(--neon-green);">APPROVED (ONLINE)</span>
       </div>
-      <div class="stats-card" style="border-color: #ff4d4d;">
-        <h2 id="notApproveCount" style="color: #ff4d4d;">0</h2>
-        <span>Pending / Rejected</span>
+      <div class="stats-card" style="border-color: var(--neon-gold);">
+        <h2 id="cHardcopy" style="color:var(--neon-gold);">0</h2>
+        <span style="color:var(--neon-gold);">APPROVED (HARDCOPY)</span>
+      </div>
+      <div class="stats-card" style="border-color: var(--neon-red);">
+        <h2 id="cPending" style="color:var(--neon-red);">0</h2>
+        <span style="color:var(--neon-red);">PENDING / INCOMPLETE</span>
       </div>
     </div>
 
     <div class="card">
-      <h3>INCOMING DATA STREAM (REAL-TIME)</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <h3>REPORT STATUS BREAKDOWN</h3>
+          <input id="searchInput" placeholder="Search ID..." style="background:rgba(0,0,0,0.3); border:1px solid #444; color:#fff; padding:5px 10px; border-radius:5px;">
+      </div>
       <div style="overflow-x:auto;">
         <table id="dashboardTable">
           <thead>
             <tr>
               <th>REF ID</th>
-              <th>OPERATOR</th>
-              <th>ASSET TYPE</th>
-              <th>TIMESTAMP</th>
-              <th>STATUS</th>
+              <th>ASSET</th>
+              <th>SEC 3 (IT STATUS)</th>
+              <th>SEC 4 (APPROVAL MODE)</th>
+              <th>DATE</th>
             </tr>
           </thead>
-          <tbody>
-            <tr><td colspan="5" style="text-align:center; opacity:0.5;">Establishing uplink...</td></tr>
-          </tbody>
+          <tbody><tr><td colspan="5" style="text-align:center;">Loading...</td></tr></tbody>
         </table>
       </div>
     </div>
 
     <div class="card">
-      <h3>SYSTEM DIAGNOSTICS</h3>
+      <h3>STATISTICS OVERVIEW</h3>
       <div class="summary-wrapper">
-        <div class="summary-row">
-          <div class="summary-chart">
-            <canvas id="statusChart"></canvas>
-          </div>
-          
-          <div class="summary-kpi" id="kpiCircle">
-            <div class="summary-kpi-inner">
-                <h2 id="efficiencyValue" style="transition: color 0.5s ease;">0%</h2>
-                <span id="efficiencyLabel">CALCULATING...</span>
-            </div>
-          </div>
-        </div>
+        <canvas id="statusChart"></canvas>
       </div>
     </div>
 
   </main>
 </div>
 
-<button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
-
 <script>
-// --- 1. FIREBASE CONFIG ---
-firebase.initializeApp({
+// --- CONFIG ---
+const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
   projectId:"e-complaint-8nu9kp"
-});
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+const auth=firebase.auth();
 
-const db = firebase.firestore();
-
-// --- 2. SIDEBAR LOGIC ---
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
-    document.querySelector('.sidebar-overlay').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none';
 }
 
-// --- 3. AUTH LOGIC (WITH SECURITY CHECK) ---
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    // ----------------------------------------------------------------
-    // 🔒 SECURITY CHECK: HANYA EMAIL YPKT ATAU ADMIN BOLEH MASUK
-    // ----------------------------------------------------------------
-    const allowedDomain = "@ypkt.gov.my";
-    
-    // 🔴 TUKAR EMAIL INI KEPADA EMAIL PERSONAL AWAK UTK TESTING (Contoh: "ali@gmail.com")
-    const myAdminEmail = "user@gmail.com"; 
-
-    // Logic Check
-    if (!user.email.endsWith(allowedDomain) && user.email !== myAdminEmail) {
-        alert("ACCESS DENIED: Please use authorized YPKT email.");
-        firebase.auth().signOut().then(() => {
-            window.location.href = "login.html";
-        });
-        return; // Stop execution here
-    }
-    // ----------------------------------------------------------------
-
-    // Populate User Info
-    document.getElementById("welcomeMsg").innerHTML = `Welcome User ...... <span style="color:var(--neon-blue); font-weight:bold;">${user.email}</span>`;
-    document.getElementById("displayEmail").textContent = user.email;
-    document.getElementById("displayUid").textContent = "UID: " + user.uid;
-
-    const joinedDate = new Date(user.metadata.creationTime).toLocaleDateString("ms-MY", { day: 'numeric', month: 'short', year: 'numeric' });
-    const lastLoginDate = new Date(user.metadata.lastSignInTime).toLocaleString("ms-MY", { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' });
-    document.getElementById("displayJoined").textContent = joinedDate;
-    document.getElementById("displayLastLogin").textContent = lastLoginDate;
-
-    // MULA DENGAR DATA
-    listenToComplaints();
-
-  } else {
-    // Kalau user tak login, tendang ke login page
-    window.location.href = "login.html";
-  }
-});
-
-// --- 4. TOGGLE METADATA ---
-function toggleMetadata() {
-    const panel = document.getElementById("metadataPanel");
-    const btn = document.getElementById("btnToggleMeta");
-    if (panel.style.display === "none") {
-        panel.style.display = "grid"; 
-        btn.innerHTML = `CLOSE <i class="fa-solid fa-chevron-up" style="margin-left:5px;"></i>`;
-        btn.style.color = "var(--neon-blue)";
-        btn.style.borderColor = "var(--neon-blue)";
+auth.onAuthStateChanged((user) => {
+    if (user && user.email.endsWith('@ypkt.gov.my')) {
+        listenToData();
     } else {
-        panel.style.display = "none"; 
-        btn.innerHTML = `DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>`;
-        btn.style.color = "var(--text-muted)";
-        btn.style.borderColor = "rgba(255,255,255,0.2)";
+        window.location.href = "login.html";
     }
-}
-
-// --- 5. LOGOUT ---
-document.getElementById("logout").addEventListener("click", ()=>{
-  firebase.auth().signOut().then(()=>{ window.location.href="login.html"; });
 });
+document.getElementById("logout").onclick = () => auth.signOut();
 
-// --- 6. DATE HELPER ---
-function formatDate(ts){
-  return ts?.toDate ? ts.toDate().toLocaleDateString("ms-MY") : "-";
-}
-
+// --- DATA LOGIC ---
+let chartInstance;
 let complaintsData = [];
-let statusChart;
 
-// --- 7. CORE: REAL-TIME LISTENER & EFFICIENCY LOGIC ---
-function listenToComplaints() {
-  db.collection("complaint")
-    .orderBy("reportdatesection1", "desc")
-    .onSnapshot((snapshot) => {
-        // Ambil Data
-        complaintsData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        
-        // Render UI Biasa
-        renderTable();
-        renderStats();
-        renderDonut();
-
-        // KIRA SYSTEM EFFICIENCY (WOW FACTOR)
-        calculateEfficiency(); 
-    
-    }, (error) => {
-        console.error("Error stream:", error);
+function listenToData() {
+    db.collection("complaint").orderBy("updatedAt", "desc").onSnapshot(snap => {
+        complaintsData = snap.docs.map(d => ({id:d.id, ...d.data()}));
+        processData();
     });
 }
 
-function calculateEfficiency() {
+function processData() {
+    // 1. KIRA COUNT (LOGIC BARU)
     const total = complaintsData.length;
-    const approved = complaintsData.filter(c => c.approvalstatus === 'Approve').length;
     
-    // Kira Peratusan
-    let percent = 0;
-    if (total > 0) {
-        percent = Math.round((approved / total) * 100);
-    }
+    // Approved Online: Status Approve DAN Ada Signature
+    const online = complaintsData.filter(c => c.approvalstatus === 'Approve' && c.approverSignature).length;
+    
+    // Approved Hardcopy: Status Approve TAPI Tiada Signature
+    const hardcopy = complaintsData.filter(c => c.approvalstatus === 'Approve' && !c.approverSignature).length;
+    
+    // Pending: Apa-apa yang bukan Approve (termasuk Reject atau belum isi)
+    const pending = total - (online + hardcopy);
 
-    // Ambil Elemen UI
-    const valueText = document.getElementById("efficiencyValue");
-    const labelText = document.getElementById("efficiencyLabel");
-    const circleBorder = document.getElementById("kpiCircle");
-    
-    // Set Nilai
-    valueText.textContent = percent + "%";
-    
-    // Logic Warna Cyberpunk
-    if (percent >= 80) {
-        // Hijau Neon (Bagus)
-        valueText.style.color = "#00ff9d"; 
-        valueText.style.textShadow = "0 0 15px rgba(0, 255, 157, 0.5)";
-        circleBorder.style.borderColor = "#00ff9d";
-        labelText.textContent = "SYSTEM OPTIMAL";
-        labelText.style.color = "#00ff9d";
-    } else if (percent >= 50) {
-        // Oren (Sederhana)
-        valueText.style.color = "#ffaa00";
-        valueText.style.textShadow = "0 0 15px rgba(255, 170, 0, 0.5)";
-        circleBorder.style.borderColor = "#ffaa00";
-        labelText.textContent = "SYSTEM STABLE";
-        labelText.style.color = "#ffaa00";
-    } else {
-        // Merah (Bahaya)
-        valueText.style.color = "#ff4d4d";
-        valueText.style.textShadow = "0 0 15px rgba(255, 77, 77, 0.5)";
-        circleBorder.style.borderColor = "#ff4d4d";
-        labelText.textContent = "ATTENTION NEEDED";
-        labelText.style.color = "#ff4d4d";
-    }
+    // Update UI Cards
+    animateValue("cTotal", total);
+    animateValue("cOnline", online);
+    animateValue("cHardcopy", hardcopy);
+    animateValue("cPending", pending);
+
+    // Update Chart
+    renderChart(online, hardcopy, pending);
+
+    // Update Table
+    renderTable();
 }
 
-// --- 8. RENDER TABLE ---
-function renderTable(){
-  const tb = document.querySelector("#dashboardTable tbody");
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  tb.innerHTML = "";
+function renderChart(online, hardcopy, pending) {
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    if(chartInstance) chartInstance.destroy();
 
-  const filtered = complaintsData.filter(c => 
-      c.id.toLowerCase().includes(search) ||
-      (c.lastUser||"").toLowerCase().includes(search) ||
-      (c.assettype||"").toLowerCase().includes(search)
-  );
-
-  if(filtered.length === 0){
-      tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">No matching data stream detected.</td></tr>`;
-      return;
-  }
-
-  filtered.forEach(c=>{
-    let statusColor = '#fff';
-    if(c.approvalstatus === 'Approve') statusColor = '#00ff9d';
-    else statusColor = '#ffaa00';
-
-    tb.innerHTML += `
-      <tr>
-        <td style="font-family:'Orbitron'; color:var(--neon-blue);">${c.id}</td>
-        <td>${c.lastUser || "-"}</td>
-        <td>${c.assettype || "-"}</td>
-        <td>${formatDate(c.damagedate)}</td>
-        <td style="color:${statusColor}; font-weight:bold;">${c.approvalstatus || "PENDING"}</td>
-      </tr>`;
+    chartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Approved Online', 'Approved Hardcopy', 'Pending/Incomplete'],
+            datasets: [{
+                data: [online, hardcopy, pending],
+                backgroundColor: ['#00ff9d', '#ffaa00', '#ff4d4d'], // Hijau, Kuning/Emas, Merah
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { color: '#fff', usePointStyle: true, padding: 20 } }
+            },
+            cutout: '70%'
+        }
     });
 }
 
-// --- 9. RENDER STATS CARDS ---
-function renderStats(){
-  document.getElementById("totalComplaints").textContent = complaintsData.length;
-  document.getElementById("approveCount").textContent = 
-    complaintsData.filter(c=>c.approvalstatus==="Approve").length;
-  document.getElementById("notApproveCount").textContent = 
-    complaintsData.filter(c=>c.approvalstatus!=="Approve").length;
+function renderTable() {
+    const tb = document.querySelector("#dashboardTable tbody");
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    tb.innerHTML = "";
+
+    const list = complaintsData.filter(c => c.id.toLowerCase().includes(search) || (c.assettype||"").toLowerCase().includes(search));
+
+    if(list.length === 0) { tb.innerHTML = `<tr><td colspan="5" style="text-align:center;">No data found</td></tr>`; return; }
+
+    list.forEach(c => {
+        // LOGIC STATUS SECTION 3 (IT)
+        // Kalau Section 3 date ada, maknanya dah isi. Kalau tak, Pending.
+        let sec3Status = c.section3date ? 
+            `<span class="badge badge-online">COMPLETED</span>` : 
+            `<span class="badge badge-pending">PENDING IT</span>`;
+
+        // LOGIC STATUS SECTION 4 (ENC ASHRI)
+        let sec4Status = "-";
+        if(c.approvalstatus === 'Approve') {
+            if(c.approverSignature) {
+                sec4Status = `<span class="badge badge-online"><i class="fa-solid fa-wifi"></i> ONLINE APPROVED</span>`;
+            } else {
+                sec4Status = `<span class="badge badge-manual"><i class="fa-solid fa-file-signature"></i> HARDCOPY APPROVED</span>`;
+            }
+        } else if (c.approvalstatus === 'Reject') {
+             sec4Status = `<span class="badge badge-pending">REJECTED</span>`;
+        } else {
+             sec4Status = `<span class="badge badge-neutral">PENDING APPROVAL</span>`;
+        }
+
+        tb.innerHTML += `
+            <tr>
+                <td style="color:var(--neon-blue); font-family:'Orbitron'">${c.id}</td>
+                <td>${c.assettype || "-"}</td>
+                <td>${sec3Status}</td>
+                <td>${sec4Status}</td>
+                <td style="color:#aaa; font-size:11px;">${c.updatedAt ? new Date(c.updatedAt.toDate()).toLocaleDateString() : "-"}</td>
+            </tr>
+        `;
+    });
 }
 
-// --- 10. RENDER CHART JS ---
-function renderDonut(){
-  const approve = complaintsData.filter(c=>c.approvalstatus==="Approve").length;
-  const pending = complaintsData.length - approve;
+document.getElementById("searchInput").oninput = renderTable;
 
-  if(statusChart) statusChart.destroy();
-  Chart.defaults.color = '#94a3b8';
-  Chart.defaults.font.family = 'Poppins';
-
-  statusChart = new Chart(document.getElementById("statusChart"),{
-    type:"doughnut",
-    data:{
-      labels:["Approved","Pending"],
-      datasets:[{
-        data:[approve,pending],
-        backgroundColor:["#00ff9d","#ff6600"],
-        borderColor: "#020617",
-        borderWidth: 2,
-        hoverOffset: 10
-      }]
-    },
-    options:{
-      cutout:"70%",
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins:{
-          legend:{
-              position:"bottom",
-              labels: { padding: 20, usePointStyle: true }
-          }
-      }
-    }
-  });
+// Animation effect for numbers
+function animateValue(id, end) {
+    const obj = document.getElementById(id);
+    let start = 0;
+    const duration = 1000;
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * (end - start) + start);
+        if (progress < 1) { window.requestAnimationFrame(step); }
+    };
+    window.requestAnimationFrame(step);
 }
-
-document.getElementById("searchInput").addEventListener("input", renderTable);
-
-const backToTopBtn = document.getElementById("backToTop");
-window.onscroll = function() {
-  if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-    backToTopBtn.classList.add("show");
-  } else {
-    backToTopBtn.classList.remove("show");
-  }
-};
-backToTopBtn.onclick = function() {
-  window.scrollTo({top: 0, behavior: 'smooth'});
-};
 </script>
 
 </body>
