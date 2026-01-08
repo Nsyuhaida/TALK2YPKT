@@ -55,91 +55,48 @@ body::before {
 }
 
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
-.brand {
-  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
-  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
-}
+.brand { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px; }
 .nav-links { flex: 1; display: flex; flex-direction: column; }
-.nav a {
-  display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
-  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
-  font-size: 14px; border: 1px solid transparent;
-}
-.nav a:hover, .nav a.active {
-  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
-}
+.nav a { display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7); padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-size: 14px; border: 1px solid transparent; }
+.nav a:hover, .nav a.active { background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border); box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); }
 .nav a i { width: 20px; text-align: center; }
-#logout {
-  margin-top: auto; color: var(--neon-red);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px; border-radius: 0; cursor: pointer;
-}
-
-.sidebar-overlay { 
-    position: fixed; inset: 0; background: rgba(0,0,0,0.8); 
-    z-index: 90; display: none; backdrop-filter: blur(5px); 
-}
+#logout { margin-top: auto; color: var(--neon-red); border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; border-radius: 0; cursor: pointer; }
+.sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 90; display: none; backdrop-filter: blur(5px); }
 .sidebar-overlay.active { display: block; }
 
 /* --- 3. MAIN CONTENT --- */
 .main { flex:1; padding:30px; width: 100%; overflow-x: hidden; }
-
 .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.mobile-toggle { 
-    background: none; border: none; color: var(--neon-blue); 
-    font-size: 24px; cursor: pointer; padding: 5px; 
-}
+.mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px; }
 
 h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
 
 /* SEARCH */
 .search-container { margin-bottom: 25px; }
-#searchInput { 
-    width: 100%; max-width: 600px; padding: 12px 20px; 
-    background: rgba(0,0,0,0.4); border: 1px solid var(--border); 
-    border-radius: 50px; color: #fff; outline: none; transition: 0.3s; 
-}
+#searchInput { width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 50px; color: #fff; outline: none; transition: 0.3s; }
 #searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
 /* TABLE RESPONSIVE */
-.table-card { 
-    background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); 
-    border-radius: 16px; border: 1px solid var(--border); 
-    padding: 0; margin-bottom: 30px; 
-    max-height: 400px; 
-    overflow-y: auto; overflow-x: auto; 
-}
+.table-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid var(--border); padding: 0; margin-bottom: 30px; max-height: 400px; overflow-y: auto; overflow-x: auto; }
 table { width:100%; border-collapse: collapse; min-width: 600px; }
 th { background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; white-space: nowrap; }
 td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; cursor: pointer; white-space: nowrap; }
 tr:hover { background: rgba(0, 243, 255, 0.05); color: #fff; }
 
 /* FORM */
-.card { 
-    background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); padding: 40px; 
-    border-radius: 16px; border: 1px solid var(--border); 
-    display: none; margin-bottom: 50px; animation: fadeIn 0.5s ease; 
-}
+.card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); padding: 40px; border-radius: 16px; border: 1px solid var(--border); display: none; margin-bottom: 50px; animation: fadeIn 0.5s ease; }
 h2 { font-family:'Orbitron'; color:#fff; border-bottom:2px solid var(--neon-blue); padding-bottom:10px; margin-bottom:20px; font-size: 20px; }
 h3 { font-family: 'Orbitron'; color: var(--neon-blue); margin-top: 25px; margin-bottom: 15px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
 
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .full-width { grid-column: span 2; }
-
 label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
 .input { width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; outline: none; transition: 0.3s; }
 .input:focus { border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0, 255, 157, 0.2); }
 .input[readonly] { background: rgba(255, 255, 255, 0.03); color: var(--neon-blue); border-color: transparent; }
 
 /* DECISION BOX */
-.decision-box {
-    grid-column: span 2;
-    margin-top: 25px; padding: 20px;
-    border: 1px solid var(--neon-gold);
-    background: rgba(251, 191, 36, 0.05);
-    border-radius: 8px;
-}
+.decision-box { grid-column: span 2; margin-top: 25px; padding: 20px; border: 1px solid var(--neon-gold); background: rgba(251, 191, 36, 0.05); border-radius: 8px; }
 .decision-title { color: var(--neon-gold); font-family: 'Orbitron'; font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
 .decision-select { background: #000; border: 1px solid var(--neon-gold); color: var(--neon-gold); font-weight: bold; cursor: pointer; }
 .info-text { margin-top:10px; font-size:11px; color:#94a3b8; line-height: 1.4; }
@@ -147,48 +104,21 @@ label { display: block; color: rgba(255,255,255,0.6); font-size: 11px; margin-bo
 .btn-primary { width: 100%; padding: 15px; border: none; border-radius: 50px; cursor: pointer; background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold; margin-top: 20px; transition:0.3s; font-size: 16px; }
 .btn-primary:hover { background: #fff; box-shadow: 0 0 20px var(--neon-blue); transform: scale(1.02); }
 
-/* --- CUSTOM SWEETALERT STYLING (BIAR LAWA) --- */
-div:where(.swal2-container) div:where(.swal2-popup) {
-    background: rgba(2, 6, 23, 0.95) !important;
-    border: 1px solid var(--neon-green);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 30px rgba(0, 255, 157, 0.1);
-}
-div:where(.swal2-title) {
-    font-family: 'Orbitron', sans-serif !important;
-    color: var(--neon-green) !important;
-    text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
-}
-div:where(.swal2-html-container) {
-    color: #cbd5e1 !important;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-}
-div:where(.swal2-confirm) {
-    background-color: var(--neon-green) !important;
-    color: #000 !important;
-    font-family: 'Orbitron', sans-serif !important;
-    font-weight: bold !important;
-    box-shadow: 0 0 15px rgba(0, 255, 157, 0.4) !important;
-    border-radius: 50px !important;
-}
-div:where(.swal2-confirm):focus { box-shadow: 0 0 0 3px rgba(0,255,157,0.5) !important; }
-div:where(.swal2-icon).swal2-success { border-color: var(--neon-green); color: var(--neon-green); }
-div:where(.swal2-icon).swal2-success [class^=swal2-success-line] { background-color: var(--neon-green); }
-div:where(.swal2-icon).swal2-success .swal2-success-ring { border: 4px solid rgba(0, 255, 157, 0.3); }
+/* SWEETALERT CUSTOM */
+div:where(.swal2-container) div:where(.swal2-popup) { background: rgba(2, 6, 23, 0.95) !important; border: 1px solid var(--neon-green); border-radius: 15px; backdrop-filter: blur(10px); }
+div:where(.swal2-title) { font-family: 'Orbitron' !important; color: var(--neon-green) !important; }
+div:where(.swal2-html-container) { color: #cbd5e1 !important; }
+div:where(.swal2-confirm) { background-color: var(--neon-green) !important; color: #000 !important; font-family: 'Orbitron' !important; border-radius: 50px !important; }
 
-/* --- MEDIA QUERIES --- */
 @media (max-width: 768px) {
-    .sidebar { position: fixed; left: -100%; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
-    .sidebar.active { left: 0; }
-    .mobile-header { display: flex; }
-    .main { padding: 20px; }
-    .form-grid { grid-template-columns: 1fr; }
-    .full-width { grid-column: span 1; }
-    .decision-box { grid-column: span 1; }
+  .sidebar { position: fixed; left: -100%; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
+  .sidebar.active { left: 0; }
+  .mobile-header { display: flex; }
+  .main { padding: 20px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .full-width { grid-column: span 1; }
+  .decision-box { grid-column: span 1; }
 }
-
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 </style>
@@ -301,7 +231,7 @@ const auth=firebase.auth();
 // --- AUTH ---
 auth.onAuthStateChanged((user) => {
     if (user && user.email.endsWith('@ypkt.gov.my')) {
-        loadComplaints();
+        listenToComplaints(); // TUKAR NAMA FUNCTION SUPAYA JELAS KITA GUNA LISTENER
     } else {
         window.location.href = "login.html";
     }
@@ -325,29 +255,41 @@ const displayDate = (t) => {
     return t.toDate().toLocaleString('ms-MY');
 }
 
-// --- DATA ---
+// --- DATA LOGIC (FIXED) ---
 let complaints=[];
-async function loadComplaints(){
-    try {
-        const s = await db.collection("complaint").orderBy("updatedAt", "desc").limit(50).get();
-        complaints = s.docs.map(d => ({id:d.id, ...d.data()}));
+
+function listenToComplaints(){
+    // KITA GUNA onSnapshot DAN BUANG orderBy("updatedAt")
+    // Ini memastikan data baru yang tak ada date pun akan masuk
+    db.collection("complaint").onSnapshot((snapshot) => {
+        let temp = snapshot.docs.map(d => ({id:d.id, ...d.data()}));
+        
+        // CLIENT SIDE SORT (Baru di atas, Lama di bawah)
+        complaints = temp.sort((a, b) => {
+            let dateA = a.updatedAt ? a.updatedAt.seconds : (a.createdAt ? a.createdAt.seconds : 0);
+            let dateB = b.updatedAt ? b.updatedAt.seconds : (b.createdAt ? b.createdAt.seconds : 0);
+            return dateB - dateA;
+        });
+
         renderTable(complaints);
-    } catch(e) { console.error(e); }
+    });
 }
 
 function renderTable(list){
     const div = document.getElementById("complaintList");
-    if(list.length === 0) { div.innerHTML = "<div style='padding:20px;text-align:center'>Tiada Rekod</div>"; return; }
+    if(list.length === 0) { div.innerHTML = "<div style='padding:20px;text-align:center; color:#888;'>Tiada rekod dijumpai.</div>"; return; }
     
-    let h = "<table><thead><tr><th>ID</th><th>PENGADU</th><th>STATUS</th></tr></thead><tbody>";
+    let h = "<table><thead><tr><th>ID</th><th>PENGADU</th><th>ASET</th><th>STATUS</th></tr></thead><tbody>";
     list.forEach(c => {
         let s = c.approvalstatus || "Pending";
         let color = (s === 'Approve') ? '#00ff9d' : (s === 'Reject' ? '#ff4d4d' : '#ccc');
+        let icon = (s === 'Approve') ? '<i class="fa-solid fa-check"></i>' : (s === 'Reject' ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-clock"></i>');
         
         h += `<tr onclick="loadDetail('${c.id}')">
             <td style="color:var(--neon-blue);font-family:'Orbitron'">${c.id}</td>
             <td>${c.lastUser||"-"}</td>
-            <td style="color:${color};font-weight:bold;font-size:11px;">${s.toUpperCase()}</td>
+            <td>${c.assettype||"-"}</td>
+            <td style="color:${color};font-weight:bold;font-size:11px;">${icon} ${s.toUpperCase()}</td>
         </tr>`;
     });
     h += "</tbody></table>";
@@ -362,7 +304,7 @@ document.getElementById("searchInput").oninput = (e) => {
 };
 
 // --- LOAD DETAIL ---
-async function loadDetail(id){
+function loadDetail(id){
     const d = complaints.find(c => c.id === id);
     if(!d) return;
 
@@ -378,12 +320,10 @@ async function loadDetail(id){
     setVal('damagedate', displayDate(d.damagedate));
     setVal('damagedescription', d.damagedescription);
 
-    // SEC 2 Field Check
     setVal('recommendationsection2', d.recommendationsection2 || d.section2recommendation); 
     setVal('section2nameposition', d.section2nameposition);
     setVal('section2date', displayDate(d.section2date));
 
-    // SEC 3
     setVal('previousmaintenancecost', d.previousmaintenancecost);
     setVal('estimatedmaintenancecost', d.estimatedmaintenancecost);
     setVal('recommendsection3', d.recommendsection3);
@@ -401,13 +341,15 @@ async function loadDetail(id){
     document.getElementById("approvalMode").value = isHardcopy ? "Hardcopy" : "Pending";
 
     form.scrollIntoView({behavior: "smooth"});
+    
+    // Auto tutup sidebar di mobile bila klik data
     if(window.innerWidth <= 768) {
         document.getElementById('sidebar').classList.remove('active');
         document.querySelector('.sidebar-overlay').classList.remove('active');
     }
 }
 
-// --- SAVE (YANG NI KITA BAGI LAWA) ---
+// --- SAVE ---
 document.getElementById("saveComplaint").onclick = async () => {
     const id = document.getElementById("complaintDetail").dataset.id;
     if(!id) return;
@@ -437,17 +379,13 @@ document.getElementById("saveComplaint").onclick = async () => {
     try {
         await db.collection("complaint").doc(id).set(updateData, {merge:true});
         
-        // --- CUSTOM ALERT YANG LAWA ---
         Swal.fire({
             title: 'SYSTEM UPDATED',
             html: '<i class="fa-solid fa-check-circle" style="font-size:40px; color:#00ff9d; margin-bottom:10px;"></i><br><br>Data rekod telah berjaya dikemaskini.<br>Status: <b style="color:#00ff9d">' + mode.toUpperCase() + '</b>',
-            icon: null, // Kita guna icon dalam HTML atas ni supaya lagi sharp
             showConfirmButton: true,
-            confirmButtonText: 'TERUSKAN',
-            // Tak perlu set background kat sini sebab dah set dalam CSS di atas (swal2-popup)
+            confirmButtonText: 'TERUSKAN'
         });
 
-        loadComplaints();
     } catch(e) {
         Swal.fire({
             title: 'RALAT SISTEM',
