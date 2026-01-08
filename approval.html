@@ -20,14 +20,28 @@
         --text: #e2e8f0;
     }
 
-    body { background: var(--bg-dark); color: var(--text); font-family: 'Poppins', sans-serif; padding: 20px; }
+    body { background: var(--bg-dark); color: var(--text); font-family: 'Poppins', sans-serif; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
 
     /* Login/Search Container */
-    .container { max-width: 800px; margin: 0 auto; }
+    .container { max-width: 800px; width: 100%; margin: 0 auto; }
     
     .header { text-align: center; margin-bottom: 40px; }
     .header img { width: 80px; margin-bottom: 15px; }
     .header h1 { font-family: 'Orbitron'; color: var(--gold); }
+
+    /* PIN SCREEN STYLES */
+    #pinScreen {
+        max-width: 400px; margin: 100px auto; text-align: center;
+        background: var(--card-bg); padding: 40px; border-radius: 15px;
+        border: 1px solid var(--gold); box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+    }
+    .pin-input {
+        width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 10px;
+        background: #0f172a; border: 1px solid #475569; color: var(--gold); border-radius: 8px; margin: 20px 0;
+    }
+
+    /* UTILITY */
+    .hidden { display: none !important; }
 
     /* Search Box */
     .search-box {
@@ -71,6 +85,9 @@
         width: 100%; padding: 12px; background: #020617; border: 1px solid var(--gold);
         color: #fff; border-radius: 5px; outline: none;
     }
+    /* Specific override for inputs inside PIN screen/search to avoid clash */
+    #pinScreen input, .search-box input { border-color: #475569; }
+    #pinScreen input:focus, .search-box input:focus { border-color: var(--gold); }
 
     .action-bar {
         display: flex; gap: 10px; margin-top: 20px;
@@ -86,13 +103,14 @@
 
     /* Print Styles */
     @media print {
-        body { background: #fff; color: #000; }
-        .search-box, .btn-submit, .btn-print, .header { display: none; }
+        body { background: #fff; color: #000; display: block; }
+        .search-box, .btn-submit, .btn-print, .header, #pinScreen { display: none !important; }
         .section-card { border: 1px solid #000; box-shadow: none; margin-bottom: 10px; break-inside: avoid; }
         .field-val { background: #fff; border: none; border-bottom: 1px solid #ccc; color: #000; padding: 5px 0; }
         input, textarea, select { border: none; background: none; color: #000; }
         #approvalForm { display: block !important; }
-        /* Header for print */
+        #mainApp { display: block !important; }
+        
         #approvalForm::before {
             content: "OFFICIAL APPROVAL DOCUMENT - YPKT";
             display: block; font-weight: bold; text-align: center; margin-bottom: 20px; font-size: 20px;
@@ -104,11 +122,20 @@
 </head>
 <body>
 
-<div class="container">
+<div id="pinScreen">
+    <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" width="80" style="margin-bottom:20px;">
+    <h2 style="color:var(--gold); font-family:'Orbitron'">EXECUTIVE ACCESS</h2>
+    <p style="font-size:12px; color:#aaa;">SECURE AREA: PLEASE ENTER PIN</p>
+    
+    <input type="password" id="secretPin" class="pin-input" placeholder="****" maxlength="4">
+    <button onclick="checkPin()" class="btn-submit" style="width:100%;">ACCESS PORTAL</button>
+</div>
+
+<div id="mainApp" class="container hidden">
     <div class="header">
         <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo">
         <h1>EXECUTIVE APPROVAL PORTAL</h1>
-        <p style="color:#94a3b8">Sila masukkan ID Rujukan Aduan untuk pengesahan.</p>
+        <p style="color:#94a3b8">Welcome, Director. Please enter Reference ID.</p>
     </div>
 
     <div class="search-box">
@@ -146,16 +173,16 @@
                     <select id="app_status">
                         <option value="Pending">Please Select...</option>
                         <option value="Approve">APPROVE (LULUS)</option>
-                        <option value="Not approve">REJECT (TIDAK LULUS)</option>
+                        <option value="Reject">REJECT (TIDAK LULUS)</option>
                     </select>
                 </div>
                 <div>
                     <label>Approver Name</label>
-                    <input type="text" id="app_name" placeholder="Enter Name (e.g. Encik Ashri)">
+                    <input type="text" id="app_name" value="ENCIK ASHRI" placeholder="Enter Name">
                 </div>
                 <div>
                     <label>Position</label>
-                    <input type="text" id="app_pos" placeholder="e.g. Pengarah">
+                    <input type="text" id="app_pos" value="PENGARAH" placeholder="e.g. Pengarah">
                 </div>
                 <div class="full">
                     <label>Comments / Remarks</label>
@@ -177,7 +204,7 @@
 </div>
 
 <script>
-// --- FIREBASE CONFIG (SAMA) ---
+// --- FIREBASE CONFIG ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -185,10 +212,38 @@ const firebaseConfig={
 };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
+const auth=firebase.auth();
 
-// Kita tak pakai Auth Guard ketat di sini sebab Encik Ashri mungkin akses direct.
-// Tapi idealnya, dia perlu login juga. Untuk demo student, kita buat open search by ID.
+// === 1. GHOST LOGIN FUNCTION ===
+function checkPin() {
+    const pin = document.getElementById('secretPin').value;
+    const btn = document.querySelector('#pinScreen button');
+    
+    if(pin === "1234") { // <--- PIN RAHSIA DISINI
+        
+        btn.innerHTML = "Authenticating...";
+        
+        // Login secara senyap di belakang tabir guna akaun khas
+        auth.signInWithEmailAndPassword("pengarah@ypkt.gov.my", "ypkt2024")
+        .then((userCredential) => {
+            // Login Berjaya!
+            document.getElementById('pinScreen').classList.add('hidden'); // Sorok PIN
+            document.getElementById('mainApp').classList.remove('hidden'); // Tunjuk App
+        })
+        .catch((error) => {
+            console.error(error);
+            btn.innerHTML = "ACCESS PORTAL";
+            alert("Ralat Sistem: " + error.message);
+        });
 
+    } else {
+        alert("PIN SALAH! Akses ditolak.");
+        document.getElementById('secretPin').value = "";
+    }
+}
+
+
+// === 2. FUNGSI ASAL (SEARCH & SUBMIT) ===
 let currentId = "";
 
 async function findComplaint() {
@@ -214,10 +269,12 @@ async function findComplaint() {
             document.getElementById('disp_cost').innerText = data.estimatedmaintenancecost || "0.00";
             document.getElementById('disp_tech_rec').innerText = data.recommendsection3 || "-";
 
-            // Populate Existing Approval Data (if any)
+            // Populate Existing Approval Data
             document.getElementById('app_status').value = data.approvalstatus || "Pending";
-            document.getElementById('app_name').value = data.approvername || "";
-            document.getElementById('app_pos').value = data.approverposition || "";
+            
+            // Auto fill nama kalau kosong, kalau tak ambil dari db
+            document.getElementById('app_name').value = data.approvername || "ENCIK ASHRI";
+            document.getElementById('app_pos').value = data.approverposition || "PENGARAH";
             document.getElementById('app_comment').value = data.approvalcomment || "";
 
             document.getElementById('approvalForm').style.display = "block";
@@ -234,6 +291,12 @@ async function findComplaint() {
 
 async function submitApproval() {
     if(!currentId) return;
+
+    // Check if user is actually logged in (Safety check)
+    if(!auth.currentUser) {
+        alert("Session Expired. Please refresh and enter PIN again.");
+        return location.reload();
+    }
 
     const status = document.getElementById('app_status').value;
     const name = document.getElementById('app_name').value;
@@ -252,10 +315,10 @@ async function submitApproval() {
             approvaldate: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        alert("Berjaya! Keputusan telah direkodkan ke dalam database.");
-        location.reload(); // Refresh page
+        alert("Berjaya! Keputusan telah direkodkan.");
+        location.reload(); 
     } catch(e) {
-        alert("Gagal simpan: " + e.message);
+        alert("Gagal simpan (Permission Error?): " + e.message);
     }
 }
 </script>
