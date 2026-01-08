@@ -16,22 +16,18 @@
     :root {
         --bg-dark: #0f172a;
         --card-bg: #1e293b;
-        --gold: #fbbf24; /* Warna Gold untuk VIP/Approver */
+        --gold: #fbbf24;
         --text: #e2e8f0;
     }
 
     body { background: var(--bg-dark); color: var(--text); font-family: 'Poppins', sans-serif; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
 
-    /* Login/Search Container */
     .container { max-width: 800px; width: 100%; margin: 0 auto; }
-    
-    .header { text-align: center; margin-bottom: 40px; }
-    .header img { width: 80px; margin-bottom: 15px; }
-    .header h1 { font-family: 'Orbitron'; color: var(--gold); }
+    .hidden { display: none !important; }
 
-    /* PIN SCREEN STYLES */
+    /* --- PIN SCREEN --- */
     #pinScreen {
-        max-width: 400px; margin: 100px auto; text-align: center;
+        max-width: 400px; margin: 80px auto; text-align: center;
         background: var(--card-bg); padding: 40px; border-radius: 15px;
         border: 1px solid var(--gold); box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
     }
@@ -40,14 +36,15 @@
         background: #0f172a; border: 1px solid #475569; color: var(--gold); border-radius: 8px; margin: 20px 0;
     }
 
-    /* UTILITY */
-    .hidden { display: none !important; }
+    /* --- MAIN APP --- */
+    .header { text-align: center; margin-bottom: 30px; }
+    .header img { width: 80px; margin-bottom: 15px; }
+    .header h1 { font-family: 'Orbitron'; color: var(--gold); margin: 0; }
 
-    /* Search Box */
     .search-box {
-        background: var(--card-bg); padding: 30px; border-radius: 15px;
+        background: var(--card-bg); padding: 25px; border-radius: 15px;
         text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        border: 1px solid rgba(251, 191, 36, 0.3);
+        border: 1px solid rgba(251, 191, 36, 0.3); margin-bottom: 20px;
     }
     .input-code {
         width: 70%; padding: 15px; font-size: 18px; border-radius: 8px;
@@ -59,65 +56,56 @@
         border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-left: 10px;
     }
 
-    /* Form Display */
-    #approvalForm { display: none; margin-top: 30px; animation: slideUp 0.5s ease; }
-    
+    /* FORM CARDS */
+    #approvalForm { animation: slideUp 0.5s ease; }
     .section-card {
         background: var(--card-bg); padding: 25px; border-radius: 10px; margin-bottom: 20px;
         border-left: 4px solid #64748b;
     }
     .section-title { font-family: 'Orbitron'; color: #94a3b8; margin-bottom: 15px; font-size: 14px; }
-    
     .active-section { border-left-color: var(--gold); border: 1px solid var(--gold); }
     .active-section .section-title { color: var(--gold); }
 
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
     .full { grid-column: span 2; }
-    
+
     label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; }
     .field-val { 
         background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px; 
         color: #fff; font-size: 14px; border: 1px solid #334155;
     }
 
-    /* Inputs for Section 4 */
     input, select, textarea {
         width: 100%; padding: 12px; background: #020617; border: 1px solid var(--gold);
-        color: #fff; border-radius: 5px; outline: none;
+        color: #fff; border-radius: 5px; outline: none; box-sizing: border-box;
     }
-    /* Specific override for inputs inside PIN screen/search to avoid clash */
-    #pinScreen input, .search-box input { border-color: #475569; }
-    #pinScreen input:focus, .search-box input:focus { border-color: var(--gold); }
-
-    .action-bar {
-        display: flex; gap: 10px; margin-top: 20px;
-    }
+    
+    .action-bar { display: flex; gap: 10px; margin-top: 20px; }
     .btn-submit {
         flex: 2; padding: 15px; background: var(--gold); border: none; border-radius: 8px;
-        font-weight: bold; cursor: pointer; font-family: 'Orbitron';
+        font-weight: bold; cursor: pointer; font-family: 'Orbitron'; color: #000;
     }
     .btn-print {
         flex: 1; padding: 15px; background: #334155; color: #fff; border: none; border-radius: 8px;
         cursor: pointer; font-family: 'Orbitron';
     }
 
-    /* Print Styles */
+    @keyframes slideUp { from {opacity:0; transform:translateY(20px)} to {opacity:1; transform:translateY(0)} }
+
+    /* PRINT MODE */
     @media print {
         body { background: #fff; color: #000; display: block; }
         .search-box, .btn-submit, .btn-print, .header, #pinScreen { display: none !important; }
         .section-card { border: 1px solid #000; box-shadow: none; margin-bottom: 10px; break-inside: avoid; }
         .field-val { background: #fff; border: none; border-bottom: 1px solid #ccc; color: #000; padding: 5px 0; }
-        input, textarea, select { border: none; background: none; color: #000; }
-        #approvalForm { display: block !important; }
-        #mainApp { display: block !important; }
+        input, textarea, select { border: none; background: none; color: #000; font-weight: bold; }
+        #mainApp, #approvalForm { display: block !important; }
         
         #approvalForm::before {
             content: "OFFICIAL APPROVAL DOCUMENT - YPKT";
-            display: block; font-weight: bold; text-align: center; margin-bottom: 20px; font-size: 20px;
+            display: block; font-weight: bold; text-align: center; margin-bottom: 20px; font-size: 20px; text-decoration: underline;
         }
     }
-
-    @keyframes slideUp { from {opacity:0; transform:translateY(20px)} to {opacity:1; transform:translateY(0)} }
 </style>
 </head>
 <body>
@@ -134,8 +122,8 @@
 <div id="mainApp" class="container hidden">
     <div class="header">
         <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo">
-        <h1>EXECUTIVE APPROVAL PORTAL</h1>
-        <p style="color:#94a3b8">Welcome, Director. Please enter Reference ID.</p>
+        <h1>APPROVAL PORTAL</h1>
+        <p style="color:#94a3b8">Welcome. Please enter Reference ID.</p>
     </div>
 
     <div class="search-box">
@@ -143,7 +131,7 @@
         <button class="btn-find" onclick="findComplaint()"><i class="fa-solid fa-magnifying-glass"></i> FIND</button>
     </div>
 
-    <div id="approvalForm">
+    <div id="approvalForm" class="hidden">
         
         <div class="section-card">
             <div class="section-title">SEC 1 & 2: REPORT DETAILS</div>
@@ -182,7 +170,7 @@
                 </div>
                 <div>
                     <label>Position</label>
-                    <input type="text" id="app_pos" value="PENGARAH" placeholder="e.g. Pengarah">
+                    <input type="text" id="app_pos" value="TIMBALAN PENGARAH" placeholder="e.g. Pengarah">
                 </div>
                 <div class="full">
                     <label>Comments / Remarks</label>
@@ -214,26 +202,28 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// === 1. GHOST LOGIN FUNCTION ===
+// === 1. GHOST LOGIN FUNCTION (UPDATED) ===
 function checkPin() {
     const pin = document.getElementById('secretPin').value;
     const btn = document.querySelector('#pinScreen button');
     
-    if(pin === "1234") { // <--- PIN RAHSIA DISINI
+    // PIN Rahsia: 1234
+    if(pin === "1234") { 
         
         btn.innerHTML = "Authenticating...";
         
-        // Login secara senyap di belakang tabir guna akaun khas
-        auth.signInWithEmailAndPassword("pengarah@ypkt.gov.my", "ypkt2024")
+        // LOGIN MENGGUNAKAN AKAUN TIMBALAN PENGARAH
+        auth.signInWithEmailAndPassword("timbalanpengarah@ypkt.gov.my", "ypkt0101")
         .then((userCredential) => {
-            // Login Berjaya!
-            document.getElementById('pinScreen').classList.add('hidden'); // Sorok PIN
-            document.getElementById('mainApp').classList.remove('hidden'); // Tunjuk App
+            // Login Berjaya
+            console.log("Logged in as: " + userCredential.user.email);
+            document.getElementById('pinScreen').classList.add('hidden'); 
+            document.getElementById('mainApp').classList.remove('hidden'); 
         })
         .catch((error) => {
             console.error(error);
             btn.innerHTML = "ACCESS PORTAL";
-            alert("Ralat Sistem: " + error.message);
+            alert("Ralat Login: " + error.message);
         });
 
     } else {
@@ -242,8 +232,7 @@ function checkPin() {
     }
 }
 
-
-// === 2. FUNGSI ASAL (SEARCH & SUBMIT) ===
+// === 2. FUNGSI SEARCH & SUBMIT ===
 let currentId = "";
 
 async function findComplaint() {
@@ -259,7 +248,7 @@ async function findComplaint() {
             const data = doc.data();
             currentId = id;
             
-            // Populate Read-Only Data
+            // Isi Data Read-Only
             document.getElementById('disp_id').innerText = id;
             document.getElementById('disp_user').innerText = data.lastUser || "-";
             document.getElementById('disp_asset').innerText = data.assettype || "-";
@@ -269,18 +258,19 @@ async function findComplaint() {
             document.getElementById('disp_cost').innerText = data.estimatedmaintenancecost || "0.00";
             document.getElementById('disp_tech_rec').innerText = data.recommendsection3 || "-";
 
-            // Populate Existing Approval Data
+            // Isi Data Approval (Jika dah pernah isi)
             document.getElementById('app_status').value = data.approvalstatus || "Pending";
             
-            // Auto fill nama kalau kosong, kalau tak ambil dari db
+            // Auto-fill nama/jawatan jika kosong
             document.getElementById('app_name').value = data.approvername || "ENCIK ASHRI";
-            document.getElementById('app_pos').value = data.approverposition || "PENGARAH";
+            document.getElementById('app_pos').value = data.approverposition || "TIMBALAN PENGARAH"; // Default updated
             document.getElementById('app_comment').value = data.approvalcomment || "";
 
-            document.getElementById('approvalForm').style.display = "block";
+            // Tunjuk Form
+            document.getElementById('approvalForm').classList.remove('hidden');
         } else {
-            alert("ID tidak dijumpai. Sila semak semula.");
-            document.getElementById('approvalForm').style.display = "none";
+            alert("ID tidak dijumpai.");
+            document.getElementById('approvalForm').classList.add('hidden');
         }
     } catch(e) {
         console.error(e);
@@ -292,17 +282,18 @@ async function findComplaint() {
 async function submitApproval() {
     if(!currentId) return;
 
-    // Check if user is actually logged in (Safety check)
+    // Safety check session
     if(!auth.currentUser) {
-        alert("Session Expired. Please refresh and enter PIN again.");
-        return location.reload();
+        alert("Sesi tamat. Sila refresh dan masukkan PIN semula.");
+        location.reload();
+        return;
     }
 
     const status = document.getElementById('app_status').value;
     const name = document.getElementById('app_name').value;
     
-    if(status === "Pending") return alert("Sila pilih status Lulus atau Tidak.");
-    if(!name) return alert("Sila masukkan nama pengesah.");
+    if(status === "Pending") return alert("Sila pilih status (Approve/Reject).");
+    if(!name) return alert("Sila masukkan nama.");
 
     if(!confirm("Adakah anda pasti untuk menghantar keputusan ini?")) return;
 
@@ -315,10 +306,10 @@ async function submitApproval() {
             approvaldate: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        alert("Berjaya! Keputusan telah direkodkan.");
+        alert("Berjaya! Keputusan telah direkodkan ke database.");
         location.reload(); 
     } catch(e) {
-        alert("Gagal simpan (Permission Error?): " + e.message);
+        alert("Gagal simpan: " + e.message);
     }
 }
 </script>
