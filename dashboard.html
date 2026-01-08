@@ -14,22 +14,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-/* --- VARIABLE & RESET (SAMA MACAM COMPLAINT) --- */
+/* --- DESIGN SYSTEM --- */
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
   --neon-gold: #ffaa00; 
   --neon-red: #ff4d4d;
   --bg-dark: #020617;
-  --glass: rgba(15, 23, 42, 0.95); /* Ikut variable complaint */
-  --border: rgba(0, 243, 255, 0.2); /* Ikut variable complaint */
+  --glass: rgba(15, 23, 42, 0.95);
+  --border: rgba(0, 243, 255, 0.2);
   --text-main: #e2e8f0;
   --text-muted: #94a3b8;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
 
-/* BACKGROUND ANIMATION */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
   background-size: 400% 400%; animation: bgMove 20s ease infinite;
@@ -44,81 +43,52 @@ body::before {
 
 .app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
 
-/* --- SIDEBAR (SEBIJIK MACAM CODE AWAK BAGI) --- */
+/* SIDEBAR */
 .sidebar {
-  width: 260px; 
-  background: var(--glass); 
-  backdrop-filter: blur(15px);
-  border-right: 1px solid var(--border); 
-  padding: 30px 20px;
-  display: flex; flex-direction: column; 
-  position: sticky; top: 0; height: 100vh;
-  z-index: 100;
-  transition: transform 0.3s ease;
+  width: 260px; background: var(--glass); backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border); padding: 30px 20px;
+  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  z-index: 100; transition: transform 0.3s ease;
 }
-
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
-.brand {
-  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
-  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
-}
-
-/* Nav Wrapper (Tolak Logout ke Bawah) */
+.brand { font-family: 'Orbitron'; font-size: 18px; font-weight: 700; text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px; }
 .nav-links { flex: 1; display: flex; flex-direction: column; }
-
-.nav a {
-  display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
-  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
-  font-size: 14px; border: 1px solid transparent;
-}
-.nav a:hover, .nav a.active {
-  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
-}
+.nav a { display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7); padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-size: 14px; border: 1px solid transparent; }
+.nav a:hover, .nav a.active { background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border); box-shadow: 0 0 15px rgba(0, 243, 255, 0.15); }
 .nav a i { width: 20px; text-align: center; }
+#logout { margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; border-radius: 0; cursor: pointer; }
 
-#logout {
-  margin-top: auto; 
-  color: #ff4d4d;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px; border-radius: 0; cursor: pointer;
-}
-#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; border-top-color: rgba(255, 255, 255, 0.3); }
-
-/* --- MAIN CONTENT (DASHBOARD LAYOUT) --- */
+/* MAIN CONTENT */
 .main { flex: 1; padding: 30px; overflow-x: hidden; width: 100%; }
-
 .mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px; }
 
-/* DASHBOARD SPECIFIC STYLES */
+/* HEADER */
 .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
 .header h1 { font-family: 'Orbitron'; font-size: 24px; color: #fff; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
 .header p { color: var(--neon-blue); font-size: 12px; letter-spacing: 1px; }
-
 .input { padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: #fff; width: 250px; outline: none; transition: 0.3s; font-size: 13px; }
 .input:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-/* PROFILE SECTION */
+/* PROFILE */
+.card { background: var(--glass); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; margin-bottom: 25px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
 .compact-profile-wrapper { display: flex; justify-content: space-between; align-items: center; }
 .compact-left { display: flex; align-items: center; gap: 15px; }
-.profile-avatar-small { width: 50px; height: 50px; background: rgba(0, 243, 255, 0.1); border: 2px solid var(--neon-blue); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--neon-blue); overflow: hidden; border-radius: 50%; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+.profile-avatar-small { width: 50px; height: 50px; background: rgba(0, 243, 255, 0.1); border: 2px solid var(--neon-blue); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--neon-blue); border-radius: 50%; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
 .badge-role { background: rgba(0, 255, 157, 0.1); color: var(--neon-green); padding: 1px 6px; border-radius: 4px; font-size: 9px; letter-spacing: 1px; border: 1px solid rgba(0, 255, 157, 0.3); font-weight: bold; }
-.btn-toggle-compact { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: 5px 12px; font-size: 10px; font-family: 'Orbitron'; cursor: pointer; border-radius: 50px; transition: 0.3s; white-space: nowrap; }
-.btn-toggle-compact:hover { border-color: var(--neon-blue); color: var(--neon-blue); background: rgba(0, 243, 255, 0.05); }
+.btn-toggle-compact { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-muted); padding: 5px 12px; font-size: 10px; font-family: 'Orbitron'; cursor: pointer; border-radius: 50px; transition: 0.3s; }
+.btn-toggle-compact:hover { border-color: var(--neon-blue); color: var(--neon-blue); }
 #metadataPanel { animation: fadeIn 0.4s ease; margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; }
 
-/* STATS CARDS */
+/* STATS */
 .stats-wrapper { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
 .stats-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; transition: 0.3s; position: relative; overflow: hidden; }
 .stats-card:hover { transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.4); border-color: var(--neon-blue); }
 .stats-card h2 { font-family: 'Orbitron'; font-size: 32px; color: #fff; margin-bottom: 5px; }
 .stats-card span { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
 
-/* TABLE & CARDS */
-.card { background: var(--glass); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; margin-bottom: 25px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+/* TABLE */
 .card h3 { font-family: 'Orbitron'; color: var(--neon-blue); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; font-size: 16px; }
-
 table { width: 100%; border-collapse: separate; border-spacing: 0 5px; }
 th { text-align: left; padding: 12px; color: rgba(255,255,255,0.6); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
 td { background: rgba(255,255,255,0.03); padding: 12px; color: #fff; font-size: 13px; }
@@ -126,48 +96,37 @@ td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
 td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
 tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 
-/* BADGES UNTUK TABLE */
-.badge-table { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; white-space: nowrap; }
+/* BADGES */
+.badge-table { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
 .badge-it-done { background: rgba(0, 243, 255, 0.15); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
 .badge-it-pending { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid #94a3b8; }
 .badge-online { background: rgba(0, 255, 157, 0.15); color: var(--neon-green); border: 1px solid var(--neon-green); }
 .badge-hardcopy { background: rgba(255, 170, 0, 0.15); color: var(--neon-gold); border: 1px solid var(--neon-gold); }
 .badge-alert { background: rgba(255, 77, 77, 0.15); color: var(--neon-red); border: 1px solid var(--neon-red); }
 
-/* CHARTS & KPI */
+/* CHARTS */
 .summary-wrapper { max-width: 800px; margin: 0 auto; }
 .summary-row { display: flex; gap: 30px; align-items: center; justify-content: center; flex-wrap: wrap; }
 .summary-chart { width: 280px; position: relative; }
-.summary-kpi { text-align: center; padding: 20px; border-radius: 50%; border: 2px dashed var(--border); width: 160px; height: 160px; display: flex; flex-direction: column; justify-content: center; animation: rotateBorder 20s linear infinite reverse; transition: border-color 0.5s ease; }
+.summary-kpi { text-align: center; padding: 20px; border-radius: 50%; border: 2px dashed var(--border); width: 160px; height: 160px; display: flex; flex-direction: column; justify-content: center; animation: rotateBorder 20s linear infinite reverse; }
 .summary-kpi-inner { animation: rotateBorder 20s linear infinite; }
 .summary-kpi h2 { font-size: 36px; color: #fff; font-family: 'Orbitron'; }
 .summary-kpi span { font-size: 10px; color: var(--neon-blue); text-transform: uppercase; }
 
-/* UTILS */
 @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes rotateBorder { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @keyframes fadeIn { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
 
-/* MOBILE RESPONSIVE UTK SIDEBAR & DASHBOARD */
 @media (max-width: 768px) {
-    .sidebar { 
-        position: fixed; left: -100%; top: 0; bottom: 0;
-        width: 80%; max-width: 300px;
-        box-shadow: 10px 0 20px rgba(0,0,0,0.5);
-    }
-    .sidebar.active { left: 0; }
-    
-    .sidebar-overlay { 
-        position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-        z-index: 90; display: none; backdrop-filter: blur(3px);
-    }
-    .sidebar-overlay.active { display: block; }
-
-    .main { padding: 20px; }
-    .mobile-header { display: flex; }
-    .header { flex-direction: column; align-items: flex-start; }
-    .input { width: 100%; }
-    .compact-profile-wrapper { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
+  .sidebar.active { left: 0; }
+  .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
+  .sidebar-overlay.active { display: block; }
+  .main { padding: 20px; }
+  .mobile-header { display: flex; }
+  .header { flex-direction: column; align-items: flex-start; }
+  .input { width: 100%; }
+  .compact-profile-wrapper { flex-direction: column; align-items: flex-start; gap: 15px; }
 }
 </style>
 </head>
@@ -191,16 +150,13 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
     </div>
 
     <div class="nav">
-      <a href="#" id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
+      <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
     </div>
   </aside>
 
   <main class="main">
-
     <div class="mobile-header">
-        <button class="mobile-toggle" onclick="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+        <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
         <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">DASHBOARD</div>
         <div style="width:24px;"></div>
     </div>
@@ -213,7 +169,7 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
       <input id="searchInput" class="input" placeholder="Search ID / Asset / User...">
     </div>
 
-    <div class="card" style="border-left: 3px solid var(--neon-blue); padding: 15px 20px;">
+    <div class="card" style="border-left: 3px solid var(--neon-blue);">
         <div class="compact-profile-wrapper">
             <div class="compact-left">
                 <div class="profile-avatar-small"><i class="fa-solid fa-user-astronaut"></i></div>
@@ -274,7 +230,7 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
             </tr>
           </thead>
           <tbody>
-            <tr><td colspan="5" style="text-align:center; opacity:0.5;">Establishing uplink...</td></tr>
+            <tr><td colspan="5" style="text-align:center; opacity:0.5; padding:20px;">Waiting for signal...</td></tr>
           </tbody>
         </table>
       </div>
@@ -287,7 +243,6 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
           <div class="summary-chart">
             <canvas id="statusChart"></canvas>
           </div>
-          
           <div class="summary-kpi" id="kpiCircle">
             <div class="summary-kpi-inner">
                 <h2 id="efficiencyValue" style="transition: color 0.5s ease;">0%</h2>
@@ -302,18 +257,33 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 </div>
 
 <script>
-// --- FIREBASE SETUP ---
-firebase.initializeApp({
+// --- CONFIG FIREBASE ---
+const firebaseConfig = {
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
   projectId:"e-complaint-8nu9kp"
-});
+};
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
 const auth = firebase.auth();
 
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
     document.querySelector('.sidebar-overlay').classList.toggle('active');
+}
+
+function toggleMetadata() {
+    const panel = document.getElementById("metadataPanel");
+    const btn = document.getElementById("btnToggleMeta");
+    if (panel.style.display === "none") {
+        panel.style.display = "grid"; 
+        btn.innerHTML = `CLOSE <i class="fa-solid fa-chevron-up"></i>`;
+    } else {
+        panel.style.display = "none"; 
+        btn.innerHTML = `DETAILS <i class="fa-solid fa-chevron-down"></i>`;
+    }
 }
 
 // --- AUTH ---
@@ -330,77 +300,74 @@ auth.onAuthStateChanged((user) => {
     window.location.href = "login.html";
   }
 });
-
-document.getElementById("logout").onclick = () => {
-    auth.signOut().finally(() => {
-        window.location.href = "login.html";
-    });
-};
-
-function toggleMetadata() {
-    const panel = document.getElementById("metadataPanel");
-    const btn = document.getElementById("btnToggleMeta");
-    if (panel.style.display === "none") {
-        panel.style.display = "grid"; 
-        btn.innerHTML = `CLOSE <i class="fa-solid fa-chevron-up"></i>`;
-    } else {
-        panel.style.display = "none"; 
-        btn.innerHTML = `DETAILS <i class="fa-solid fa-chevron-down"></i>`;
-    }
-}
+document.getElementById("logout").onclick = () => auth.signOut();
 
 // --- LOGIC UTAMA ---
 let complaintsData = [];
 let statusChart;
 
 function listenToComplaints() {
-  db.collection("complaint").orderBy("updatedAt", "desc").onSnapshot((snapshot) => {
-        complaintsData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  // SAYA BUANG .orderBy("updatedAt") SUPAYA SEMUA DATA KELUAR
+  // Walaupun data tu tak ada date, dia tetap akan muncul.
+  db.collection("complaint").onSnapshot((snapshot) => {
+        let temp = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        // SORT GUNA JAVASCRIPT (CLIENT SIDE)
+        // Kalau ada date baru sort, kalau tak ada letak bawah
+        complaintsData = temp.sort((a, b) => {
+            let dateA = a.updatedAt ? a.updatedAt.seconds : 0;
+            let dateB = b.updatedAt ? b.updatedAt.seconds : 0;
+            return dateB - dateA; // Descending (Baru ke Lama)
+        });
+
         processStats();
   });
 }
 
 function processStats() {
-    // 1. KIRA STATISTIK
     const total = complaintsData.length;
     
+    // LOGIC CHECK STATUS (Sama macam Data Entry)
     const online = complaintsData.filter(c => c.approvalstatus === 'Approve' && c.approverSignature).length;
     const hardcopy = complaintsData.filter(c => c.approvalstatus === 'Approve' && !c.approverSignature).length;
     const pending = total - (online + hardcopy);
 
-    // Update UI Cards
     document.getElementById("totalComplaints").textContent = total;
     document.getElementById("approveOnline").textContent = online;
     document.getElementById("approveHardcopy").textContent = hardcopy;
     document.getElementById("pendingCount").textContent = pending;
 
-    // Update Components
     renderTable();
     updateChart(online, hardcopy, pending);
     updateKPI(online + hardcopy, total);
 }
 
-// --- RENDER TABLE ---
 function renderTable() {
     const tb = document.querySelector("#dashboardTable tbody");
     const search = document.getElementById("searchInput").value.toLowerCase();
     tb.innerHTML = "";
 
+    // FILTER CARIAN
     const list = complaintsData.filter(c => 
         c.id.toLowerCase().includes(search) || 
         (c.lastUser||"").toLowerCase().includes(search) || 
         (c.assettype||"").toLowerCase().includes(search)
     );
 
-    if (list.length === 0) { tb.innerHTML = `<tr><td colspan="5" style="text-align:center;">No data found</td></tr>`; return; }
+    if (list.length === 0) { 
+        tb.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No matching records found.</td></tr>`; 
+        return; 
+    }
 
-    list.forEach(c => {
-        // SEC 3 STATUS (IT)
+    // LIMIT DISPLAY KEPADA 10 SAHAJA SUPAYA DASHBOARD LAJU
+    list.slice(0, 10).forEach(c => {
+        
+        // BADGE STATUS SEC 3 (IT)
         let sec3Badge = c.section3date 
-            ? `<span class="badge-table badge-it-done">IT DONE</span>`
-            : `<span class="badge-table badge-it-pending">IT PENDING</span>`;
+            ? `<span class="badge-table badge-it-done"><i class="fa-solid fa-check"></i> IT DONE</span>`
+            : `<span class="badge-table badge-it-pending"><i class="fa-solid fa-clock"></i> PENDING</span>`;
 
-        // SEC 4 STATUS (APPROVAL)
+        // BADGE STATUS SEC 4 (APPROVAL)
         let sec4Badge = "-";
         if (c.approvalstatus === 'Approve') {
             if(c.approverSignature) {
@@ -409,13 +376,13 @@ function renderTable() {
                 sec4Badge = `<span class="badge-table badge-hardcopy"><i class="fa-solid fa-file-pen"></i> HARDCOPY</span>`;
             }
         } else if (c.approvalstatus === 'Reject') {
-            sec4Badge = `<span class="badge-table badge-alert">REJECTED</span>`;
+            sec4Badge = `<span class="badge-table badge-alert"><i class="fa-solid fa-xmark"></i> REJECTED</span>`;
         } else {
-            sec4Badge = `<span class="badge-table badge-alert">PENDING</span>`;
+            sec4Badge = `<span class="badge-table badge-alert"><i class="fa-solid fa-spinner"></i> PENDING</span>`;
         }
 
         tb.innerHTML += `
-            <tr>
+            <tr onclick="window.location.href='data-entry.html'">
                 <td style="color:var(--neon-blue); font-family:'Orbitron'">${c.id}</td>
                 <td>${c.lastUser || "-"}</td>
                 <td>${c.assettype || "-"}</td>
@@ -451,12 +418,11 @@ function updateChart(online, hardcopy, pending) {
       cutout: "70%",
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: "bottom", labels: { usePointStyle: true, padding: 20 } } }
+      plugins: { legend: { position: "bottom", labels: { usePointStyle: true, padding: 20, font:{size:11} } } }
     }
   });
 }
 
-// --- KPI CIRCLE ---
 function updateKPI(completed, total) {
     let percent = 0;
     if(total > 0) percent = Math.round((completed / total) * 100);
