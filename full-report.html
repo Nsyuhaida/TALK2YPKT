@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Full Report Archive | TALK2YPKT ADMIN</title>
+<title>KEW.PA-10</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
@@ -12,13 +12,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap');
-/* Font khas untuk borang (nampak macam surat rasmi) */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 :root {
   --neon-blue: #00f3ff;
-  --neon-green: #00ff9d;
-  --neon-red: #ff4d4d;
   --bg-dark: #020617;
   --glass: rgba(15, 23, 42, 0.95);
   --border: rgba(0, 243, 255, 0.2);
@@ -26,14 +23,17 @@
 
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior: smooth; }
 
-/* --- BACKGROUND ORIGINAL (JANGAN UBAH) --- */
+/* --- BACKGROUND --- */
 body {
   background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #020617);
   background-size: 400% 400%;
   animation: bgMove 20s ease infinite;
   color: #e2e8f0;
   min-height: 100vh;
+  display: flex;
 }
+@keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
 body::before {
   content: ""; position: fixed; inset: 0;
   background-image: linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
@@ -41,178 +41,96 @@ body::before {
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
-.app { display:flex; min-height:100vh; position: relative; z-index: 1; }
-
-/* --- SIDEBAR ORIGINAL (JANGAN UBAH) --- */
+/* --- SIDEBAR --- */
 .sidebar {
-  width: 260px; 
-  background: var(--glass); 
-  backdrop-filter: blur(15px);
-  border-right: 1px solid var(--border); 
-  padding: 30px 20px;
-  display: flex; flex-direction: column; 
-  position: sticky; top: 0; height: 100vh;
-  z-index: 100;
-  transition: transform 0.3s ease;
+  width: 260px; background: var(--glass); backdrop-filter: blur(15px);
+  border-right: 1px solid var(--border); padding: 30px 20px;
+  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  z-index: 100; transition: transform 0.3s ease;
 }
 .logo { width: 70px; display: block; margin: 0 auto 15px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); }
-.brand {
-  font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
-  text-align: center; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 40px;
-}
+.brand { font-family: 'Orbitron'; font-size: 18px; font-weight: 700; text-align: center; color: var(--neon-blue); margin-bottom: 40px; }
 .nav-links { flex: 1; display: flex; flex-direction: column; }
 .nav a {
   display: flex; align-items: center; gap: 12px; text-decoration: none; color: rgba(255,255,255,0.7);
-  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
-  font-size: 14px; border: 1px solid transparent;
+  padding: 14px 18px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; font-size: 14px;
 }
-.nav a:hover, .nav a.active {
-  background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
-}
-.nav a i { width: 20px; text-align: center; }
-#logout {
-  margin-top: auto; color: var(--neon-red);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px; border-radius: 0; cursor: pointer;
-}
-#logout:hover { background: rgba(255, 77, 77, 0.1); color: #fff; }
+.nav a:hover, .nav a.active { background: rgba(0, 243, 255, 0.1); color: #fff; border-color: var(--border); }
+#logout { margin-top: auto; color: #ff4d4d; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 20px; cursor: pointer; }
 
-/* --- MAIN CONTENT --- */
-.main { flex:1; padding:30px; overflow-x: hidden; width: 100%; }
+/* --- MAIN --- */
+.main { flex:1; padding:30px; width: 100%; }
+.mobile-header { display: none; align-items: center; justify-content: space-between; margin-bottom: 20px; width: 100%; }
+.mobile-toggle { background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; }
+h1 { font-family: 'Orbitron'; font-size: 28px; color: #fff; margin-bottom: 25px; }
 
-.mobile-header {
-    width: 100%; display: none; align-items: center; justify-content: space-between; margin-bottom: 20px;
-}
-.mobile-toggle {
-    background: none; border: none; color: var(--neon-blue); font-size: 24px; cursor: pointer; padding: 5px;
-}
-
-h1 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: #fff; margin-bottom: 25px; }
-
-/* SEARCH */
-.search-container { margin-bottom: 25px; }
-#searchInput {
+/* SEARCH & TABLE */
+.search-container input {
   width: 100%; max-width: 600px; padding: 12px 20px; background: rgba(0,0,0,0.4);
-  border: 1px solid var(--border); border-radius: 50px; color: #fff;
-  outline: none; transition: 0.3s;
+  border: 1px solid var(--border); border-radius: 50px; color: #fff; outline: none;
 }
-#searchInput:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
-
-/* --- TABLE --- */
 .table-card {
   background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px);
-  border-radius: 16px; border: 1px solid var(--border);
-  padding: 0; margin-bottom: 30px;
-  max-height: 400px; overflow-y: auto; overflow-x: auto; 
+  border-radius: 16px; border: 1px solid var(--border); margin-bottom: 30px;
+  overflow-x: auto;
 }
 table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-th { 
-    background: rgba(0, 243, 255, 0.1); position: sticky; top: 0; 
-    color: var(--neon-blue); padding: 15px; text-align: left; 
-    font-family: 'Orbitron'; font-size: 12px; z-index: 10; 
-}
+th { background: rgba(0, 243, 255, 0.1); color: var(--neon-blue); padding: 15px; text-align: left; font-family: 'Orbitron'; font-size: 12px; }
 td { padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; font-size: 13px; cursor: pointer; }
 tr:hover { background: rgba(0, 243, 255, 0.05); color: #fff; }
 
 /* =========================================
-   STYLE BORANG A4 (KEW.PA-10 FIX)
+   STYLE BORANG A4 (KEW.PA-10)
    ========================================= */
 .gov-form {
-    /* Set saiz A4 Fix */
-    width: 210mm;
-    min-height: 297mm;
-    padding: 20mm;
-    margin: 0 auto 50px auto; /* Center alignment */
-    background: white;
-    color: black;
-    font-family: 'Roboto', Arial, sans-serif;
-    font-size: 11pt;
-    line-height: 1.3;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5);
-    display: none; /* Hidden asal */
-    position: relative;
+    width: 210mm; min-height: 297mm; padding: 20mm; margin: 0 auto 50px auto; 
+    background: white; color: black; font-family: 'Roboto', Arial, sans-serif;
+    font-size: 11pt; line-height: 1.3; box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    display: none; position: relative;
 }
-
-/* Header Kanan Atas */
 .form-meta { text-align: right; font-weight: bold; font-size: 10pt; margin-bottom: 20px; }
-.form-title { 
-    text-align: center; font-weight: bold; font-size: 14pt; 
-    text-decoration: underline; margin-bottom: 25px; text-transform: uppercase;
-}
+.form-title { text-align: center; font-weight: bold; font-size: 14pt; text-decoration: underline; margin-bottom: 25px; text-transform: uppercase; }
 
-/* Struktur Kotak Bahagian */
-.section-box {
-    margin-bottom: 15px;
-}
-.section-title {
-    font-weight: bold; margin-bottom: 10px; font-size: 11pt;
-}
-
-/* Baris Data (Label : Value) */
+/* Struktur Borang */
+.section-box { margin-bottom: 15px; }
+.section-title { font-weight: bold; margin-bottom: 10px; font-size: 11pt; }
 .row { display: flex; margin-bottom: 5px; align-items: flex-start; }
-.lbl { width: 220px; font-weight: 500; } /* Lebar label */
+.lbl { width: 220px; font-weight: 500; }
 .sep { width: 20px; text-align: center; font-weight: bold; }
-.val { 
-    flex: 1; 
-    border-bottom: 1px dotted #000; /* Garisan titik-titik standard borang */
-    min-height: 20px; 
-    padding-left: 5px;
-}
+.val { flex: 1; border-bottom: 1px dotted #000; min-height: 20px; padding-left: 5px; }
 
-/* CSS KHAS SECTION 4 */
+/* Styling Section 4 */
 .decision-text { font-weight: bold; margin: 15px 0; }
 .strike { text-decoration: line-through; opacity: 0.5; }
 .selected { text-decoration: underline; font-weight: 900; }
-
 .sig-img { max-height: 70px; display: block; }
 
 /* Print Button */
 .btn-print {
     padding: 12px 30px; border: none; border-radius: 50px; cursor: pointer;
     background: var(--neon-blue); color: #000; font-family: 'Orbitron'; font-weight: bold;
-    display: block; margin: 30px auto; 
-    box-shadow: 0 0 20px var(--neon-blue); transition: 0.3s;
+    display: block; margin: 30px auto; box-shadow: 0 0 20px var(--neon-blue); transition: 0.3s;
 }
 .btn-print:hover { transform: scale(1.05); background: #fff; }
 
-@keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-
 @media (max-width: 768px) {
-    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; max-width: 300px; box-shadow: 10px 0 20px rgba(0,0,0,0.5); }
+    .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; width: 80%; }
     .sidebar.active { left: 0; }
-    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 90; display: none; backdrop-filter: blur(3px); }
-    .sidebar-overlay.active { display: block; }
-    .main { padding: 20px; }
     .mobile-header { display: flex; }
-    
-    /* Responsive A4 view in mobile (just shrink it) */
-    .gov-form { width: 100%; padding: 10px; min-height: auto; }
+    .gov-form { width: 100%; padding: 10px; }
     .lbl { width: 130px; font-size: 10pt; }
 }
 
-/* ============================
-   PRINT SETTINGS (A4 EXACT)
-   ============================ */
+/* PRINT SETTINGS (CLEAN) */
 @media print {
-  @page { margin: 0; size: A4 portrait; } /* Fix Margin 0 */
-  
-  body { background: white !important; -webkit-print-color-adjust: exact; }
-  
-  /* HIDE UI ELEMENTS */
-  .sidebar, .mobile-header, .search-container, .table-card, .btn-print, #authLoader, #backToTop, h1 { 
-      display: none !important; 
-  }
-  
-  .main { margin: 0; padding: 0; width: 100%; height: 100%; }
-  
-  /* SHOW FORM ONLY */
+  @page { margin: 0; size: A4 portrait; }
+  body { background: white !important; -webkit-print-color-adjust: exact; margin: 0; }
+  .sidebar, .mobile-header, .search-container, .table-card, .btn-print, #authLoader, h1 { display: none !important; }
+  .main { margin: 0; padding: 0; width: 100%; }
   .gov-form { 
-      display: block !important; 
-      width: 210mm; height: 297mm; /* Paksa saiz A4 */
-      margin: 0; padding: 20mm; 
-      box-shadow: none; border: none;
-      page-break-after: always;
+      display: block !important; width: 210mm; min-height: 297mm; 
+      margin: 0; padding: 20mm; box-shadow: none; border: none;
+      position: absolute; top: 0; left: 0;
   }
 }
 </style>
@@ -224,138 +142,117 @@ tr:hover { background: rgba(0, 243, 255, 0.05); color: #fff; }
     <div style="color:#00f3ff; font-family:'Orbitron';">AUTHENTICATING...</div>
 </div>
 
-<div class="app">
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar-overlay" onclick="toggleSidebar()" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:90; display:none;"></div>
 
-    <aside class="sidebar" id="sidebar">
-        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo YPKT" class="logo">
-        <div class="brand">TALK2YPKT ADMIN</div>
-        
-        <div class="nav nav-links">
-            <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-            <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
-            <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
-            <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
-            <a href="full-report.html" class="active"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
-            <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+<aside class="sidebar" id="sidebar">
+    <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo" class="logo">
+    <div class="brand">TALK2YPKT ADMIN</div>
+    <div class="nav nav-links">
+        <a href="dashboard.html"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        <a href="complaints.html"><i class="fa-solid fa-file-shield"></i> Complaints</a>
+        <a href="notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
+        <a href="data-entry.html"><i class="fa-solid fa-database"></i> Data Entry</a>
+        <a href="full-report.html" class="active"><i class="fa-solid fa-clipboard-list"></i> Full Report</a>
+        <a href="faq.html"><i class="fa-solid fa-circle-question"></i> FAQ</a>
+    </div>
+    <div class="nav">
+        <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
+    </div>
+</aside>
+
+<main class="main">
+    <div class="mobile-header">
+        <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">ARCHIVE</div>
+        <div style="width:24px;"></div>
+    </div>
+
+    <h1><i class="fa-solid fa-folder-open"></i> FULL REPORT ARCHIVE</h1>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search Database...">
+    </div>
+
+    <div class="table-card">
+        <table id="complaintTable">
+            <thead>
+                <tr>
+                    <th>ID REF</th>
+                    <th>REPORTED BY</th>
+                    <th>ASSET TYPE</th>
+                    <th>STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="4" style="text-align:center; padding:20px;">Connecting...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="gov-form" id="printArea">
+        <div class="form-meta">
+            <div>Pekeliling Perbendaharaan Malaysia</div>
+            <div>AM 2.4 Lampiran B</div>
+            <div style="margin-top:5px;">KEW.PA-10</div>
         </div>
 
-        <div class="nav">
-            <a id="logout"><i class="fa-solid fa-power-off"></i> Sign Out</a>
-        </div>
-    </aside>
+        <div class="form-title">BORANG ADUAN KEROSAKAN ASET ALIH</div>
 
-    <main class="main">
-        <div class="mobile-header">
-            <button class="mobile-toggle" onclick="toggleSidebar()">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div style="font-family:'Orbitron'; font-weight:bold; color:var(--neon-blue);">ARCHIVE</div>
-            <div style="width:24px;"></div>
-        </div>
-
-        <h1><i class="fa-solid fa-folder-open"></i> FULL REPORT ARCHIVE</h1>
-
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search Database (ID, User, Asset)...">
+        <div class="section-box">
+            <div class="section-title">Bahagian I (Untuk Diisi Oleh Pengadu)</div>
+            <div class="row"><div class="lbl">1. Jenis Aset</div><div class="sep">:</div><div class="val" id="p1_type"></div></div>
+            <div class="row"><div class="lbl">2. No. Siri Pendaftaran</div><div class="sep">:</div><div class="val" id="p1_serial"></div></div>
+            <div class="row"><div class="lbl">3. Pengguna Terakhir</div><div class="sep">:</div><div class="val" id="p1_user"></div></div>
+            <div class="row"><div class="lbl">4. Tarikh Kerosakan</div><div class="sep">:</div><div class="val" id="p1_date"></div></div>
+            <div class="row"><div class="lbl">5. Perihal Kerosakan</div><div class="sep">:</div><div class="val" id="p1_desc"></div></div>
+            <div class="row"><div class="lbl">6. Nama & Jawatan</div><div class="sep">:</div><div class="val" id="p1_namepos"></div></div>
+            <div class="row"><div class="lbl">7. Tarikh</div><div class="sep">:</div><div class="val" id="p1_rdate"></div></div>
         </div>
 
-        <div class="table-card">
-            <table id="complaintTable">
-                <thead>
-                    <tr>
-                        <th>ID REF</th>
-                        <th>REPORTED BY</th>
-                        <th>ASSET TYPE</th>
-                        <th>STATUS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="4" style="text-align:center; padding:20px;">Connecting...</td></tr>
-                </tbody>
-            </table>
+        <div class="section-box">
+            <div class="section-title">Bahagian II (Untuk Diisi Oleh Pegawai Aset)</div>
+            <div class="row"><div class="lbl">8. Syor dan Ulasan</div><div class="sep">:</div><div class="val" id="p2_rec"></div></div>
+            <div class="row"><div class="lbl">9. Nama & Jawatan</div><div class="sep">:</div><div class="val" id="p2_name"></div></div>
+            <div class="row"><div class="lbl">10. Tarikh</div><div class="sep">:</div><div class="val" id="p2_date"></div></div>
         </div>
 
-        <div class="gov-form" id="printArea">
-            <div class="form-meta">
-                <div>Pekeliling Perbendaharaan Malaysia</div>
-                <div>AM 2.4 Lampiran B</div>
-                <div style="margin-top:5px;">KEW.PA-10</div>
-            </div>
-
-            <div class="form-title">BORANG ADUAN KEROSAKAN ASET ALIH</div>
-
-            <div class="section-box">
-                <div class="section-title">Bahagian I (Untuk Diisi Oleh Pengadu)</div>
-                <div class="row"><div class="lbl">1. Jenis Aset</div><div class="sep">:</div><div class="val" id="p1_type"></div></div>
-                <div class="row"><div class="lbl">2. No. Siri Pendaftaran</div><div class="sep">:</div><div class="val" id="p1_serial"></div></div>
-                <div class="row"><div class="lbl">3. Pengguna Terakhir</div><div class="sep">:</div><div class="val" id="p1_user"></div></div>
-                <div class="row"><div class="lbl">4. Tarikh Kerosakan</div><div class="sep">:</div><div class="val" id="p1_date"></div></div>
-                <div class="row"><div class="lbl">5. Perihal Kerosakan</div><div class="sep">:</div><div class="val" id="p1_desc"></div></div>
-                <div class="row"><div class="lbl">6. Nama & Jawatan</div><div class="sep">:</div><div class="val" id="p1_namepos"></div></div>
-                <div class="row"><div class="lbl">7. Tarikh</div><div class="sep">:</div><div class="val" id="p1_rdate"></div></div>
-            </div>
-
-            <div class="section-box">
-                <div class="section-title">Bahagian II (Untuk Diisi Oleh Pegawai Aset)</div>
-                <div class="row"><div class="lbl">8. Syor dan Ulasan</div><div class="sep">:</div><div class="val" id="p2_rec"></div></div>
-                <div class="row"><div class="lbl">9. Nama & Jawatan</div><div class="sep">:</div><div class="val" id="p2_name"></div></div>
-                <div class="row"><div class="lbl">10. Tarikh</div><div class="sep">:</div><div class="val" id="p2_date"></div></div>
-            </div>
-
-            <div class="section-box">
-                <div class="section-title">Bahagian III (Untuk Diisi Oleh Pegawai Teknikal)</div>
-                <div class="row"><div class="lbl">11. Kos Terdahulu</div><div class="sep">:</div><div class="val">RM <span id="p3_prev"></span></div></div>
-                <div class="row"><div class="lbl">12. Anggaran Kos</div><div class="sep">:</div><div class="val">RM <span id="p3_est"></span></div></div>
-                <div class="row"><div class="lbl">13. Syor dan Ulasan</div><div class="sep">:</div><div class="val" id="p3_rec"></div></div>
-                <div class="row"><div class="lbl">14. Nama & Jawatan</div><div class="sep">:</div><div class="val" id="p3_name"></div></div>
-                <div class="row"><div class="lbl">15. Tarikh</div><div class="sep">:</div><div class="val" id="p3_date"></div></div>
-            </div>
-
-            <div class="section-box" id="section4_container">
-                </div>
-
-            <div style="font-size:9pt; margin-top:20px;">Nota: * Potong mana yang tidak berkenaan</div>
-
-            <button class="btn-print" onclick="window.print()">
-                <i class="fa-solid fa-print"></i> PRINT KEW.PA-10
-            </button>
+        <div class="section-box">
+            <div class="section-title">Bahagian III (Untuk Diisi Oleh Pegawai Teknikal)</div>
+            <div class="row"><div class="lbl">11. Kos Terdahulu</div><div class="sep">:</div><div class="val">RM <span id="p3_prev"></span></div></div>
+            <div class="row"><div class="lbl">12. Anggaran Kos</div><div class="sep">:</div><div class="val">RM <span id="p3_est"></span></div></div>
+            <div class="row"><div class="lbl">13. Syor dan Ulasan</div><div class="sep">:</div><div class="val" id="p3_rec"></div></div>
+            <div class="row"><div class="lbl">14. Nama & Jawatan</div><div class="sep">:</div><div class="val" id="p3_name"></div></div>
+            <div class="row"><div class="lbl">15. Tarikh</div><div class="sep">:</div><div class="val" id="p3_date"></div></div>
         </div>
-    </main>
-</div>
 
-<button id="backToTop" title="Return to Top"><i class="fa-solid fa-arrow-up"></i></button>
+        <div class="section-box" id="section4_container"></div>
+
+        <div style="font-size:9pt; margin-top:20px;">Nota: * Potong mana yang tidak berkenaan</div>
+
+        <button class="btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> PRINT KEW.PA-10</button>
+    </div>
+</main>
 
 <script>
-// --- FIREBASE SETUP ---
-const firebaseConfig={
-  apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
-  authDomain:"e-complaint-8nu9kp.firebaseapp.com",
-  projectId:"e-complaint-8nu9kp"
-};
+const firebaseConfig={ apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk", authDomain:"e-complaint-8nu9kp.firebaseapp.com", projectId:"e-complaint-8nu9kp" };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// AUTH CHECK
 auth.onAuthStateChanged((user) => {
     if (user && user.email.endsWith('@ypkt.gov.my')) {
         document.getElementById("authLoader").style.display="none";
         loadComplaints();
-    } else {
-        window.location.href = "login.html";
-    }
+    } else { window.location.href = "login.html"; }
 });
 document.getElementById("logout").onclick = () => auth.signOut().then(()=>window.location.href="login.html");
 
-// HELPERS
 function dt(v){ return v && v.toDate ? v.toDate().toLocaleDateString("en-GB") : ""; }
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('active');
-    document.querySelector('.sidebar-overlay').classList.toggle('active');
+    document.querySelector('.sidebar-overlay').style.display = document.getElementById('sidebar').classList.contains('active') ? 'block' : 'none';
 }
 
-// DATA LOADING
 let complaints=[];
 async function loadComplaints(){
   try {
@@ -369,34 +266,27 @@ function renderTable(filter=""){
   const tbody = document.querySelector("#complaintTable tbody");
   tbody.innerHTML = "";
   const list = complaints.filter(c => c.id.toLowerCase().includes(filter.toLowerCase()) || (c.assettype||"").toLowerCase().includes(filter));
-  
   if(list.length===0){ tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No data</td></tr>'; return; }
-
   list.forEach(c => {
     const tr = document.createElement("tr");
     let s = c.approvalstatus || "Pending";
     let color = s==='Approve'?'#00ff9d':(s==='Pending'?'#ccc':'#ff4d4d');
-    tr.innerHTML = `
-      <td style="color:var(--neon-blue); font-family:'Orbitron'">${c.id}</td>
-      <td>${c.lastUser||"-"}</td><td>${c.assettype||"-"}</td>
-      <td style="color:${color}">${s}</td>`;
+    tr.innerHTML = `<td style="color:var(--neon-blue); font-family:'Orbitron'">${c.id}</td><td>${c.lastUser||"-"}</td><td>${c.assettype||"-"}</td><td style="color:${color}">${s}</td>`;
     tr.onclick = () => showReport(c.id);
     tbody.appendChild(tr);
   });
 }
 document.getElementById("searchInput").oninput = e => renderTable(e.target.value);
 
-// --- SHOW REPORT LOGIC (HYBRID) ---
+// --- MAIN LOGIC FOR SECTION 4 ---
 function showReport(id){
     const c = complaints.find(x => x.id === id);
     if(!c) return;
     
-    // Papar Borang
-    const form = document.getElementById("printArea");
-    form.style.display = "block";
-    form.scrollIntoView({behavior: "smooth"});
+    document.getElementById("printArea").style.display = "block";
+    document.getElementById("printArea").scrollIntoView({behavior: "smooth"});
 
-    // ISI DATA SECTION 1-3
+    // Fill Section 1-3 (Standard)
     document.getElementById("p1_type").innerText = c.assettype || "";
     document.getElementById("p1_serial").innerText = c.serialNumber || "";
     document.getElementById("p1_user").innerText = c.lastUser || "";
@@ -415,58 +305,49 @@ function showReport(id){
     document.getElementById("p3_name").innerText = c.section3nameposition || "";
     document.getElementById("p3_date").innerText = dt(c.section3date);
 
-    // --- LOGIC SECTION 4 ---
+    // --- LOGIC BARU SECTION 4 ---
     const sec4 = document.getElementById("section4_container");
-    const status = c.approvalstatus || "Pending";
+    const header = `<div class="section-title">Bahagian IV (Keputusan Ketua Jabatan / Bahagian / Seksyen / Unit)</div>`;
+    
+    // Check if Online Approval exists (Must be Approved/Rejected AND have a Signature)
+    const isOnlineFilled = (c.approvalstatus === 'Approve' || c.approvalstatus === 'Reject') && 
+                           (c.approverSignature && c.approverSignature.length > 5);
 
-    // HEADER SECTION 4
-    let header = `<div class="section-title">Bahagian IV (Keputusan Ketua Jabatan / Bahagian / Seksyen / Unit)</div>`;
+    if (isOnlineFilled) {
+        // --- SENARIO 1: ISI ONLINE (Ada data & Signature) ---
+        let isApprove = c.approvalstatus === 'Approve';
+        let decisionHTML = isApprove 
+            ? `<span class="selected">Diluluskan</span> / <span class="strike">Tidak Diluluskan *</span>`
+            : `<span class="strike">Diluluskan</span> / <span class="selected">Tidak Diluluskan *</span>`;
 
-    // CASE 1: PENDING (KOSONGKAN UNTUK SIGN TANGAN)
-    if(status === "Pending") {
+        sec4.innerHTML = `
+            ${header}
+            <div class="decision-text">${decisionHTML}</div>
+            <div class="row"><div class="lbl">Ulasan</div><div class="sep">:</div><div class="val">${c.approvalcomment || "-"}</div></div>
+            <div class="row"><div class="lbl">Nama</div><div class="sep">:</div><div class="val">${c.approvername || ""}</div></div>
+            <div class="row" style="align-items:flex-end;">
+                <div class="lbl">Tandatangan</div><div class="sep">:</div>
+                <div class="val" style="border:none; padding-top:10px;">
+                    <img src="${c.approverSignature}" class="sig-img">
+                </div>
+            </div>
+            <div class="row"><div class="lbl">Jawatan</div><div class="sep">:</div><div class="val">${c.approverposition || ""}</div></div>
+            <div class="row"><div class="lbl">Tarikh</div><div class="sep">:</div><div class="val">${dt(c.approvaldate)}</div></div>
+        `;
+    } else {
+        // --- SENARIO 2: HARDCOPY / PENDING (KOSONGKAN DATA) ---
+        // Walaupun status 'Approve' (hardcopy) atau 'Pending', papar form kosong untuk sign manual.
         sec4.innerHTML = `
             ${header}
             <div class="decision-text">Diluluskan / Tidak Diluluskan *</div>
             
             <div class="row"><div class="lbl">Ulasan</div><div class="sep">:</div><div class="val" style="height:30px;"></div></div>
             <div class="row"><div class="lbl">Nama</div><div class="sep">:</div><div class="val" style="height:30px;"></div></div>
+            
             <div class="row"><div class="lbl">Tandatangan</div><div class="sep">:</div><div class="val" style="height:60px;"></div></div>
+            
             <div class="row"><div class="lbl">Jawatan</div><div class="sep">:</div><div class="val" style="height:30px;"></div></div>
             <div class="row"><div class="lbl">Tarikh</div><div class="sep">:</div><div class="val" style="height:30px;"></div></div>
-        `;
-    } 
-    // CASE 2: APPROVED/REJECTED (ISI DATA & SIGNATURE)
-    else {
-        let isApprove = status === 'Approve';
-        
-        // Logic Potong Perkataan
-        let decisionHTML = "";
-        if(isApprove) {
-            decisionHTML = `<span class="selected">Diluluskan</span> / <span class="strike">Tidak Diluluskan *</span>`;
-        } else {
-            decisionHTML = `<span class="strike">Diluluskan</span> / <span class="selected">Tidak Diluluskan *</span>`;
-        }
-
-        let sigDisplay = c.approverSignature 
-            ? `<img src="${c.approverSignature}" class="sig-img">` 
-            : "(Tiada Tandatangan Digital)";
-
-        sec4.innerHTML = `
-            ${header}
-            <div class="decision-text">${decisionHTML}</div>
-            
-            <div class="row"><div class="lbl">Ulasan</div><div class="sep">:</div><div class="val">${c.approvalcomment || "-"}</div></div>
-            <div class="row"><div class="lbl">Nama</div><div class="sep">:</div><div class="val">${c.approvername || ""}</div></div>
-            
-            <div class="row" style="align-items:flex-end;">
-                <div class="lbl">Tandatangan</div><div class="sep">:</div>
-                <div class="val" style="border:none; padding-top:10px;">
-                    ${sigDisplay}
-                </div>
-            </div>
-
-            <div class="row"><div class="lbl">Jawatan</div><div class="sep">:</div><div class="val">${c.approverposition || ""}</div></div>
-            <div class="row"><div class="lbl">Tarikh</div><div class="sep">:</div><div class="val">${dt(c.approvaldate)}</div></div>
         `;
     }
 }
