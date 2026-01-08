@@ -18,11 +18,12 @@
         --card-bg: #1e293b;
         --gold: #fbbf24;
         --text: #e2e8f0;
+        --border: #334155;
     }
 
     body { background: var(--bg-dark); color: var(--text); font-family: 'Poppins', sans-serif; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
 
-    .container { max-width: 800px; width: 100%; margin: 0 auto; }
+    .container { max-width: 900px; width: 100%; margin: 0 auto; padding-bottom: 50px; }
     .hidden { display: none !important; }
 
     /* --- PIN SCREEN --- */
@@ -36,75 +37,86 @@
         background: #0f172a; border: 1px solid #475569; color: var(--gold); border-radius: 8px; margin: 20px 0;
     }
 
-    /* --- MAIN APP --- */
+    /* --- HEADER & SEARCH --- */
     .header { text-align: center; margin-bottom: 30px; }
     .header img { width: 80px; margin-bottom: 15px; }
-    .header h1 { font-family: 'Orbitron'; color: var(--gold); margin: 0; }
-
+    .header h1 { font-family: 'Orbitron'; color: var(--gold); margin: 0; font-size: 24px; }
+    
     .search-box {
         background: var(--card-bg); padding: 25px; border-radius: 15px;
         text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        border: 1px solid rgba(251, 191, 36, 0.3); margin-bottom: 20px;
+        border: 1px solid rgba(251, 191, 36, 0.3); margin-bottom: 30px;
     }
     .input-code {
-        width: 70%; padding: 15px; font-size: 18px; border-radius: 8px;
+        width: 60%; padding: 12px; font-size: 16px; border-radius: 8px;
         border: 1px solid #475569; background: #0f172a; color: #fff;
-        text-align: center; letter-spacing: 2px;
+        text-align: center; letter-spacing: 1px;
     }
     .btn-find {
-        padding: 15px 30px; background: var(--gold); color: #000; font-weight: bold;
-        border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-left: 10px;
+        padding: 12px 25px; background: var(--gold); color: #000; font-weight: bold;
+        border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin-left: 10px;
     }
 
-    /* FORM CARDS */
-    #approvalForm { animation: slideUp 0.5s ease; }
+    /* --- SECTION CARDS --- */
     .section-card {
-        background: var(--card-bg); padding: 25px; border-radius: 10px; margin-bottom: 20px;
-        border-left: 4px solid #64748b;
+        background: var(--card-bg); padding: 25px; border-radius: 10px; margin-bottom: 25px;
+        border: 1px solid var(--border);
     }
-    .section-title { font-family: 'Orbitron'; color: #94a3b8; margin-bottom: 15px; font-size: 14px; }
-    .active-section { border-left-color: var(--gold); border: 1px solid var(--gold); }
-    .active-section .section-title { color: var(--gold); }
+    .section-header {
+        background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 5px;
+        margin-bottom: 20px; border-left: 4px solid #64748b;
+        font-family: 'Orbitron'; font-size: 14px; color: #94a3b8; font-weight: bold;
+    }
+    .active-section { border-color: var(--gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.1); }
+    .active-section .section-header { border-left-color: var(--gold); color: var(--gold); background: rgba(251, 191, 36, 0.1); }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .full { grid-column: span 2; }
 
-    label { font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px; }
+    label { font-size: 11px; color: #64748b; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
     .field-val { 
-        background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px; 
-        color: #fff; font-size: 14px; border: 1px solid #334155;
+        background: #0f172a; padding: 12px; border-radius: 6px; 
+        color: #e2e8f0; font-size: 14px; border: 1px solid #334155; min-height: 20px;
     }
 
     input, select, textarea {
         width: 100%; padding: 12px; background: #020617; border: 1px solid var(--gold);
-        color: #fff; border-radius: 5px; outline: none; box-sizing: border-box;
+        color: #fff; border-radius: 6px; outline: none; box-sizing: border-box; font-family: 'Poppins', sans-serif;
     }
-    
-    .action-bar { display: flex; gap: 10px; margin-top: 20px; }
+
+    /* --- SIGNATURE PAD STYLE --- */
+    .sig-container {
+        background: #fff; border-radius: 8px; padding: 10px; text-align: center;
+        border: 2px dashed #475569; position: relative;
+    }
+    canvas { 
+        border: 1px solid #ccc; background: #fff; cursor: crosshair; touch-action: none;
+        width: 100%; height: 150px; /* Responsive width */
+    }
+    .btn-clear-sig {
+        background: #ef4444; color: white; border: none; padding: 5px 10px;
+        font-size: 12px; border-radius: 4px; cursor: pointer; margin-top: 5px;
+    }
+
+    /* BUTTONS */
+    .action-bar { display: flex; gap: 15px; margin-top: 20px; }
     .btn-submit {
         flex: 2; padding: 15px; background: var(--gold); border: none; border-radius: 8px;
-        font-weight: bold; cursor: pointer; font-family: 'Orbitron'; color: #000;
+        font-weight: bold; cursor: pointer; font-family: 'Orbitron'; color: #000; font-size: 16px;
     }
     .btn-print {
         flex: 1; padding: 15px; background: #334155; color: #fff; border: none; border-radius: 8px;
-        cursor: pointer; font-family: 'Orbitron';
+        cursor: pointer; font-family: 'Orbitron'; font-size: 14px;
     }
 
-    @keyframes slideUp { from {opacity:0; transform:translateY(20px)} to {opacity:1; transform:translateY(0)} }
-
-    /* PRINT MODE */
     @media print {
-        body { background: #fff; color: #000; display: block; }
-        .search-box, .btn-submit, .btn-print, .header, #pinScreen { display: none !important; }
+        .search-box, .btn-submit, .btn-print, .header, #pinScreen, .btn-clear-sig { display: none !important; }
+        .container { margin: 0; width: 100%; max-width: 100%; }
         .section-card { border: 1px solid #000; box-shadow: none; margin-bottom: 10px; break-inside: avoid; }
-        .field-val { background: #fff; border: none; border-bottom: 1px solid #ccc; color: #000; padding: 5px 0; }
+        .field-val { background: #fff; border: none; border-bottom: 1px solid #ccc; color: #000; padding: 5px 0; font-weight: bold; }
         input, textarea, select { border: none; background: none; color: #000; font-weight: bold; }
-        #mainApp, #approvalForm { display: block !important; }
-        
-        #approvalForm::before {
-            content: "OFFICIAL APPROVAL DOCUMENT - YPKT";
-            display: block; font-weight: bold; text-align: center; margin-bottom: 20px; font-size: 20px; text-decoration: underline;
-        }
+        canvas { border: none; }
+        #approvalForm::before { content: "DIGITAL APPROVAL DOCUMENT"; display: block; font-weight: bold; text-align: center; margin-bottom: 20px; font-size: 18px; text-decoration: underline; }
     }
 </style>
 </head>
@@ -114,7 +126,6 @@
     <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" width="80" style="margin-bottom:20px;">
     <h2 style="color:var(--gold); font-family:'Orbitron'">EXECUTIVE ACCESS</h2>
     <p style="font-size:12px; color:#aaa;">SECURE AREA: PLEASE ENTER PIN</p>
-    
     <input type="password" id="secretPin" class="pin-input" placeholder="****" maxlength="4">
     <button onclick="checkPin()" class="btn-submit" style="width:100%;">ACCESS PORTAL</button>
 </div>
@@ -122,69 +133,84 @@
 <div id="mainApp" class="container hidden">
     <div class="header">
         <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" alt="Logo">
-        <h1>APPROVAL PORTAL</h1>
-        <p style="color:#94a3b8">Welcome. Please enter Reference ID.</p>
+        <h1>APPROVAL DASHBOARD</h1>
+        <p>Log Masuk: Timbalan Pengarah</p>
     </div>
 
     <div class="search-box">
-        <input type="text" id="searchId" class="input-code" placeholder="Example: YPKT-2023-001">
+        <input type="text" id="searchId" class="input-code" placeholder="Enter Ref ID (e.g. YPKT-2023-001)">
         <button class="btn-find" onclick="findComplaint()"><i class="fa-solid fa-magnifying-glass"></i> FIND</button>
     </div>
 
     <div id="approvalForm" class="hidden">
         
         <div class="section-card">
-            <div class="section-title">SEC 1 & 2: REPORT DETAILS</div>
+            <div class="section-header">SEC 1: MAKLUMAT PENGADU & ASET</div>
             <div class="grid">
-                <div><label>ID Ref</label><div class="field-val" id="disp_id"></div></div>
-                <div><label>User</label><div class="field-val" id="disp_user"></div></div>
-                <div><label>Asset</label><div class="field-val" id="disp_asset"></div></div>
-                <div><label>Damage</label><div class="field-val" id="disp_damage"></div></div>
+                <div><label>ID Rujukan</label><div class="field-val" id="d_id"></div></div>
+                <div><label>Nama Pengguna</label><div class="field-val" id="d_user"></div></div>
+                <div><label>Jenis Aset</label><div class="field-val" id="d_asset"></div></div>
+                <div><label>No Siri Aset</label><div class="field-val" id="d_serial"></div></div>
+                <div class="full"><label>Keterangan Kerosakan</label><div class="field-val" id="d_desc"></div></div>
             </div>
         </div>
 
         <div class="section-card">
-            <div class="section-title">SEC 3: IT DEPARTMENT ASSESSMENT</div>
+            <div class="section-header">SEC 2: SYOR PEGAWAI ASET</div>
             <div class="grid">
-                <div><label>IT Officer</label><div class="field-val" id="disp_it_name"></div></div>
-                <div><label>Est. Cost (RM)</label><div class="field-val" id="disp_cost"></div></div>
-                <div class="full"><label>Technical Recommendation</label><div class="field-val" id="disp_tech_rec"></div></div>
+                <div><label>Nama Pegawai</label><div class="field-val" id="d_sec2_name"></div></div>
+                <div><label>Syor / Cadangan</label><div class="field-val" id="d_sec2_rec"></div></div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">SEC 3: ULASAN TEKNIKAL (IT)</div>
+            <div class="grid">
+                <div><label>Pegawai Teknikal</label><div class="field-val" id="d_it_name"></div></div>
+                <div><label>Anggaran Kos (RM)</label><div class="field-val" id="d_est_cost"></div></div>
+                <div class="full"><label>Ulasan Teknikal</label><div class="field-val" id="d_it_rec"></div></div>
             </div>
         </div>
 
         <div class="section-card active-section">
-            <div class="section-title"><i class="fa-solid fa-pen-nib"></i> SEC 4: FINAL APPROVAL (ACTION REQUIRED)</div>
+            <div class="section-header"><i class="fa-solid fa-pen-nib"></i> SEC 4: KELULUSAN & TANDATANGAN</div>
             
             <div class="grid">
                 <div class="full">
-                    <label>Approval Decision</label>
-                    <select id="app_status">
-                        <option value="Pending">Please Select...</option>
-                        <option value="Approve">APPROVE (LULUS)</option>
-                        <option value="Reject">REJECT (TIDAK LULUS)</option>
+                    <label style="color:var(--gold);">STATUS KELULUSAN</label>
+                    <select id="app_status" style="font-size:16px;">
+                        <option value="Pending">-- Sila Pilih Keputusan --</option>
+                        <option value="Approve">LULUS / APPROVE</option>
+                        <option value="Not approve">TIDAK LULUS / REJECT</option>
                     </select>
                 </div>
                 <div>
-                    <label>Approver Name</label>
+                    <label>Nama Pelulus</label>
                     <input type="text" id="app_name" value="ENCIK ASHRI" placeholder="Enter Name">
                 </div>
                 <div>
-                    <label>Position</label>
-                    <input type="text" id="app_pos" value="TIMBALAN PENGARAH" placeholder="e.g. Pengarah">
+                    <label>Jawatan</label>
+                    <input type="text" id="app_pos" value="TIMBALAN PENGARAH" placeholder="Position">
                 </div>
                 <div class="full">
-                    <label>Comments / Remarks</label>
-                    <textarea id="app_comment" rows="3" placeholder="Sebarang catatan tambahan..."></textarea>
+                    <label>Ulasan / Catatan</label>
+                    <textarea id="app_comment" rows="2" placeholder="Sila masukkan ulasan..."></textarea>
+                </div>
+
+                <div class="full">
+                    <label style="color:var(--gold); font-size:12px;">TANDATANGAN DIGITAL (Sila tandatangan dalam kotak putih di bawah)</label>
+                    <div class="sig-container">
+                        <canvas id="sigCanvas"></canvas>
+                        <button class="btn-clear-sig" onclick="clearSignature()">
+                            <i class="fa-solid fa-eraser"></i> Padam & Sign Semula
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="action-bar">
-                <button class="btn-print" onclick="window.print()">
-                    <i class="fa-solid fa-print"></i> PRINT / PDF
-                </button>
-                <button class="btn-submit" onclick="submitApproval()">
-                    <i class="fa-solid fa-check-circle"></i> SUBMIT DECISION
-                </button>
+                <button class="btn-print" onclick="window.print()"><i class="fa-solid fa-print"></i> PRINT</button>
+                <button class="btn-submit" onclick="submitApproval()"><i class="fa-solid fa-check-circle"></i> SAHKAN KEPUTUSAN</button>
             </div>
         </div>
 
@@ -202,111 +228,152 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// === 1. GHOST LOGIN FUNCTION (UPDATED) ===
+// === 1. LOGIN SYSTEM ===
 function checkPin() {
     const pin = document.getElementById('secretPin').value;
     const btn = document.querySelector('#pinScreen button');
     
-    // PIN Rahsia: 1234
     if(pin === "1234") { 
-        
-        btn.innerHTML = "Authenticating...";
-        
-        // LOGIN MENGGUNAKAN AKAUN TIMBALAN PENGARAH
+        btn.innerHTML = "Verifying...";
         auth.signInWithEmailAndPassword("timbalanpengarah@ypkt.gov.my", "ypkt0101")
-        .then((userCredential) => {
-            // Login Berjaya
-            console.log("Logged in as: " + userCredential.user.email);
+        .then(() => {
             document.getElementById('pinScreen').classList.add('hidden'); 
             document.getElementById('mainApp').classList.remove('hidden'); 
+            setupCanvas(); // Initialize Canvas when logged in
         })
         .catch((error) => {
-            console.error(error);
             btn.innerHTML = "ACCESS PORTAL";
             alert("Ralat Login: " + error.message);
         });
-
     } else {
-        alert("PIN SALAH! Akses ditolak.");
-        document.getElementById('secretPin').value = "";
+        alert("PIN SALAH!");
     }
 }
 
-// === 2. FUNGSI SEARCH & SUBMIT ===
+// === 2. CANVAS SIGNATURE LOGIC ===
+let canvas, ctx, isDrawing = false;
+
+function setupCanvas() {
+    canvas = document.getElementById('sigCanvas');
+    ctx = canvas.getContext('2d');
+    
+    // Set resolusi canvas supaya tak pecah
+    canvas.width = canvas.offsetWidth; 
+    canvas.height = canvas.offsetHeight;
+
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000000';
+
+    // Mouse Events
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', endDraw);
+    canvas.addEventListener('mouseout', endDraw);
+
+    // Touch Events (Phone/Tablet)
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+    canvas.addEventListener('touchend', endDraw);
+}
+
+function startDraw(e) {
+    isDrawing = true;
+    const rect = canvas.getBoundingClientRect();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+function draw(e) {
+    if (!isDrawing) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.stroke();
+}
+
+function endDraw() { isDrawing = false; }
+function clearSignature() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+// === 3. DATA FUNCTIONS ===
+const dt = (t) => t && t.toDate ? t.toDate().toLocaleString("en-GB") : "-";
 let currentId = "";
 
 async function findComplaint() {
     const id = document.getElementById('searchId').value.trim();
     if(!id) return alert("Sila masukkan ID");
 
-    const btn = document.querySelector('.btn-find');
-    btn.innerHTML = "Searching...";
-
     try {
         const doc = await db.collection("complaint").doc(id).get();
         if(doc.exists) {
-            const data = doc.data();
+            const d = doc.data();
             currentId = id;
             
-            // Isi Data Read-Only
-            document.getElementById('disp_id').innerText = id;
-            document.getElementById('disp_user').innerText = data.lastUser || "-";
-            document.getElementById('disp_asset').innerText = data.assettype || "-";
-            document.getElementById('disp_damage').innerText = data.damagedescription || "-";
+            // Populate Fields
+            document.getElementById('d_id').innerText = id;
+            document.getElementById('d_user').innerText = d.lastUser || "-";
+            document.getElementById('d_asset').innerText = d.assettype || "-";
+            document.getElementById('d_serial').innerText = d.serialNumber || "-";
+            document.getElementById('d_desc').innerText = d.damagedescription || "-";
             
-            document.getElementById('disp_it_name').innerText = data.section3nameposition || "Pending IT";
-            document.getElementById('disp_cost').innerText = data.estimatedmaintenancecost || "0.00";
-            document.getElementById('disp_tech_rec').innerText = data.recommendsection3 || "-";
-
-            // Isi Data Approval (Jika dah pernah isi)
-            document.getElementById('app_status').value = data.approvalstatus || "Pending";
+            document.getElementById('d_sec2_name').innerText = d.section2nameposition || "-";
+            document.getElementById('d_sec2_rec').innerText = d.recommendationsection2 || "-";
             
-            // Auto-fill nama/jawatan jika kosong
-            document.getElementById('app_name').value = data.approvername || "ENCIK ASHRI";
-            document.getElementById('app_pos').value = data.approverposition || "TIMBALAN PENGARAH"; // Default updated
-            document.getElementById('app_comment').value = data.approvalcomment || "";
+            document.getElementById('d_it_name').innerText = d.section3nameposition || "Pending IT";
+            document.getElementById('d_est_cost').innerText = d.estimatedmaintenancecost || "0.00";
+            document.getElementById('d_it_rec').innerText = d.recommendsection3 || "-";
 
-            // Tunjuk Form
+            // Approval Data
+            document.getElementById('app_status').value = d.approvalstatus || "Pending";
+            document.getElementById('app_name').value = d.approvername || "ENCIK ASHRI";
+            document.getElementById('app_pos').value = d.approverposition || "TIMBALAN PENGARAH";
+            document.getElementById('app_comment').value = d.approvalcomment || "";
+
+            // Load Existing Signature (Optional: Draw Image if exists)
+            // For now we assume new signature every time or just blank
+            clearSignature();
+
             document.getElementById('approvalForm').classList.remove('hidden');
+            
+            // Resize canvas again to be safe
+            setTimeout(() => {
+                 canvas.width = canvas.offsetWidth;
+                 canvas.height = canvas.offsetHeight;
+                 ctx.lineWidth = 3; ctx.lineCap='round';
+            }, 500);
+
         } else {
             alert("ID tidak dijumpai.");
-            document.getElementById('approvalForm').classList.add('hidden');
         }
     } catch(e) {
         console.error(e);
         alert("Error connection.");
     }
-    btn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> FIND';
 }
 
 async function submitApproval() {
     if(!currentId) return;
-
-    // Safety check session
-    if(!auth.currentUser) {
-        alert("Sesi tamat. Sila refresh dan masukkan PIN semula.");
-        location.reload();
-        return;
-    }
+    if(!auth.currentUser) return alert("Sesi tamat.");
 
     const status = document.getElementById('app_status').value;
-    const name = document.getElementById('app_name').value;
     
-    if(status === "Pending") return alert("Sila pilih status (Approve/Reject).");
-    if(!name) return alert("Sila masukkan nama.");
+    if(status === "Pending") return alert("Sila pilih Status.");
+    if(!confirm("Hantar keputusan dengan tandatangan ini?")) return;
 
-    if(!confirm("Adakah anda pasti untuk menghantar keputusan ini?")) return;
+    // Convert Signature to Base64 String
+    const signatureData = canvas.toDataURL("image/png");
 
     try {
         await db.collection("complaint").doc(currentId).update({
             approvalstatus: status,
-            approvername: name,
+            approvername: document.getElementById('app_name').value,
             approverposition: document.getElementById('app_pos').value,
             approvalcomment: document.getElementById('app_comment').value,
+            approverSignature: signatureData, // Save Signature Here
             approvaldate: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        alert("Berjaya! Keputusan telah direkodkan ke database.");
+        alert("Berjaya! Keputusan dan Tandatangan disimpan.");
         location.reload(); 
     } catch(e) {
         alert("Gagal simpan: " + e.message);
