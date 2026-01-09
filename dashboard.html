@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
-/* --- DESIGN SYSTEM --- */
+/* --- DESIGN SYSTEM (KEKAL 100%) --- */
 :root {
   --neon-blue: #00f3ff;
   --neon-green: #00ff9d;
@@ -302,7 +302,7 @@ auth.onAuthStateChanged((user) => {
 });
 document.getElementById("logout").onclick = () => auth.signOut();
 
-// --- LOGIC UTAMA ---
+// --- LOGIC UTAMA (BAHAGIAN INI DIUBAH SECARA AGRESIF) ---
 let complaintsData = [];
 let statusChart;
 
@@ -310,15 +310,36 @@ function listenToComplaints() {
   db.collection("complaint").onSnapshot((snapshot) => {
         let temp = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         
-        // --- FIX: SUSUNAN DATA ---
-        // Jika data baru tiada 'updatedAt', dia akan jadi 0 dan jatuh ke bawah (hilang).
-        // Kita tambah check untuk 'createdAt' atau 'timestamp' supaya data baru naik ke atas.
+        // FUNCTION UNTUK DAPATKAN MASA DARI PELBAGAI FIELD
+        const getTime = (doc) => {
+            if (doc.updatedAt && doc.updatedAt.seconds) return doc.updatedAt.seconds;
+            if (doc.createdAt && doc.createdAt.seconds) return doc.createdAt.seconds;
+            if (doc.timestamp && doc.timestamp.seconds) return doc.timestamp.seconds;
+            if (doc.date && doc.date.seconds) return doc.date.seconds; 
+            return 0; // Jika tiada langsung, return 0
+        };
+
+        // SUSUN DATA
         complaintsData = temp.sort((a, b) => {
-            // Check UpdatedAt -> then CreatedAt -> then Timestamp -> else 0
-            let dateA = a.updatedAt ? a.updatedAt.seconds : (a.createdAt ? a.createdAt.seconds : (a.timestamp ? a.timestamp.seconds : 0));
-            let dateB = b.updatedAt ? b.updatedAt.seconds : (b.createdAt ? b.createdAt.seconds : (b.timestamp ? b.timestamp.seconds : 0));
+            // Kita cari tarikh paling "latest" antara update/create/dll
+            let timeA = Math.max(
+                a.updatedAt ? a.updatedAt.seconds : 0, 
+                a.createdAt ? a.createdAt.seconds : 0, 
+                a.timestamp ? a.timestamp.seconds : 0
+            );
             
-            return dateB - dateA; // Descending (Baru ke Lama)
+            let timeB = Math.max(
+                b.updatedAt ? b.updatedAt.seconds : 0, 
+                b.createdAt ? b.createdAt.seconds : 0, 
+                b.timestamp ? b.timestamp.seconds : 0
+            );
+
+            // LOGIC PENTING: Jika tiada tarikh langsung (0), kita anggap ia BARU MASUK (Pending)
+            // Jadi kita letak ia paling atas.
+            if (timeA === 0 && timeB > 0) return -1; // A naik atas
+            if (timeB === 0 && timeA > 0) return 1;  // B naik atas
+
+            return timeB - timeA; // Susun ikut masa (Baru ke Lama)
         });
 
         processStats();
@@ -328,7 +349,7 @@ function listenToComplaints() {
 function processStats() {
     const total = complaintsData.length;
     
-    // LOGIC CHECK STATUS (Sama macam Data Entry)
+    // LOGIC CHECK STATUS
     const online = complaintsData.filter(c => c.approvalstatus === 'Approve' && c.approverSignature).length;
     const hardcopy = complaintsData.filter(c => c.approvalstatus === 'Approve' && !c.approverSignature).length;
     const pending = total - (online + hardcopy);
