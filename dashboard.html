@@ -310,17 +310,15 @@ function listenToComplaints() {
   db.collection("complaint").onSnapshot((snapshot) => {
         let temp = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         
-        // --- FIXED SORTING LOGIC UNTUK DATA BARU ---
-        // Masalah sebelum ini: Data baru tak ada 'updatedAt', jadi dia dianggap 0 dan jatuh ke bawah.
-        // Solution: Check 'updatedAt'. Kalau tak ada, guna 'createdAt' atau 'created_time' (standard FlutterFlow).
-        
+        // --- FIX: SUSUNAN DATA ---
+        // Jika data baru tiada 'updatedAt', dia akan jadi 0 dan jatuh ke bawah (hilang).
+        // Kita tambah check untuk 'createdAt' atau 'timestamp' supaya data baru naik ke atas.
         complaintsData = temp.sort((a, b) => {
-            // Kita cari tarikh yang wujud
-            let dateA = a.updatedAt ? a.updatedAt.seconds : (a.createdAt ? a.createdAt.seconds : (a.created_time ? a.created_time.seconds : 0));
-            let dateB = b.updatedAt ? b.updatedAt.seconds : (b.createdAt ? b.createdAt.seconds : (b.created_time ? b.created_time.seconds : 0));
+            // Check UpdatedAt -> then CreatedAt -> then Timestamp -> else 0
+            let dateA = a.updatedAt ? a.updatedAt.seconds : (a.createdAt ? a.createdAt.seconds : (a.timestamp ? a.timestamp.seconds : 0));
+            let dateB = b.updatedAt ? b.updatedAt.seconds : (b.createdAt ? b.createdAt.seconds : (b.timestamp ? b.timestamp.seconds : 0));
             
-            // Susun menurun (Paling baru di atas)
-            return dateB - dateA; 
+            return dateB - dateA; // Descending (Baru ke Lama)
         });
 
         processStats();
@@ -330,7 +328,7 @@ function listenToComplaints() {
 function processStats() {
     const total = complaintsData.length;
     
-    // LOGIC CHECK STATUS
+    // LOGIC CHECK STATUS (Sama macam Data Entry)
     const online = complaintsData.filter(c => c.approvalstatus === 'Approve' && c.approverSignature).length;
     const hardcopy = complaintsData.filter(c => c.approvalstatus === 'Approve' && !c.approverSignature).length;
     const pending = total - (online + hardcopy);
@@ -362,8 +360,7 @@ function renderTable() {
         return; 
     }
 
-    // LIMIT DISPLAY 10
-    // Sekarang data baru akan duduk dalam top 10 sebab sorting dah betul
+    // LIMIT DISPLAY KEPADA 10 SAHAJA SUPAYA DASHBOARD LAJU
     list.slice(0, 10).forEach(c => {
         
         // BADGE STATUS SEC 3 (IT)
