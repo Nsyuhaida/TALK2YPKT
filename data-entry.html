@@ -231,7 +231,7 @@ const auth=firebase.auth();
 // --- AUTH ---
 auth.onAuthStateChanged((user) => {
     if (user && user.email.endsWith('@ypkt.gov.my')) {
-        listenToComplaints(); // TUKAR NAMA FUNCTION SUPAYA JELAS KITA GUNA LISTENER
+        listenToComplaints(); 
     } else {
         window.location.href = "login.html";
     }
@@ -255,17 +255,26 @@ const displayDate = (t) => {
     return t.toDate().toLocaleString('ms-MY');
 }
 
-// --- DATA LOGIC (FIXED) ---
+// --- DATA LOGIC (UPDATED: PENDING ATAS + TERKINI) ---
 let complaints=[];
 
 function listenToComplaints(){
-    // KITA GUNA onSnapshot DAN BUANG orderBy("updatedAt")
-    // Ini memastikan data baru yang tak ada date pun akan masuk
     db.collection("complaint").onSnapshot((snapshot) => {
         let temp = snapshot.docs.map(d => ({id:d.id, ...d.data()}));
         
-        // CLIENT SIDE SORT (Baru di atas, Lama di bawah)
+        // --- LOGIC SORTING BARU DI SINI ---
         complaints = temp.sort((a, b) => {
+            // 1. Tentukan Status
+            const statusA = (a.approvalstatus || "Pending").toLowerCase();
+            const statusB = (b.approvalstatus || "Pending").toLowerCase();
+            const isPendingA = statusA === "pending";
+            const isPendingB = statusB === "pending";
+
+            // 2. Logic: Kalau A pending tapi B tidak, A naik atas (-1)
+            if (isPendingA && !isPendingB) return -1;
+            if (!isPendingA && isPendingB) return 1;
+
+            // 3. Kalau status sama (Dua-dua Pending @ Dua-dua Dah Siap), susun ikut masa terkini
             let dateA = a.updatedAt ? a.updatedAt.seconds : (a.createdAt ? a.createdAt.seconds : 0);
             let dateB = b.updatedAt ? b.updatedAt.seconds : (b.createdAt ? b.createdAt.seconds : 0);
             return dateB - dateA;
