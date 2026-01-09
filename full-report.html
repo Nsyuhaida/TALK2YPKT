@@ -263,12 +263,28 @@ function toggleSidebar() {
     document.querySelector('.sidebar-overlay').classList.toggle('active');
 }
 
-// --- DATA LOGIC ---
+// --- DATA LOGIC (UPDATED: FIXED SORTING) ---
 let complaints=[];
 async function loadComplaints(){
   try {
-      const snap = await db.collection("complaint").orderBy("updatedAt","desc").get();
-      complaints = snap.docs.map(d => ({id:d.id, ...d.data()}));
+      // 1. AMBIL SEMUA DATA (Buang .orderBy di sini supaya data baru tak hilang)
+      const snap = await db.collection("complaint").get();
+      
+      let temp = snap.docs.map(d => ({id:d.id, ...d.data()}));
+
+      // 2. SORTING GUNA JAVASCRIPT (Lebih selamat)
+      complaints = temp.sort((a, b) => {
+          // Cari tarikh "latest" dari pelbagai field
+          const timeA = a.updatedAt?.seconds || a.createdAt?.seconds || a.timestamp?.seconds || a.date?.seconds || 0;
+          const timeB = b.updatedAt?.seconds || b.createdAt?.seconds || b.timestamp?.seconds || b.date?.seconds || 0;
+
+          // Jika tiada tarikh langsung (0), paksa naik atas (sebab mungkin data baru masuk)
+          if (timeA === 0 && timeB > 0) return -1;
+          if (timeB === 0 && timeA > 0) return 1;
+
+          return timeB - timeA; // Susun Descending (Baru -> Lama)
+      });
+
       renderTable();
   } catch (e) { console.error(e); }
 }
