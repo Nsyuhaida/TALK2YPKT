@@ -370,13 +370,13 @@ document.getElementById("logout").onclick = () => {
   });
 };
 
-// HELPER DATE
+// HELPER DATE (EDITED: REMOVED TIME)
 function formatDate(ts){
   if(!ts || !ts.toDate) return "-";
+  // KITA BUANG MASA, AMBIK TARIKH SAHAJA
   return ts.toDate().toLocaleDateString("ms-MY", { 
     day: '2-digit', month: '2-digit', year: 'numeric' 
-  }) + " <span style='color:rgba(255,255,255,0.5); font-size:12px;'>" + 
-  ts.toDate().toLocaleTimeString("ms-MY", { hour: '2-digit', minute:'2-digit' }) + "</span>";
+  });
 }
 
 // --- LOAD DATA ---
@@ -506,4 +506,3 @@ loadComplaints();
 
 </body>
 </html>
-
