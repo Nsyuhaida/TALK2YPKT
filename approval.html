@@ -8,7 +8,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -152,7 +151,7 @@
 
 <div id="pinScreen">
     <div class="pin-box">
-        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" width="90" style="margin-bottom:20px;" onerror="this.style.display='none'">
+        <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" width="90" style="margin-bottom:20px;">
         <h2 style="color:var(--gold); font-family:'Orbitron'; margin:0;">EXECUTIVE ACCESS</h2>
         <p style="color:#64748b; font-size:12px; margin-top:5px;">SILA MASUKKAN KOD KESELAMATAN</p>
         
@@ -168,7 +167,7 @@
     
     <div class="header">
         <div class="header-left">
-            <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" width="45" onerror="this.style.display='none'">
+            <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" width="45">
             <div class="header-title">
                 <h1>APPROVAL DASHBOARD</h1>
                 <span>YAYASAN PEMBANGUNAN KELUARGA TERENGGANU</span>
@@ -288,11 +287,7 @@ const firebaseConfig={
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
   projectId:"e-complaint-8nu9kp"
 };
-
-// Check if Firebase is already initialized
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
@@ -303,7 +298,6 @@ function checkPin() {
     
     if(pin === "1234") { 
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> VERIFYING...';
-        // Pastikan akaun ini wujud dalam Firebase Auth
         auth.signInWithEmailAndPassword("timbalanpengarah@ypkt.gov.my", "ypkt0101").then(() => {
             document.getElementById('pinScreen').style.display = 'none'; 
             document.getElementById('mainApp').classList.remove('hidden'); 
@@ -311,8 +305,7 @@ function checkPin() {
             setupCanvas();
         }).catch(e => {
             btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> MASUK';
-            console.error("Login Error:", e);
-            Swal.fire("Ralat Login", "Akaun tidak dijumpai atau masalah internet.", "error");
+            Swal.fire("Ralat Login", "Sistem gagal log masuk.", "error");
         });
     } else {
         Swal.fire({icon: 'error', title: 'PIN Salah', text: 'Sila masukkan kod yang betul.', background: '#1e293b', color: '#fff'});
@@ -325,16 +318,14 @@ function loadPendingList() {
     const container = document.getElementById('pendingList');
     const msg = document.getElementById('loadingMsg');
     
-    // Subscribe to changes
-    db.collection("complaint").orderBy("timestamp", "desc").onSnapshot((snapshot) => {
+    db.collection("complaint").onSnapshot((snapshot) => {
         let html = "";
         let count = 0;
 
         snapshot.forEach(doc => {
             const d = doc.data();
             
-            // Logic: Papar hanya yang BELUM diputuskan (Pending/Null)
-            // Dan sebaiknya yang sudah ada teknikal (section3date)
+            // Logic: Papar hanya yang BELUM diputuskan (Pending/Null) dan SUDAH disemak oleh IT
             const status = d.approvalstatus ? d.approvalstatus.toLowerCase().trim() : "";
             const isNotDecided = (status !== "approve" && status !== "reject");
             const isTechDone = (d.section3date || d.section3Date); 
@@ -346,9 +337,6 @@ function loadPendingList() {
                 if(d.assettype && d.assettype.toLowerCase().includes("komputer")) icon = "fa-computer";
                 if(d.assettype && d.assettype.toLowerCase().includes("pencetak")) icon = "fa-print";
                 
-                // Format date for list
-                const displayDate = formatDate(d.date || d.reportdatesection1 || d.timestamp);
-
                 html += `
                 <div class="pending-card" onclick="openDetail('${doc.id}')">
                     <div class="card-left">
@@ -357,7 +345,7 @@ function loadPendingList() {
                             <h3>${d.assettype || "Aset Umum"}</h3>
                             <div class="meta">
                                 <span><i class="fa-solid fa-user"></i> ${d.name || d.lastUser || "Tanpa Nama"}</span>
-                                <span><i class="fa-solid fa-calendar"></i> ${displayDate}</span>
+                                <span><i class="fa-solid fa-calendar"></i> ${formatDate(d.date || d.timestamp)}</span>
                             </div>
                         </div>
                     </div>
@@ -380,11 +368,11 @@ function loadPendingList() {
     });
 }
 
-// === 3. OPEN DETAIL (FIXED DATA MAPPING) ===
+// === 3. OPEN DETAIL (FIXED HERE) ===
 let currentId = "";
 
 async function openDetail(id) {
-    currentId = id; // SIMPAN ID UNTUK SUBMIT
+    currentId = id;
     Swal.fire({title:'Mengambil Data...', didOpen:()=>{Swal.showLoading()}});
     
     try {
@@ -396,52 +384,44 @@ async function openDetail(id) {
         document.getElementById('approvalForm').classList.remove('hidden');
 
         // MAPPING DATA (READ ONLY)
-        setText('v_name', d.lastUser || d.name || d.fullname); 
-        setText('v_date', formatDate(d.reportdatesection1 || d.date || d.timestamp));
+        setText('v_name', d.name || d.lastUser || d.fullname); 
+        setText('v_date', formatDate(d.date || d.timestamp));
         setText('v_dept', d.department || d.bahagian || "-");
         setText('v_assettype', d.assettype);
-        setText('v_brand', d.brand || d.jenama || d.assettype || "-");
+        setText('v_brand', d.brand || d.jenama || "-");
         setText('v_serial', d.serialNumber || d.noSiri || "-");
         setText('v_damage', d.damagedescription || d.kerosakan);
 
-        setText('v_sec2_name', d.section2nameposition || d.section2name || "-"); 
-        setText('v_sec2_date', formatDate(d.section2date));
-        setText('v_sec2_rec', d.recommendationsection2 || "-");
+        setText('v_sec2_name', d.officerName || d.pegawaiAsetName || d.section2name || "-"); 
+        setText('v_sec2_date', formatDate(d.section2date || d.tarikhPemeriksaan));
+        setText('v_sec2_rec', d.recommendationsection2 || d.syorPegawaiAset || "-");
 
         setText('v_sec3_name', d.section3nameposition);
-        setText('v_sec3_date', formatDate(d.section3date));
+        setText('v_sec3_date', formatDate(d.section3date || d.section3Date));
         setText('v_sec3_cost', "RM " + (d.estimatedmaintenancecost || "0.00"));
         setText('v_sec3_rec', d.recommendsection3);
 
-        // --- MAPPING FORM INPUTS (APPROVER) ---
+        // --- FIX: MAPPING FORM INPUTS (APPROVER) ---
         // Jika ada data lama dalam DB, guna data tu. Jika tiada, guna default.
         document.getElementById('app_name').value = d.approvername || "ENCIK ASHRI";
         document.getElementById('app_pos').value = d.approverposition || "TIMBALAN PENGARAH";
         document.getElementById('app_comment').value = d.approvalcomment || "";
-        
-        const status = d.approvalstatus === "Approve" || d.approvalstatus === "Reject" ? d.approvalstatus : "Pending";
-        document.getElementById('app_status').value = status;
+        document.getElementById('app_status').value = d.approvalstatus || "Pending";
 
         clearSignature();
         setTimeout(setupCanvas, 300);
 
     } catch(e) {
-        console.error(e);
         Swal.fire("Ralat", "Gagal data: " + e.message, "error");
     }
 }
 
-function setText(id, val) { const el = document.getElementById(id); if(el) el.innerText = val ? val : "-"; }
+function setText(id, val) { const el = document.getElementById(id); if(el) el.innerText = val || "-"; }
 
-function formatDate(val) {
-    if (!val) return "-";
-    if (val.toDate) return val.toDate().toLocaleDateString('en-GB');
-    if (typeof val === 'string' && val.length > 5) {
-        const d = new Date(val);
-        if(!isNaN(d.getTime())) return d.toLocaleDateString('en-GB');
-        return val; 
-    }
-    return val;
+function formatDate(timestamp) {
+    if(!timestamp) return "-";
+    if(timestamp.toDate) return timestamp.toDate().toLocaleDateString('en-GB'); 
+    return timestamp;
 }
 
 function showDashboard() {
@@ -449,7 +429,7 @@ function showDashboard() {
     document.getElementById('dashboardView').classList.remove('hidden');
 }
 
-// === 4. SIGNATURE LOGIC ===
+// === 4. SIGNATURE ===
 let currentSigMode = 'draw';
 let canvas, ctx, isDrawing=false, uploadedSigData=null;
 
@@ -489,24 +469,13 @@ function previewSig(input){
     }
 }
 
-// === 5. SUBMIT (UPDATE DATABASE) ===
+// === 5. SUBMIT ===
 async function submitApproval() {
-    // 1. Validation
-    if(!currentId) return Swal.fire("Ralat", "ID Permohonan hilang. Sila refresh.", "error");
-    
     const status = document.getElementById('app_status').value;
     if(status === "Pending") return Swal.fire("Sila Pilih", "Lulus atau Tidak?", "warning");
 
-    // 2. Prepare Signature
-    let finalSig = null;
-    if(currentSigMode === 'draw') {
-        // Check if canvas is empty (basic check)
-        finalSig = canvas.toDataURL("image/png");
-    } else {
-        finalSig = uploadedSigData;
-    }
+    let finalSig = (currentSigMode === 'draw') ? canvas.toDataURL("image/png") : uploadedSigData;
 
-    // 3. Confirm
     const result = await Swal.fire({
         title: 'Sahkan?',
         text: `Anda pasti ingin ${status === "Approve" ? "MELULUSKAN" : "MENOLAK"} permohonan ini?`,
@@ -516,8 +485,6 @@ async function submitApproval() {
     if(result.isConfirmed) {
         try {
             Swal.fire({title:'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
-            
-            // 4. Update Firestore
             await db.collection("complaint").doc(currentId).update({
                 approvalstatus: status,
                 approvername: document.getElementById('app_name').value,
@@ -526,13 +493,9 @@ async function submitApproval() {
                 approvaldate: firebase.firestore.FieldValue.serverTimestamp(),
                 approverSignature: finalSig
             });
-            
             await Swal.fire("Berjaya", "Keputusan direkodkan.", "success");
             showDashboard(); 
-        } catch(e) { 
-            console.error("Submit Error:", e);
-            Swal.fire("Ralat", "Gagal menyimpan: " + e.message, "error"); 
-        }
+        } catch(e) { Swal.fire("Ralat", e.message, "error"); }
     }
 }
 </script>
