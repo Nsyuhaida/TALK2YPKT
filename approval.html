@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Approver Dashboard | TALK2YPKT</title>
+<title>Approver Portal | TALK2YPKT</title>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
@@ -20,14 +20,10 @@
         --gold: #fbbf24;
         --text: #e2e8f0;
         --border: #334155;
+        --green: #10b981;
     }
 
-    /* HIDE SCROLLBAR */
-    ::-webkit-scrollbar { width: 0px; background: transparent; }
-    * { -ms-overflow-style: none; scrollbar-width: none; }
-
     body { background: var(--bg-dark); color: var(--text); font-family: 'Poppins', sans-serif; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
-
     .container { max-width: 850px; width: 100%; margin: 0 auto; padding-bottom: 50px; }
     .hidden { display: none !important; }
 
@@ -43,42 +39,30 @@
     }
 
     /* --- HEADER --- */
-    .header { text-align: center; margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center; }
-    .header-content { text-align: left; }
+    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; padding-bottom:20px; border-bottom:1px solid var(--border); }
     .header h1 { font-family: 'Orbitron'; color: var(--gold); margin: 0; font-size: 20px; }
-    .logout-btn { background:none; border:none; color:#ef4444; font-size:20px; cursor:pointer; }
+    .user-badge { background: rgba(251, 191, 36, 0.1); color: var(--gold); padding: 5px 12px; border-radius: 20px; font-size: 12px; border: 1px solid var(--gold); }
+
+    /* --- DASHBOARD LIST (NEW) --- */
+    .dashboard-title { font-family: 'Orbitron'; margin-bottom: 15px; color: #fff; display: flex; align-items: center; gap: 10px; }
+    .pending-list { display: grid; gap: 15px; }
     
-    /* --- DASHBOARD TABLE --- */
-    .dashboard-card {
-        background: var(--card-bg); border-radius: 15px; padding: 20px;
-        border: 1px solid var(--border); margin-bottom: 20px;
+    .pending-card {
+        background: var(--card-bg); padding: 20px; border-radius: 12px;
+        border: 1px solid var(--border); cursor: pointer; transition: 0.3s;
+        display: flex; justify-content: space-between; align-items: center;
+        position: relative; overflow: hidden;
     }
-    .refresh-btn {
-        background: var(--gold); color: #000; border: none; padding: 8px 15px; 
-        border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; float: right;
-    }
-
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th { text-align: left; color: #94a3b8; font-size: 12px; padding: 10px; border-bottom: 1px solid var(--border); }
-    td { padding: 15px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; cursor: pointer; }
-    tr:hover td { background: rgba(251, 191, 36, 0.1); color: var(--gold); }
+    .pending-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--gold); }
+    .pending-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-color: var(--gold); }
     
-    .status-badge {
-        padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase;
-        background: rgba(251, 191, 36, 0.2); color: var(--gold);
-    }
+    .card-info h3 { margin: 0; color: #fff; font-size: 16px; font-weight: 600; }
+    .card-info p { margin: 5px 0 0; color: #94a3b8; font-size: 12px; }
+    .card-status { background: rgba(16, 185, 129, 0.1); color: var(--green); padding: 5px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; }
+    .arrow-icon { color: var(--gold); }
 
-    /* --- DETAIL VIEW (FORM) --- */
-    .back-btn {
-        background: #334155; color: #fff; border: none; padding: 10px 20px;
-        border-radius: 8px; cursor: pointer; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 8px;
-    }
-    .back-btn:hover { background: #475569; }
-
-    .section-card {
-        background: var(--card-bg); padding: 20px; border-radius: 10px; margin-bottom: 20px;
-        border: 1px solid var(--border);
-    }
+    /* --- FORM SECTION --- */
+    .section-card { background: var(--card-bg); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border); }
     .section-header {
         background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 5px;
         margin-bottom: 15px; border-left: 4px solid #64748b;
@@ -86,45 +70,22 @@
     }
     .active-section { border-color: var(--gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.1); }
     .active-section .section-header { border-left-color: var(--gold); color: var(--gold); background: rgba(251, 191, 36, 0.1); }
-
+    
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
     .full { grid-column: span 2; }
-
     label { font-size: 11px; color: #64748b; display: block; margin-bottom: 4px; text-transform: uppercase; }
-    .field-val { 
-        background: #0f172a; padding: 10px; border-radius: 6px; 
-        color: #e2e8f0; font-size: 13px; border: 1px solid #334155; min-height: 20px;
-    }
+    .field-val { background: #0f172a; padding: 10px; border-radius: 6px; color: #e2e8f0; font-size: 13px; border: 1px solid #334155; min-height: 20px; }
+    input, select, textarea { width: 100%; padding: 10px; background: #020617; border: 1px solid var(--gold); color: #fff; border-radius: 6px; outline: none; font-family: 'Poppins', sans-serif; }
 
-    input, select, textarea {
-        width: 100%; padding: 10px; background: #020617; border: 1px solid var(--gold);
-        color: #fff; border-radius: 6px; outline: none; box-sizing: border-box; font-family: 'Poppins', sans-serif;
-        text-transform: uppercase; /* FORCE UPPERCASE DISPLAY */
-    }
-
-    /* --- SIGNATURE --- */
+    /* SIGNATURE */
     .sig-tabs { display: flex; gap: 10px; margin-bottom: 10px; }
-    .tab-btn {
-        flex: 1; padding: 10px; background: #334155; border: none; color: #fff;
-        cursor: pointer; border-radius: 5px; font-size: 12px;
-    }
+    .tab-btn { flex: 1; padding: 10px; background: #334155; border: none; color: #fff; cursor: pointer; border-radius: 5px; font-size: 12px; }
     .tab-btn.active { background: var(--gold); color: #000; font-weight: bold; }
-
-    .sig-area {
-        background: #fff; border-radius: 8px; padding: 10px; text-align: center;
-        border: 2px dashed #475569; min-height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center;
-    }
+    canvas { border: 1px solid #ccc; background:#fff; cursor: crosshair; touch-action: none; width: 100%; height: 150px; border-radius: 8px;}
     
-    canvas { border: 1px solid #ccc; cursor: crosshair; touch-action: none; width: 100%; height: 150px; }
-    .upload-box { width: 100%; }
-    .preview-img { max-height: 100px; margin-top: 10px; display: none; border: 1px solid #ccc; }
-
-    .btn-submit {
-        width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 8px;
-        font-weight: bold; cursor: pointer; font-family: 'Orbitron'; color: #000; font-size: 16px; margin-top: 20px;
-        transition: transform 0.2s;
-    }
-    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit { width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; color: #000; font-size: 16px; margin-top: 20px; }
+    .btn-back { background: none; border: none; color: #94a3b8; cursor: pointer; margin-bottom: 10px; font-size: 14px; display: flex; align-items: center; gap: 5px; }
+    .btn-back:hover { color: #fff; }
 
 </style>
 </head>
@@ -140,142 +101,98 @@
 <div id="mainApp" class="container hidden">
     
     <div class="header">
-        <div class="header-content">
-            <h1>APPROVAL PORTAL</h1>
-            <p style="color:#64748b; font-size:12px;">Logged in as: TIMBALAN PENGARAH</p>
+        <div>
+            <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" width="40" style="vertical-align:middle; margin-right:10px;">
+            <span style="font-family:'Orbitron'; font-weight:bold; color:#fff;">APPROVAL DASHBOARD</span>
         </div>
-        <button class="logout-btn" onclick="location.reload()"><i class="fa-solid fa-power-off"></i></button>
+        <div class="user-badge"><i class="fa-solid fa-user-tie"></i> TIMBALAN PENGARAH</div>
     </div>
 
     <div id="dashboardView">
-        <div class="dashboard-card">
-            <button class="refresh-btn" onclick="loadDashboard()"><i class="fa-solid fa-rotate"></i> REFRESH</button>
-            <h3 style="margin:0; font-family:'Orbitron'; color:#fff; font-size:16px; padding:8px 0;">PENDING APPROVAL</h3>
-            <p style="font-size:12px; color:#64748b; margin-bottom:15px;">Senarai aduan yang telah disemak teknikal & menunggu kelulusan.</p>
-            
-            <div id="loading" style="text-align:center; padding:20px; color:var(--gold); display:none;">
-                <i class="fa-solid fa-spinner fa-spin"></i> Loading Data...
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID / ASSET</th>
-                        <th>REPORTER</th>
-                        <th>DATE (IT)</th>
-                        <th>STATUS</th>
-                    </tr>
-                </thead>
-                <tbody id="pendingTableBody">
-                    </tbody>
-            </table>
-            <div id="emptyMsg" style="text-align:center; padding:30px; color:#64748b; display:none;">
-                <i class="fa-regular fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i><br>
-                Tiada aduan menunggu kelulusan.
-            </div>
+        <div class="dashboard-title">
+            <i class="fa-solid fa-clock-rotate-left" style="color:var(--gold)"></i> MENUNGGU KELULUSAN
         </div>
+        <div id="loadingMsg" style="text-align:center; color:#64748b; padding:20px;">Checking Database...</div>
+        <div id="pendingList" class="pending-list"></div>
     </div>
 
-    <div id="detailView" class="hidden">
-        <button class="back-btn" onclick="closeDetail()">
-            <i class="fa-solid fa-arrow-left"></i> KEMBALI
+    <div id="approvalForm" class="hidden">
+        
+        <button class="btn-back" onclick="showDashboard()">
+            <i class="fa-solid fa-arrow-left"></i> KEMBALI KE SENARAI
         </button>
 
-        <div id="approvalForm">
-            <div class="section-card">
-                <div class="section-header">SEC 1: INFO ASET & PENGADU <span id="disp_id" style="float:right; opacity:0.5;"></span></div>
-                <div class="grid">
-                    <div><label>Asset Type</label><div class="field-val" id="v_assettype"></div></div>
-                    <div><label>Serial Number</label><div class="field-val" id="v_serialNumber"></div></div>
-                    <div><label>Last User</label><div class="field-val" id="v_lastUser"></div></div>
-                    <div><label>Damage Date</label><div class="field-val" id="v_damagedate"></div></div>
-                    <div class="full"><label>Damage Description</label><div class="field-val" id="v_damagedescription"></div></div>
-                    <div><label>Reporter</label><div class="field-val" id="v_reporternamaposition"></div></div>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div class="section-header">SEC 2: SYOR PEGAWAI ASET</div>
-                <div class="grid">
-                    <div><label>Officer</label><div class="field-val" id="v_section2nameposition"></div></div>
-                    <div class="full"><label>Recommendation</label><div class="field-val" id="v_recommendationsection2"></div></div>
-                </div>
-            </div>
-
-            <div class="section-card" style="border-left: 1px solid var(--gold);">
-                <div class="section-header" style="color:#fff;">SEC 3: ULASAN TEKNIKAL (IT)</div>
-                <div class="grid">
-                    <div><label>IT Officer</label><div class="field-val" id="v_section3nameposition"></div></div>
-                    <div><label>Verify Date</label><div class="field-val" id="v_section3date"></div></div>
-                    <div><label>Est. Cost (RM)</label><div class="field-val" id="v_estimatedmaintenancecost"></div></div>
-                    <div class="full"><label>Technical Comment</label><div class="field-val" id="v_recommendsection3" style="color:var(--gold);"></div></div>
-                </div>
-            </div>
-
-            <div class="section-card active-section">
-                <div class="section-header"><i class="fa-solid fa-pen-nib"></i> SEC 4: KELULUSAN / APPROVAL</div>
-                
-                <div class="grid">
-                    <div class="full">
-                        <label style="color:var(--gold);">KEPUTUSAN (DECISION)</label>
-                        <select id="app_status" style="font-size:16px;">
-                            <option value="Pending">-- SILA PILIH --</option>
-                            <option value="Approve">LULUS (APPROVE)</option>
-                            <option value="Reject">TIDAK LULUS (REJECT)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Approver Name</label>
-                        <input type="text" id="app_name" value="ENCIK ASHRI" readonly>
-                    </div>
-                    <div>
-                        <label>Approver Position</label>
-                        <input type="text" id="app_pos" value="TIMBALAN PENGARAH" readonly>
-                    </div>
-                    <div class="full">
-                        <label>Approval Comment</label>
-                        <textarea id="app_comment" rows="2" placeholder="SILA MASUKKAN CATATAN..."></textarea>
-                    </div>
-
-                    <div class="full" style="margin-top:10px;">
-                        <label style="color:var(--gold);">TANDATANGAN DIGITAL</label>
-                        
-                        <div class="sig-tabs">
-                            <button class="tab-btn active" id="btnDraw" onclick="switchSigMode('draw')">
-                                <i class="fa-solid fa-pen"></i> LUKIS (DRAW)
-                            </button>
-                            <button class="tab-btn" id="btnUpload" onclick="switchSigMode('upload')">
-                                <i class="fa-solid fa-upload"></i> UPLOAD COP
-                            </button>
-                        </div>
-
-                        <div id="areaDraw" class="sig-area">
-                            <canvas id="sigCanvas"></canvas>
-                            <div style="width:100%; text-align:right; margin-top:5px;">
-                                <button onclick="clearSignature()" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">Clear Pad</button>
-                            </div>
-                        </div>
-
-                        <div id="areaUpload" class="sig-area hidden">
-                            <div class="upload-box">
-                                <input type="file" id="sigFile" accept="image/*" onchange="previewSig(this)" style="background:none; border:none; color:#000;">
-                                <img id="sigPreview" class="preview-img" src="">
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <button class="btn-submit" onclick="submitApproval()">
-                    <i class="fa-solid fa-check-circle"></i> SAHKAN & HANTAR
-                </button>
+        <div class="section-card">
+            <div class="section-header">SEC 1: INFO ASET & PENGADU</div>
+            <div class="grid">
+                <div><label>ID Aduan</label><div class="field-val" id="v_id" style="color:var(--gold); font-weight:bold;"></div></div>
+                <div><label>Jenis Aset</label><div class="field-val" id="v_assettype"></div></div>
+                <div><label>No. Siri</label><div class="field-val" id="v_serialNumber"></div></div>
+                <div><label>Pengguna Terakhir</label><div class="field-val" id="v_lastUser"></div></div>
+                <div class="full"><label>Kerosakan</label><div class="field-val" id="v_damagedescription"></div></div>
             </div>
         </div>
+
+        <div class="section-card">
+            <div class="section-header">SEC 2: SYOR PEGAWAI ASET</div>
+            <div class="grid">
+                <div class="full"><label>Ulasan</label><div class="field-val" id="v_recommendationsection2"></div></div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">SEC 3: ULASAN TEKNIKAL (IT)</div>
+            <div class="grid">
+                <div><label>Pegawai Teknikal</label><div class="field-val" id="v_section3nameposition"></div></div>
+                <div><label>Tarikh Semakan</label><div class="field-val" id="v_section3date"></div></div>
+                <div><label>Anggaran Kos (RM)</label><div class="field-val" id="v_estimatedmaintenancecost" style="color:var(--green); font-weight:bold;"></div></div>
+                <div class="full"><label>Syor Teknikal</label><div class="field-val" id="v_recommendsection3"></div></div>
+            </div>
+        </div>
+
+        <div class="section-card active-section">
+            <div class="section-header"><i class="fa-solid fa-pen-nib"></i> SEC 4: TINDAKAN PENGARAH</div>
+            
+            <div class="grid">
+                <div class="full">
+                    <label style="color:var(--gold);">Keputusan</label>
+                    <select id="app_status" style="font-size:16px;">
+                        <option value="Pending">-- Sila Pilih --</option>
+                        <option value="Approve">LULUS (APPROVE)</option>
+                        <option value="Reject">TIDAK LULUS (REJECT)</option>
+                    </select>
+                </div>
+                <div><label>Nama</label><input type="text" id="app_name" value="ENCIK ASHRI"></div>
+                <div><label>Jawatan</label><input type="text" id="app_pos" value="TIMBALAN PENGARAH"></div>
+                <div class="full"><label>Ulasan</label><textarea id="app_comment" rows="2" placeholder="Catatan..."></textarea></div>
+
+                <div class="full" style="margin-top:10px;">
+                    <label style="color:var(--gold);">TANDATANGAN</label>
+                    <div class="sig-tabs">
+                        <button class="tab-btn active" id="btnDraw" onclick="switchSigMode('draw')">LUKIS</button>
+                        <button class="tab-btn" id="btnUpload" onclick="switchSigMode('upload')">UPLOAD COP</button>
+                    </div>
+                    <div id="areaDraw">
+                        <canvas id="sigCanvas"></canvas>
+                        <div style="text-align:right;"><button onclick="clearSignature()" style="color:#ef4444; background:none; border:none; font-size:12px;">Padam</button></div>
+                    </div>
+                    <div id="areaUpload" class="hidden">
+                        <input type="file" id="sigFile" accept="image/*" onchange="previewSig(this)" style="color:#fff;">
+                        <img id="sigPreview" style="max-height:100px; display:none; margin-top:10px; border:1px solid #555;">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-submit" onclick="submitApproval()">
+                <i class="fa-solid fa-check-circle"></i> SAHKAN KEPUTUSAN
+            </button>
+        </div>
+
     </div>
 </div>
 
 <script>
-// --- FIREBASE SETUP ---
+// --- CONFIG ---
 const firebaseConfig={
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
   authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -285,229 +202,178 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const auth=firebase.auth();
 
-// === 1. GHOST LOGIN ===
+// === 1. LOGIN & LOAD LIST ===
 function checkPin() {
     const pin = document.getElementById('secretPin').value;
-    const btn = document.querySelector('#pinScreen button');
-    
     if(pin === "1234") { 
-        btn.innerHTML = "Authenticating...";
-        auth.signInWithEmailAndPassword("timbalanpengarah@ypkt.gov.my", "ypkt0101")
-        .then(() => {
+        auth.signInWithEmailAndPassword("timbalanpengarah@ypkt.gov.my", "ypkt0101").then(() => {
             document.getElementById('pinScreen').classList.add('hidden'); 
             document.getElementById('mainApp').classList.remove('hidden'); 
-            loadDashboard(); // Load data automatically
-        })
-        .catch((error) => {
-            btn.innerHTML = "ACCESS PORTAL";
-            Swal.fire("Login Failed", error.message, "error");
-        });
+            loadPendingList(); // <--- TERUS LOAD LIST
+            setupCanvas();
+        }).catch(e => Swal.fire("Error", e.message, "error"));
     } else {
-        Swal.fire("Akses Ditolak", "PIN Salah!", "error");
-        document.getElementById('secretPin').value = "";
+        Swal.fire("Salah", "PIN tidak sah", "error");
     }
 }
 
-// === 2. DASHBOARD LOGIC (NEW) ===
-let pendingData = [];
-const dt = (t) => t && t.toDate ? t.toDate().toLocaleDateString("en-GB") : "-";
-
-async function loadDashboard() {
-    const tbody = document.getElementById("pendingTableBody");
-    const loader = document.getElementById("loading");
-    const empty = document.getElementById("emptyMsg");
+// === 2. AUTO-FETCH PENDING LIST ===
+function loadPendingList() {
+    const container = document.getElementById('pendingList');
+    const msg = document.getElementById('loadingMsg');
     
-    tbody.innerHTML = "";
-    loader.style.display = "block";
-    empty.style.display = "none";
+    // Query: Ambil semua data
+    db.collection("complaint").onSnapshot((snapshot) => {
+        let html = "";
+        let count = 0;
 
-    try {
-        // Ambil data yang belum approve (atau pending)
-        // Kita juga filter supaya sekurang-kurangnya Section 3 (IT) dah check
-        // Supaya Encik Ashri tak approve benda kosong.
-        const snapshot = await db.collection("complaint")
-            .orderBy("reportdatesection1", "desc")
-            .get();
-
-        pendingData = [];
-        
         snapshot.forEach(doc => {
             const d = doc.data();
-            // FILTER CLIENT SIDE:
-            // 1. Status belum 'Approve' atau 'Reject'
-            // 2. Section 3 Date WUJUD (Maksudnya IT dah proses)
+            
+            // LOGIC PENAPISAN (FILTER):
+            // 1. Status mestilah "Pending" (atau kosong)
+            // 2. Section 3 (IT) MESTI dah ada tarikh (maksudnya Admin dah semak)
             const isPending = !d.approvalstatus || d.approvalstatus === "Pending";
-            const isTechChecked = d.section3date || d.section3Date; // Check field existence
+            const isTechDone = d.section3date || d.section3Date; 
 
-            if(isPending && isTechChecked) {
-                d._id = doc.id;
-                pendingData.push(d);
+            if(isPending && isTechDone) {
+                count++;
+                html += `
+                <div class="pending-card" onclick="openDetail('${doc.id}')">
+                    <div class="card-info">
+                        <h3>${d.assettype || "Aset Umum"}</h3>
+                        <p>ID: ${doc.id} | Oleh: ${d.lastUser}</p>
+                        <p style="color:#aaa; font-style:italic;">"${d.damagedescription || ''}"</p>
+                    </div>
+                    <div>
+                        <div class="card-status">READY</div>
+                        <div style="text-align:right; margin-top:5px;"><i class="fa-solid fa-chevron-right arrow-icon"></i></div>
+                    </div>
+                </div>`;
             }
         });
 
-        loader.style.display = "none";
-
-        if(pendingData.length === 0) {
-            empty.style.display = "block";
-            return;
+        if(count === 0) {
+            msg.innerHTML = "Tiada permohonan yang menunggu kelulusan setakat ini.";
+            container.innerHTML = "";
+        } else {
+            msg.style.display = 'none';
+            container.innerHTML = html;
         }
-
-        pendingData.forEach(item => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td>
-                    <span style="color:#fff; font-weight:bold;">${item.assettype || 'Unknown'}</span><br>
-                    <span style="font-family:'Courier New'; color:#64748b;">${item.serialNumber || '-'}</span>
-                </td>
-                <td>${item.reporternamaposition || '-'}</td>
-                <td>${dt(item.section3date || item.section3Date)}</td>
-                <td><span class="status-badge">READY</span></td>
-            `;
-            tr.onclick = () => openDetail(item);
-            tbody.appendChild(tr);
-        });
-
-    } catch(e) {
-        console.error(e);
-        loader.style.display = "none";
-        Swal.fire("Error", "Gagal memuat turun data.", "error");
-    }
+    });
 }
 
-// === 3. DETAIL VIEW LOGIC ===
+// === 3. OPEN DETAIL & SIGNATURE ===
 let currentId = "";
+let currentSigMode = 'draw';
+let canvas, ctx, isDrawing=false, uploadedSigData=null;
 
-function openDetail(d) {
-    currentId = d._id;
-
-    // Populate Fields
-    document.getElementById('disp_id').innerText = "#" + currentId.substr(0,5);
+async function openDetail(id) {
+    currentId = id;
     
-    // Sec 1
+    // Tunjuk Loading kejap
+    Swal.fire({title:'Loading...', didOpen:()=>{Swal.showLoading()}});
+    
+    const doc = await db.collection("complaint").doc(id).get();
+    const d = doc.data();
+    Swal.close();
+
+    // Hide List, Show Form
+    document.getElementById('dashboardView').classList.add('hidden');
+    document.getElementById('approvalForm').classList.remove('hidden');
+
+    // Fill Data
+    const dt = t => t?.toDate ? t.toDate().toLocaleDateString('en-GB') : "-";
+    
+    document.getElementById('v_id').innerText = id;
     document.getElementById('v_assettype').innerText = d.assettype || "-";
     document.getElementById('v_serialNumber').innerText = d.serialNumber || "-";
     document.getElementById('v_lastUser').innerText = d.lastUser || "-";
-    document.getElementById('v_damagedate').innerText = dt(d.damagedate);
     document.getElementById('v_damagedescription').innerText = d.damagedescription || "-";
-    document.getElementById('v_reporternamaposition').innerText = d.reporternamaposition || "-";
     
-    // Sec 2
-    document.getElementById('v_section2nameposition').innerText = d.section2nameposition || "-";
     document.getElementById('v_recommendationsection2').innerText = d.recommendationsection2 || "-";
-
-    // Sec 3
+    
     document.getElementById('v_section3nameposition').innerText = d.section3nameposition || "-";
     document.getElementById('v_section3date').innerText = dt(d.section3date || d.section3Date);
-    document.getElementById('v_estimatedmaintenancecost').innerText = d.estimatedmaintenancecost || "0.00";
+    document.getElementById('v_estimatedmaintenancecost').innerText = "RM " + (d.estimatedmaintenancecost || "0.00");
     document.getElementById('v_recommendsection3').innerText = d.recommendsection3 || "-";
 
-    // Form Reset
-    document.getElementById('app_status').value = "Pending";
-    document.getElementById('app_comment').value = "";
-    
-    // Switch View
-    document.getElementById('dashboardView').classList.add('hidden');
-    document.getElementById('detailView').classList.remove('hidden');
-    
-    // Fix Canvas Size (Must be done when visible)
-    setTimeout(setupCanvas, 300);
+    // Setup Signature Canvas (Reset)
+    setTimeout(setupCanvas, 500);
 }
 
-function closeDetail() {
-    document.getElementById('detailView').classList.add('hidden');
+function showDashboard() {
+    document.getElementById('approvalForm').classList.add('hidden');
     document.getElementById('dashboardView').classList.remove('hidden');
-    currentId = "";
 }
 
-// === 4. SIGNATURE & SUBMIT LOGIC (SAMA MACAM DULU) ===
-let currentSigMode = 'draw';
-let canvas, ctx, isDrawing = false;
-let uploadedSigData = null; 
-
+// === 4. CANVAS LOGIC ===
 function switchSigMode(mode) {
     currentSigMode = mode;
     document.getElementById('btnDraw').className = mode === 'draw' ? 'tab-btn active' : 'tab-btn';
     document.getElementById('btnUpload').className = mode === 'upload' ? 'tab-btn active' : 'tab-btn';
-    
     if(mode === 'draw') {
         document.getElementById('areaDraw').classList.remove('hidden');
         document.getElementById('areaUpload').classList.add('hidden');
-        setupCanvas(); 
+        setupCanvas();
     } else {
         document.getElementById('areaDraw').classList.add('hidden');
         document.getElementById('areaUpload').classList.remove('hidden');
     }
 }
-
-function setupCanvas() {
-    canvas = document.getElementById('sigCanvas');
-    ctx = canvas.getContext('2d');
-    canvas.width = canvas.parentElement.offsetWidth; // Auto width
-    canvas.height = 150;
-    ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
-
-    canvas.onmousedown = startDraw; canvas.onmousemove = draw; canvas.onmouseup = endDraw; canvas.onmouseout = endDraw;
-    canvas.ontouchstart = (e)=>{e.preventDefault(); startDraw(e.touches[0])};
-    canvas.ontouchmove = (e)=>{e.preventDefault(); draw(e.touches[0])};
-    canvas.ontouchend = endDraw;
+function setupCanvas(){
+    canvas=document.getElementById('sigCanvas'); ctx=canvas.getContext('2d');
+    canvas.width=canvas.offsetWidth; canvas.height=150;
+    ctx.lineWidth=3; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.strokeStyle='#000';
+    canvas.onmousedown=start; canvas.onmousemove=draw; canvas.onmouseup=end;
+    canvas.ontouchstart=(e)=>{e.preventDefault();start(e.touches[0])};
+    canvas.ontouchmove=(e)=>{e.preventDefault();draw(e.touches[0])};
+    canvas.ontouchend=end;
 }
-function startDraw(e){ isDrawing=true; ctx.beginPath(); ctx.moveTo(e.clientX-canvas.getBoundingClientRect().left, e.clientY-canvas.getBoundingClientRect().top); }
-function draw(e){ if(!isDrawing)return; ctx.lineTo(e.clientX-canvas.getBoundingClientRect().left, e.clientY-canvas.getBoundingClientRect().top); ctx.stroke(); }
-function endDraw(){ isDrawing=false; }
-function clearSignature(){ ctx.clearRect(0,0,canvas.width,canvas.height); }
-
-function previewSig(input) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('sigPreview').src = e.target.result;
-            document.getElementById('sigPreview').style.display = "block";
-            uploadedSigData = e.target.result; 
-        }
-        reader.readAsDataURL(input.files[0]);
+function start(e){isDrawing=true; ctx.beginPath(); ctx.moveTo(e.clientX-canvas.getBoundingClientRect().left, e.clientY-canvas.getBoundingClientRect().top);}
+function draw(e){if(!isDrawing)return; ctx.lineTo(e.clientX-canvas.getBoundingClientRect().left, e.clientY-canvas.getBoundingClientRect().top); ctx.stroke();}
+function end(){isDrawing=false;}
+function clearSignature(){ctx.clearRect(0,0,canvas.width,canvas.height);}
+function previewSig(input){
+    if(input.files[0]){
+        const r=new FileReader();
+        r.onload=(e)=>{
+            uploadedSigData=e.target.result; 
+            document.getElementById('sigPreview').src=uploadedSigData;
+            document.getElementById('sigPreview').style.display='block';
+        };
+        r.readAsDataURL(input.files[0]);
     }
 }
 
+// === 5. SUBMIT ===
 async function submitApproval() {
-    if(!currentId) return;
     const status = document.getElementById('app_status').value;
-    if(status === "Pending") return Swal.fire("Required", "SILA PILIH KEPUTUSAN.", "warning");
+    if(status === "Pending") return Swal.fire("Sila Pilih", "Lulus atau Tidak?", "warning");
 
-    let finalSignature = "";
-    if (currentSigMode === 'draw') {
-        finalSignature = canvas.toDataURL("image/png");
-    } else {
-        finalSignature = uploadedSigData;
-    }
+    let sig = "";
+    if(currentSigMode === 'draw') sig = canvas.toDataURL("image/png");
+    else sig = uploadedSigData;
 
-    const result = await Swal.fire({
-        title: 'SAHKAN KEPUTUSAN?',
-        text: `Status: ${status}`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#fbbf24',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'YA, HANTAR'
-    });
-
-    if (result.isConfirmed) {
-        try {
-            await db.collection("complaint").doc(currentId).update({
-                approvalstatus: status,
-                approvername: document.getElementById('app_name').value.toUpperCase(),
-                approverposition: document.getElementById('app_pos').value.toUpperCase(),
-                approvalcomment: document.getElementById('app_comment').value.toUpperCase(),
-                approvaldate: firebase.firestore.FieldValue.serverTimestamp(),
-                approverSignature: finalSignature
-            });
-
-            await Swal.fire("BERJAYA!", "Keputusan telah direkod.", "success");
-            closeDetail();
-            loadDashboard(); // Refresh list
-        } catch(e) {
-            Swal.fire("Gagal", e.message, "error");
+    Swal.fire({
+        title: 'Sahkan?', text: status, icon: 'question', showCancelButton: true, confirmButtonText: 'Ya'
+    }).then(async (res) => {
+        if(res.isConfirmed) {
+            try {
+                await db.collection("complaint").doc(currentId).update({
+                    approvalstatus: status,
+                    approvername: document.getElementById('app_name').value,
+                    approverposition: document.getElementById('app_pos').value,
+                    approvalcomment: document.getElementById('app_comment').value,
+                    approvaldate: firebase.firestore.FieldValue.serverTimestamp(),
+                    approverSignature: sig
+                });
+                
+                await Swal.fire("Berjaya", "Telah direkodkan.", "success");
+                showDashboard(); // Balik ke list, item tu akan hilang automatik
+            } catch(e) { Swal.fire("Ralat", e.message, "error"); }
         }
-    }
+    });
 }
 </script>
 </body>
