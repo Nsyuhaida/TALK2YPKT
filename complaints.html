@@ -393,7 +393,7 @@ async function loadComplaints(){
 
     snapshot.forEach(doc => {
       const d = doc.data();
-      d._id = doc.id;
+      d._id = doc.id; // <--- INI ID FIREBASE YANG PANJANG TU
       d._code = String(counter).padStart(3,'0'); // Simple Code logic
       counter--;
       complaintsData.push(d);
@@ -447,22 +447,33 @@ function renderTable(){
   table.style.display = "table";
 }
 
-// --- SHOW MODAL ---
+// --- SHOW MODAL (EDITED HERE) ---
 function showDetails(d){
   const modal = document.getElementById("detailModal");
   const body = document.getElementById("modalBody");
 
+  // NOTA: Pastikan field email dalam firebase bernama "email".
+  // Kalau lain, tukar d.email kepada d.nama_field_email
+
   body.innerHTML = `
     <h3><i class="fa-solid fa-file-invoice"></i> RECORD #${d._code}</h3>
+    
+    <p><b>System Ref ID:</b> <span style="font-family:'Courier New'; font-size:12px; color:#aaa;">${d._id}</span></p>
+
     <p><b>Asset Type:</b> <span>${d.assettype??"-"}</span></p>
     <p><b>Serial Number:</b> <span>${d.serialNumber??"-"}</span></p>
     <p><b>Last User:</b> <span>${d.lastUser??"-"}</span></p>
     <p><b>Damage Date:</b> <span>${formatDate(d.damagedate)}</span></p>
+    
     <div style="margin: 15px 0; background:rgba(255,255,255,0.05); padding:10px; border-radius:5px;">
         <b style="display:block; margin-bottom:5px; color:var(--neon-blue);">Damage Description:</b>
         <span style="font-size:13px; line-height:1.5;">${d.damagedescription??"-"}</span>
     </div>
-    <p><b>Reporter:</b> <span>${d.reporternamaposition??"-"}</span></p>
+    
+    <p><b>Reporter Name:</b> <span>${d.reporternamaposition??"-"}</span></p>
+    
+    <p><b>Reporter Email:</b> <span>${d.email??"-"}</span></p>
+
     <p><b>Date Reported:</b> <span>${formatDate(d.reportdatesection1)}</span></p>
     <hr style="border-color:rgba(255,255,255,0.1); margin:10px 0;">
     <p><b>Recommendation:</b> <span>${d.recommendationsection2??"-"}</span></p>
