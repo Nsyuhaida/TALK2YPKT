@@ -325,36 +325,27 @@ function loadPendingList() {
         snapshot.forEach(doc => {
             const d = doc.data();
             
-            // Logic Check: Status belum approve/reject DAN bahagian teknikal dah siap semak
-            const status = d.approvalStatus || d.approvalstatus || "";
-            const statusLower = status.toLowerCase().trim();
-            const isNotDecided = (statusLower !== "approve" && statusLower !== "reject");
-            
-            // Check tarikh teknikal (support pelbagai ejaan field)
-            const techDate = d.section3Date || d.section3date || d.tarikhSemakan;
-            const isTechDone = (techDate != null); 
+            // Logic: Papar hanya yang BELUM diputuskan (Pending/Null) dan SUDAH disemak oleh IT
+            const status = d.approvalstatus ? d.approvalstatus.toLowerCase().trim() : "";
+            const isNotDecided = (status !== "approve" && status !== "reject");
+            const isTechDone = (d.section3date || d.section3Date); 
 
             if(isNotDecided && isTechDone) {
                 count++;
                 
-                // Ambil data untuk kad (support pelbagai ejaan)
-                const type = d.assetType || d.assettype || d.jenisAset || "Aset Umum";
-                const name = d.name || d.Name || d.fullname || d.nama || "Tanpa Nama";
-                const dateVal = d.date || d.Date || d.timestamp || d.tarikhAduan;
-
                 let icon = "fa-box";
-                if(type.toLowerCase().includes("komputer") || type.toLowerCase().includes("laptop")) icon = "fa-computer";
-                if(type.toLowerCase().includes("pencetak") || type.toLowerCase().includes("printer")) icon = "fa-print";
+                if(d.assettype && d.assettype.toLowerCase().includes("komputer")) icon = "fa-computer";
+                if(d.assettype && d.assettype.toLowerCase().includes("pencetak")) icon = "fa-print";
                 
                 html += `
                 <div class="pending-card" onclick="openDetail('${doc.id}')">
                     <div class="card-left">
                         <div class="asset-icon"><i class="fa-solid ${icon}"></i></div>
                         <div class="card-info">
-                            <h3>${type}</h3>
+                            <h3>${d.assettype || "Aset Umum"}</h3>
                             <div class="meta">
-                                <span><i class="fa-solid fa-user"></i> ${name}</span>
-                                <span><i class="fa-solid fa-calendar"></i> ${formatDate(dateVal)}</span>
+                                <span><i class="fa-solid fa-user"></i> ${d.name || d.lastUser || "Tanpa Nama"}</span>
+                                <span><i class="fa-solid fa-calendar"></i> ${formatDate(d.date || d.timestamp)}</span>
                             </div>
                         </div>
                     </div>
@@ -377,7 +368,7 @@ function loadPendingList() {
     });
 }
 
-// === 3. OPEN DETAIL ===
+// === 3. OPEN DETAIL (FIXED HERE) ===
 let currentId = "";
 
 async function openDetail(id) {
@@ -392,70 +383,50 @@ async function openDetail(id) {
         document.getElementById('dashboardView').classList.add('hidden');
         document.getElementById('approvalForm').classList.remove('hidden');
 
-        // --- MAPPING DATA (Support multiple field names) ---
-        
-        // SEC 1: ADUAN
-        setText('v_name', d.name || d.Name || d.fullname || d.nama || "-"); 
-        setText('v_date', formatDate(d.date || d.Date || d.timestamp || d.tarikhAduan));
-        setText('v_dept', d.department || d.Department || d.bahagian || d.unit || "-");
-        setText('v_assettype', d.assetType || d.assettype || d.jenisAset || "-");
-        setText('v_brand', d.brand || d.Brand || d.jenama || d.model || "-");
-        setText('v_serial', d.serialNumber || d.serialnumber || d.noSiri || "-");
-        setText('v_damage', d.damageDescription || d.damagedescription || d.kerosakan || d.masalah || "-");
+        // MAPPING DATA (READ ONLY)
+        setText('v_name', d.name || d.lastUser || d.fullname); 
+        setText('v_date', formatDate(d.date || d.timestamp));
+        setText('v_dept', d.department || d.bahagian || "-");
+        setText('v_assettype', d.assettype);
+        setText('v_brand', d.brand || d.jenama || "-");
+        setText('v_serial', d.serialNumber || d.noSiri || "-");
+        setText('v_damage', d.damagedescription || d.kerosakan);
 
-        // SEC 2: PEGAWAI ASET
-        setText('v_sec2_name', d.officerName || d.pegawaiAsetName || d.section2Name || d.section2name || "-"); 
-        setText('v_sec2_date', formatDate(d.section2Date || d.section2date || d.tarikhPemeriksaan));
-        setText('v_sec2_rec', d.recommendationSection2 || d.recommendationsection2 || d.syorPegawaiAset || "-");
+        setText('v_sec2_name', d.officerName || d.pegawaiAsetName || d.section2name || "-"); 
+        setText('v_sec2_date', formatDate(d.section2date || d.tarikhPemeriksaan));
+        setText('v_sec2_rec', d.recommendationsection2 || d.syorPegawaiAset || "-");
 
-        // SEC 3: TEKNIKAL (IT)
-        setText('v_sec3_name', d.section3NamePosition || d.section3nameposition || d.technicianName || "-");
-        setText('v_sec3_date', formatDate(d.section3Date || d.section3date || d.tarikhSemakan));
-        
-        // Format Duit (Cost)
-        let cost = d.estimatedMaintenanceCost || d.estimatedmaintenancecost || d.kosAnggaran || "0";
-        setText('v_sec3_cost', "RM " + cost);
-        
-        setText('v_sec3_rec', d.recommendSection3 || d.recommendsection3 || d.syorTeknikal || "-");
+        setText('v_sec3_name', d.section3nameposition);
+        setText('v_sec3_date', formatDate(d.section3date || d.section3Date));
+        setText('v_sec3_cost', "RM " + (d.estimatedmaintenancecost || "0.00"));
+        setText('v_sec3_rec', d.recommendsection3);
 
-        // --- FORM PENGARAH ---
-        document.getElementById('app_name').value = d.approverName || d.approvername || "ENCIK ASHRI";
-        document.getElementById('app_pos').value = d.approverPosition || d.approverposition || "TIMBALAN PENGARAH";
-        document.getElementById('app_comment').value = d.approvalComment || d.approvalcomment || "";
-        document.getElementById('app_status').value = d.approvalStatus || d.approvalstatus || "Pending";
+        // --- FIX: MAPPING FORM INPUTS (APPROVER) ---
+        // Jika ada data lama dalam DB, guna data tu. Jika tiada, guna default.
+        document.getElementById('app_name').value = d.approvername || "ENCIK ASHRI";
+        document.getElementById('app_pos').value = d.approverposition || "TIMBALAN PENGARAH";
+        document.getElementById('app_comment').value = d.approvalcomment || "";
+        document.getElementById('app_status').value = d.approvalstatus || "Pending";
 
         clearSignature();
         setTimeout(setupCanvas, 300);
 
     } catch(e) {
         Swal.fire("Ralat", "Gagal data: " + e.message, "error");
-        console.error(e);
     }
 }
 
-function setText(id, val) { 
-    const el = document.getElementById(id); 
-    if(el) el.innerText = val; 
-}
+function setText(id, val) { const el = document.getElementById(id); if(el) el.innerText = val || "-"; }
 
 function formatDate(timestamp) {
     if(!timestamp) return "-";
-    // Convert Firebase Timestamp to JS Date
-    let dateObj = timestamp;
-    if(timestamp.toDate) dateObj = timestamp.toDate();
-    
-    // Format kepada DD/MM/YYYY
-    try {
-        return new Date(dateObj).toLocaleDateString('en-GB'); 
-    } catch(e) {
-        return timestamp; 
-    }
+    if(timestamp.toDate) return timestamp.toDate().toLocaleDateString('en-GB'); 
+    return timestamp;
 }
 
 function showDashboard() {
     document.getElementById('approvalForm').classList.add('hidden');
     document.getElementById('dashboardView').classList.remove('hidden');
-    loadPendingList(); 
 }
 
 // === 4. SIGNATURE ===
@@ -501,31 +472,28 @@ function previewSig(input){
 // === 5. SUBMIT ===
 async function submitApproval() {
     const status = document.getElementById('app_status').value;
-    if(status === "Pending") return Swal.fire("Sila Pilih", "Sila pilih keputusan Lulus atau Tidak.", "warning");
+    if(status === "Pending") return Swal.fire("Sila Pilih", "Lulus atau Tidak?", "warning");
 
     let finalSig = (currentSigMode === 'draw') ? canvas.toDataURL("image/png") : uploadedSigData;
 
     const result = await Swal.fire({
-        title: 'Sahkan Keputusan?',
+        title: 'Sahkan?',
         text: `Anda pasti ingin ${status === "Approve" ? "MELULUSKAN" : "MENOLAK"} permohonan ini?`,
-        icon: 'question', showCancelButton: true, confirmButtonColor: '#fbbf24', cancelButtonColor: '#334155', confirmButtonText: 'Ya, Sahkan', background: '#1e293b', color: '#fff'
+        icon: 'warning', showCancelButton: true, confirmButtonColor: '#fbbf24', cancelButtonColor: '#334155', confirmButtonText: 'Ya', background: '#1e293b', color: '#fff'
     });
 
     if(result.isConfirmed) {
         try {
             Swal.fire({title:'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
-            
             await db.collection("complaint").doc(currentId).update({
-                approvalStatus: status,
-                approvalstatus: status, // Simpan dua-dua version just in case
-                approverName: document.getElementById('app_name').value,
-                approverPosition: document.getElementById('app_pos').value,
-                approvalComment: document.getElementById('app_comment').value,
-                approvalDate: firebase.firestore.FieldValue.serverTimestamp(),
+                approvalstatus: status,
+                approvername: document.getElementById('app_name').value,
+                approverposition: document.getElementById('app_pos').value,
+                approvalcomment: document.getElementById('app_comment').value,
+                approvaldate: firebase.firestore.FieldValue.serverTimestamp(),
                 approverSignature: finalSig
             });
-            
-            await Swal.fire("Berjaya", "Keputusan telah direkodkan.", "success");
+            await Swal.fire("Berjaya", "Keputusan direkodkan.", "success");
             showDashboard(); 
         } catch(e) { Swal.fire("Ralat", e.message, "error"); }
     }
