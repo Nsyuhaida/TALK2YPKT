@@ -23,6 +23,7 @@
         --text-muted: #94a3b8;
         --border: #334155;
         --green: #10b981;
+        --red: #ef4444; /* Added Red for Logout */
     }
 
     * { box-sizing: border-box; }
@@ -69,12 +70,30 @@
     .header-left { display: flex; align-items: center; gap: 15px; }
     .header-title h1 { font-family: 'Orbitron'; color: #fff; margin: 0; font-size: 18px; letter-spacing: 1px; }
     .header-title span { font-size: 11px; color: var(--gold); letter-spacing: 2px; }
+    
+    .header-right { display: flex; align-items: center; gap: 10px; } /* Group badge & logout */
+
     .user-badge { 
         background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.05));
         color: var(--gold); padding: 8px 15px; border-radius: 30px; 
         font-size: 12px; border: 1px solid var(--gold); font-weight: 600;
         display: flex; align-items: center; gap: 8px;
     }
+
+    /* LOGOUT BUTTON STYLE */
+    .btn-logout {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--red);
+        border: 1px solid var(--red);
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex; align-items: center; gap: 8px;
+        transition: 0.3s;
+    }
+    .btn-logout:hover { background: var(--red); color: #fff; }
 
     /* --- LIST VIEW --- */
     .dashboard-title { font-family: 'Orbitron'; margin-bottom: 20px; color: #fff; font-size: 16px; display: flex; align-items: center; gap: 10px; }
@@ -144,6 +163,8 @@
         .grid-container { grid-template-columns: 1fr; } 
         .full-width { grid-column: span 1; }
         .pin-box { margin: 20px; }
+        .header { flex-direction: column; align-items: flex-start; gap: 15px; } /* Adjust header mobile */
+        .header-right { width: 100%; justify-content: space-between; }
     }
 </style>
 </head>
@@ -173,8 +194,14 @@
                 <span>YAYASAN PEMBANGUNAN KELUARGA TERENGGANU</span>
             </div>
         </div>
-        <div class="user-badge">
-            <i class="fa-solid fa-user-tie"></i> TIMB. PENGARAH
+        
+        <div class="header-right">
+            <div class="user-badge">
+                <i class="fa-solid fa-user-tie"></i> TIMB. PENGARAH
+            </div>
+            <button class="btn-logout" onclick="logoutApp()">
+                <i class="fa-solid fa-power-off"></i> KELUAR
+            </button>
         </div>
     </div>
 
@@ -312,6 +339,35 @@ function checkPin() {
         Swal.fire({icon: 'error', title: 'PIN Salah', text: 'Sila masukkan kod yang betul.', background: '#1e293b', color: '#fff'});
         document.getElementById('secretPin').value = "";
     }
+}
+
+// === LOGOUT SYSTEM (New) ===
+function logoutApp() {
+    Swal.fire({
+        title: 'Log Keluar?',
+        text: "Anda pasti ingin keluar dari sistem?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#334155',
+        confirmButtonText: 'Ya, Keluar',
+        background: '#1e293b',
+        color: '#fff'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            auth.signOut().then(() => {
+                // Reset View
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('approvalForm').classList.add('hidden');
+                document.getElementById('dashboardView').classList.remove('hidden');
+                document.getElementById('pinScreen').style.display = 'flex';
+                
+                // Reset Inputs
+                document.getElementById('secretPin').value = "";
+                document.querySelector('.pin-box button').innerHTML = '<i class="fa-solid fa-lock-open"></i> MASUK';
+            });
+        }
+    });
 }
 
 // === 2. LOAD LIST ===
