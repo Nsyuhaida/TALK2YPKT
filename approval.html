@@ -41,7 +41,7 @@
     .container { max-width: 900px; width: 100%; padding-bottom: 50px; align-self: flex-start; margin-top: 20px; }
     .hidden { display: none !important; }
 
-    /* --- PIN SCREEN (CENTER & GLASS) --- */
+    /* --- PIN SCREEN --- */
     #pinScreen {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -200,32 +200,33 @@
         <div class="section-card">
             <div class="section-ribbon">SEC 1: BUTIRAN ASET & PENGADU</div>
             <div class="grid-container">
-                <div class="data-group"><label>Nama Pengadu</label><div class="data-value highlight" id="v_name"></div></div>
-                <div class="data-group"><label>Tarikh Aduan</label><div class="data-value" id="v_date"></div></div>
-                <div class="data-group"><label>Bahagian/Unit</label><div class="data-value" id="v_dept"></div></div>
+                <div class="data-group"><label>Nama Pengadu (Last User)</label><div class="data-value highlight" id="v_lastUser"></div></div>
+                <div class="data-group"><label>Tarikh Kerosakan</label><div class="data-value" id="v_damagedate"></div></div>
                 <div class="data-group"><label>Jenis Aset</label><div class="data-value" id="v_assettype"></div></div>
-                <div class="data-group"><label>Jenama / Model</label><div class="data-value" id="v_brand"></div></div>
-                <div class="data-group"><label>No. Siri</label><div class="data-value" id="v_serial"></div></div>
-                <div class="data-group full-width"><label>Kerosakan</label><div class="data-value" id="v_damage"></div></div>
+                <div class="data-group"><label>No. Siri</label><div class="data-value" id="v_SerialNumber"></div></div>
+                <div class="data-group full-width"><label>Keterangan Kerosakan</label><div class="data-value" id="v_damagedescription"></div></div>
             </div>
         </div>
 
         <div class="section-card">
             <div class="section-ribbon">SEC 2: PEGAWAI ASET</div>
             <div class="grid-container">
-                <div class="data-group"><label>Nama Pegawai</label><div class="data-value" id="v_sec2_name"></div></div>
-                <div class="data-group"><label>Tarikh Pemeriksaan</label><div class="data-value" id="v_sec2_date"></div></div>
-                <div class="data-group full-width"><label>Ulasan / Syor</label><div class="data-value" id="v_sec2_rec"></div></div>
+                <div class="data-group"><label>Nama Pegawai</label><div class="data-value" id="v_section2nameposition"></div></div>
+                <div class="data-group"><label>Tarikh Pemeriksaan</label><div class="data-value" id="v_section2date"></div></div>
+                <div class="data-group full-width"><label>Ulasan / Syor</label><div class="data-value" id="v_recommendationsection2"></div></div>
             </div>
         </div>
 
         <div class="section-card">
             <div class="section-ribbon">SEC 3: ULASAN TEKNIKAL</div>
             <div class="grid-container">
-                <div class="data-group"><label>Pegawai Teknikal</label><div class="data-value" id="v_sec3_name"></div></div>
-                <div class="data-group"><label>Tarikh Semakan</label><div class="data-value" id="v_sec3_date"></div></div>
-                <div class="data-group"><label>Anggaran Kos</label><div class="data-value highlight" style="color:var(--green);" id="v_sec3_cost"></div></div>
-                <div class="data-group full-width"><label>Syor Teknikal</label><div class="data-value" id="v_sec3_rec"></div></div>
+                <div class="data-group"><label>Pegawai Teknikal</label><div class="data-value" id="v_section3nameposition"></div></div>
+                <div class="data-group"><label>Tarikh Semakan</label><div class="data-value" id="v_section3date"></div></div>
+                
+                <div class="data-group"><label>Kos Terdahulu</label><div class="data-value" id="v_previousmaintenancecost"></div></div>
+                <div class="data-group"><label>Anggaran Kos</label><div class="data-value highlight" style="color:var(--green);" id="v_estimatedmaintenancecost"></div></div>
+                
+                <div class="data-group full-width"><label>Syor Teknikal</label><div class="data-value" id="v_recommendsection3"></div></div>
             </div>
         </div>
 
@@ -325,27 +326,35 @@ function loadPendingList() {
         snapshot.forEach(doc => {
             const d = doc.data();
             
-            // Logic: Papar hanya yang BELUM diputuskan (Pending/Null) dan SUDAH disemak oleh IT
-            const status = d.approvalstatus ? d.approvalstatus.toLowerCase().trim() : "";
-            const isNotDecided = (status !== "approve" && status !== "reject");
-            const isTechDone = (d.section3date || d.section3Date); 
+            // --- LOGIC: (Lowercase field names) ---
+            const status = d.approvalstatus || "Pending"; 
+            const statusLower = status.toLowerCase().trim();
+            const isNotDecided = (statusLower !== "approve" && statusLower !== "reject");
+            
+            // Cek section3date untuk pastikan IT dah siap
+            const isTechDone = (d.section3date != null); 
 
             if(isNotDecided && isTechDone) {
                 count++;
                 
+                // MAPPING DATABASE FIELDS (Strictly match data entry)
+                const type = d.assettype || "Umum"; 
+                const name = d.lastUser || "Tanpa Nama"; 
+                const dateVal = d.damagedate;
+
                 let icon = "fa-box";
-                if(d.assettype && d.assettype.toLowerCase().includes("komputer")) icon = "fa-computer";
-                if(d.assettype && d.assettype.toLowerCase().includes("pencetak")) icon = "fa-print";
+                if(type.toLowerCase().includes("komputer") || type.toLowerCase().includes("laptop")) icon = "fa-computer";
+                if(type.toLowerCase().includes("pencetak") || type.toLowerCase().includes("printer")) icon = "fa-print";
                 
                 html += `
                 <div class="pending-card" onclick="openDetail('${doc.id}')">
                     <div class="card-left">
                         <div class="asset-icon"><i class="fa-solid ${icon}"></i></div>
                         <div class="card-info">
-                            <h3>${d.assettype || "Aset Umum"}</h3>
+                            <h3>${type}</h3>
                             <div class="meta">
-                                <span><i class="fa-solid fa-user"></i> ${d.name || d.lastUser || "Tanpa Nama"}</span>
-                                <span><i class="fa-solid fa-calendar"></i> ${formatDate(d.date || d.timestamp)}</span>
+                                <span><i class="fa-solid fa-user"></i> ${name}</span>
+                                <span><i class="fa-solid fa-calendar"></i> ${formatDate(dateVal)}</span>
                             </div>
                         </div>
                     </div>
@@ -368,7 +377,7 @@ function loadPendingList() {
     });
 }
 
-// === 3. OPEN DETAIL (FIXED HERE) ===
+// === 3. OPEN DETAIL ===
 let currentId = "";
 
 async function openDetail(id) {
@@ -383,26 +392,34 @@ async function openDetail(id) {
         document.getElementById('dashboardView').classList.add('hidden');
         document.getElementById('approvalForm').classList.remove('hidden');
 
-        // MAPPING DATA (READ ONLY)
-        setText('v_name', d.name || d.lastUser || d.fullname); 
-        setText('v_date', formatDate(d.date || d.timestamp));
-        setText('v_dept', d.department || d.bahagian || "-");
-        setText('v_assettype', d.assettype);
-        setText('v_brand', d.brand || d.jenama || "-");
-        setText('v_serial', d.serialNumber || d.noSiri || "-");
-        setText('v_damage', d.damagedescription || d.kerosakan);
+        // --- MAPPING DATA (Strictly using requested fields) ---
+        
+        // SECTION 1
+        setText('v_lastUser', d.lastUser || "-"); 
+        setText('v_damagedate', formatDate(d.damagedate)); 
+        setText('v_assettype', d.assettype || "-");
+        setText('v_SerialNumber', d.SerialNumber || "-"); // CamelCase
+        setText('v_damagedescription', d.damagedescription || "-");
 
-        setText('v_sec2_name', d.officerName || d.pegawaiAsetName || d.section2name || "-"); 
-        setText('v_sec2_date', formatDate(d.section2date || d.tarikhPemeriksaan));
-        setText('v_sec2_rec', d.recommendationsection2 || d.syorPegawaiAset || "-");
+        // SECTION 2
+        setText('v_section2nameposition', d.section2nameposition || "-");
+        setText('v_section2date', formatDate(d.section2date));
+        setText('v_recommendationsection2', d.recommendationsection2 || "-");
 
-        setText('v_sec3_name', d.section3nameposition);
-        setText('v_sec3_date', formatDate(d.section3date || d.section3Date));
-        setText('v_sec3_cost', "RM " + (d.estimatedmaintenancecost || "0.00"));
-        setText('v_sec3_rec', d.recommendsection3);
+        // SECTION 3
+        setText('v_section3nameposition', d.section3nameposition || "-");
+        setText('v_section3date', formatDate(d.section3date));
+        
+        // Kos (Dua jenis)
+        let prevCost = d.previousmaintenancecost || "0";
+        setText('v_previousmaintenancecost', "RM " + prevCost);
 
-        // --- FIX: MAPPING FORM INPUTS (APPROVER) ---
-        // Jika ada data lama dalam DB, guna data tu. Jika tiada, guna default.
+        let estCost = d.estimatedmaintenancecost || "0";
+        setText('v_estimatedmaintenancecost', "RM " + estCost);
+        
+        setText('v_recommendsection3', d.recommendsection3 || "-");
+
+        // --- SECTION 4 (FORM PENGARAH) ---
         document.getElementById('app_name').value = d.approvername || "ENCIK ASHRI";
         document.getElementById('app_pos').value = d.approverposition || "TIMBALAN PENGARAH";
         document.getElementById('app_comment').value = d.approvalcomment || "";
@@ -413,20 +430,30 @@ async function openDetail(id) {
 
     } catch(e) {
         Swal.fire("Ralat", "Gagal data: " + e.message, "error");
+        console.error(e);
     }
 }
 
-function setText(id, val) { const el = document.getElementById(id); if(el) el.innerText = val || "-"; }
+function setText(id, val) { 
+    const el = document.getElementById(id); 
+    if(el) el.innerText = val; 
+}
 
 function formatDate(timestamp) {
     if(!timestamp) return "-";
-    if(timestamp.toDate) return timestamp.toDate().toLocaleDateString('en-GB'); 
-    return timestamp;
+    let dateObj = timestamp;
+    if(timestamp.toDate) dateObj = timestamp.toDate();
+    try {
+        return new Date(dateObj).toLocaleDateString('en-GB'); 
+    } catch(e) {
+        return timestamp; 
+    }
 }
 
 function showDashboard() {
     document.getElementById('approvalForm').classList.add('hidden');
     document.getElementById('dashboardView').classList.remove('hidden');
+    loadPendingList(); 
 }
 
 // === 4. SIGNATURE ===
@@ -469,31 +496,34 @@ function previewSig(input){
     }
 }
 
-// === 5. SUBMIT ===
+// === 5. SUBMIT (Save to Database) ===
 async function submitApproval() {
     const status = document.getElementById('app_status').value;
-    if(status === "Pending") return Swal.fire("Sila Pilih", "Lulus atau Tidak?", "warning");
+    if(status === "Pending") return Swal.fire("Sila Pilih", "Sila pilih keputusan Lulus atau Tidak.", "warning");
 
     let finalSig = (currentSigMode === 'draw') ? canvas.toDataURL("image/png") : uploadedSigData;
 
     const result = await Swal.fire({
-        title: 'Sahkan?',
+        title: 'Sahkan Keputusan?',
         text: `Anda pasti ingin ${status === "Approve" ? "MELULUSKAN" : "MENOLAK"} permohonan ini?`,
-        icon: 'warning', showCancelButton: true, confirmButtonColor: '#fbbf24', cancelButtonColor: '#334155', confirmButtonText: 'Ya', background: '#1e293b', color: '#fff'
+        icon: 'question', showCancelButton: true, confirmButtonColor: '#fbbf24', cancelButtonColor: '#334155', confirmButtonText: 'Ya, Sahkan', background: '#1e293b', color: '#fff'
     });
 
     if(result.isConfirmed) {
         try {
             Swal.fire({title:'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
+            
+            // UPDATE: Gunakan nama field yang sama dengan Data Entry (Section 4)
             await db.collection("complaint").doc(currentId).update({
-                approvalstatus: status,
+                approvalstatus: status, 
                 approvername: document.getElementById('app_name').value,
                 approverposition: document.getElementById('app_pos').value,
                 approvalcomment: document.getElementById('app_comment').value,
                 approvaldate: firebase.firestore.FieldValue.serverTimestamp(),
-                approverSignature: finalSig
+                approverSignature: finalSig // camelCase (sama dgn data entry)
             });
-            await Swal.fire("Berjaya", "Keputusan direkodkan.", "success");
+            
+            await Swal.fire("Berjaya", "Keputusan telah direkodkan.", "success");
             showDashboard(); 
         } catch(e) { Swal.fire("Ralat", e.message, "error"); }
     }
