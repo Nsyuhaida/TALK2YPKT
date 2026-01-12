@@ -188,7 +188,7 @@
         </div>
         
         <div id="pendingList" class="pending-list">
-            </div>
+        </div>
     </div>
 
     <div id="approvalForm" class="hidden">
@@ -241,8 +241,8 @@
                     </select>
                 </div>
                 
-                <div class="data-group"><label>Nama</label><input type="text" id="app_name" value="ENCIK ASHRI"></div>
-                <div class="data-group"><label>Jawatan</label><input type="text" id="app_pos" value="TIMBALAN PENGARAH"></div>
+                <div class="data-group"><label>Nama</label><input type="text" id="app_name" placeholder="Nama Penuh"></div>
+                <div class="data-group"><label>Jawatan</label><input type="text" id="app_pos" placeholder="Jawatan"></div>
                 
                 <div class="full-width">
                     <label>Ulasan / Catatan</label>
@@ -313,7 +313,7 @@ function checkPin() {
     }
 }
 
-// === 2. LOAD LIST (FILTER FIX IS HERE) ===
+// === 2. LOAD LIST ===
 function loadPendingList() {
     const container = document.getElementById('pendingList');
     const msg = document.getElementById('loadingMsg');
@@ -325,17 +325,9 @@ function loadPendingList() {
         snapshot.forEach(doc => {
             const d = doc.data();
             
-            // --- LOGIC BARU ---
-            // 1. Bersihkan status (remove spaces, lowercase)
+            // Logic: Papar hanya yang BELUM diputuskan (Pending/Null) dan SUDAH disemak oleh IT
             const status = d.approvalstatus ? d.approvalstatus.toLowerCase().trim() : "";
-
-            // 2. Syarat Keputusan:
-            // Selagi BUKAN 'approve' dan BUKAN 'reject', kita anggap ia masih terbuka.
-            // Ini akan cover kes "Hardcopy", "Online", atau kosong.
             const isNotDecided = (status !== "approve" && status !== "reject");
-
-            // 3. Syarat IT:
-            // Pastikan Section 3 dah ada tarikh
             const isTechDone = (d.section3date || d.section3Date); 
 
             if(isNotDecided && isTechDone) {
@@ -376,7 +368,7 @@ function loadPendingList() {
     });
 }
 
-// === 3. OPEN DETAIL (DATA MAPPING) ===
+// === 3. OPEN DETAIL (FIXED HERE) ===
 let currentId = "";
 
 async function openDetail(id) {
@@ -391,9 +383,7 @@ async function openDetail(id) {
         document.getElementById('dashboardView').classList.add('hidden');
         document.getElementById('approvalForm').classList.remove('hidden');
 
-        // --- MAPPING DATA (Guna '||' untuk backup fields) ---
-        
-        // SEC 1
+        // MAPPING DATA (READ ONLY)
         setText('v_name', d.name || d.lastUser || d.fullname); 
         setText('v_date', formatDate(d.date || d.timestamp));
         setText('v_dept', d.department || d.bahagian || "-");
@@ -402,20 +392,22 @@ async function openDetail(id) {
         setText('v_serial', d.serialNumber || d.noSiri || "-");
         setText('v_damage', d.damagedescription || d.kerosakan);
 
-        // SEC 2 (Backup field names included)
         setText('v_sec2_name', d.officerName || d.pegawaiAsetName || d.section2name || "-"); 
         setText('v_sec2_date', formatDate(d.section2date || d.tarikhPemeriksaan));
         setText('v_sec2_rec', d.recommendationsection2 || d.syorPegawaiAset || "-");
 
-        // SEC 3
         setText('v_sec3_name', d.section3nameposition);
         setText('v_sec3_date', formatDate(d.section3date || d.section3Date));
         setText('v_sec3_cost', "RM " + (d.estimatedmaintenancecost || "0.00"));
         setText('v_sec3_rec', d.recommendsection3);
 
-        // RESET FORM
-        document.getElementById('app_status').value = "Pending";
-        document.getElementById('app_comment').value = "";
+        // --- FIX: MAPPING FORM INPUTS (APPROVER) ---
+        // Jika ada data lama dalam DB, guna data tu. Jika tiada, guna default.
+        document.getElementById('app_name').value = d.approvername || "ENCIK ASHRI";
+        document.getElementById('app_pos').value = d.approverposition || "TIMBALAN PENGARAH";
+        document.getElementById('app_comment').value = d.approvalcomment || "";
+        document.getElementById('app_status').value = d.approvalstatus || "Pending";
+
         clearSignature();
         setTimeout(setupCanvas, 300);
 
