@@ -293,7 +293,9 @@ auth.onAuthStateChanged((user) => {
     document.getElementById("displayEmail").textContent = user.email;
     document.getElementById("displayUid").textContent = "UID: " + user.uid.substring(0,8) + "...";
     document.getElementById("displayJoined").textContent = new Date(user.metadata.creationTime).toLocaleDateString("en-GB");
-    document.getElementById("displayLastLogin").textContent = new Date(user.metadata.lastSignInTime).toLocaleDateString("en-GB");
+    
+    // --- DI SINI SAYA UBAH UNTUK MASUKKAN MASA ---
+    document.getElementById("displayLastLogin").textContent = new Date(user.metadata.lastSignInTime).toLocaleString("en-GB");
     
     listenToComplaints();
   } else {
@@ -302,7 +304,7 @@ auth.onAuthStateChanged((user) => {
 });
 document.getElementById("logout").onclick = () => auth.signOut();
 
-// --- LOGIC UTAMA (BAHAGIAN INI DIUBAH SECARA AGRESIF) ---
+// --- LOGIC UTAMA (KEKAL) ---
 let complaintsData = [];
 let statusChart;
 
@@ -310,18 +312,15 @@ function listenToComplaints() {
   db.collection("complaint").onSnapshot((snapshot) => {
         let temp = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         
-        // FUNCTION UNTUK DAPATKAN MASA DARI PELBAGAI FIELD
         const getTime = (doc) => {
             if (doc.updatedAt && doc.updatedAt.seconds) return doc.updatedAt.seconds;
             if (doc.createdAt && doc.createdAt.seconds) return doc.createdAt.seconds;
             if (doc.timestamp && doc.timestamp.seconds) return doc.timestamp.seconds;
             if (doc.date && doc.date.seconds) return doc.date.seconds; 
-            return 0; // Jika tiada langsung, return 0
+            return 0;
         };
 
-        // SUSUN DATA
         complaintsData = temp.sort((a, b) => {
-            // Kita cari tarikh paling "latest" antara update/create/dll
             let timeA = Math.max(
                 a.updatedAt ? a.updatedAt.seconds : 0, 
                 a.createdAt ? a.createdAt.seconds : 0, 
@@ -334,12 +333,10 @@ function listenToComplaints() {
                 b.timestamp ? b.timestamp.seconds : 0
             );
 
-            // LOGIC PENTING: Jika tiada tarikh langsung (0), kita anggap ia BARU MASUK (Pending)
-            // Jadi kita letak ia paling atas.
-            if (timeA === 0 && timeB > 0) return -1; // A naik atas
-            if (timeB === 0 && timeA > 0) return 1;  // B naik atas
+            if (timeA === 0 && timeB > 0) return -1;
+            if (timeB === 0 && timeA > 0) return 1; 
 
-            return timeB - timeA; // Susun ikut masa (Baru ke Lama)
+            return timeB - timeA;
         });
 
         processStats();
@@ -349,7 +346,6 @@ function listenToComplaints() {
 function processStats() {
     const total = complaintsData.length;
     
-    // LOGIC CHECK STATUS
     const online = complaintsData.filter(c => c.approvalstatus === 'Approve' && c.approverSignature).length;
     const hardcopy = complaintsData.filter(c => c.approvalstatus === 'Approve' && !c.approverSignature).length;
     const pending = total - (online + hardcopy);
@@ -369,7 +365,6 @@ function renderTable() {
     const search = document.getElementById("searchInput").value.toLowerCase();
     tb.innerHTML = "";
 
-    // FILTER CARIAN
     const list = complaintsData.filter(c => 
         c.id.toLowerCase().includes(search) || 
         (c.lastUser||"").toLowerCase().includes(search) || 
@@ -381,15 +376,11 @@ function renderTable() {
         return; 
     }
 
-    // LIMIT DISPLAY KEPADA 10 SAHAJA SUPAYA DASHBOARD LAJU
     list.slice(0, 10).forEach(c => {
-        
-        // BADGE STATUS SEC 3 (IT)
         let sec3Badge = c.section3date 
             ? `<span class="badge-table badge-it-done"><i class="fa-solid fa-check"></i> IT DONE</span>`
             : `<span class="badge-table badge-it-pending"><i class="fa-solid fa-clock"></i> PENDING</span>`;
 
-        // BADGE STATUS SEC 4 (APPROVAL)
         let sec4Badge = "-";
         if (c.approvalstatus === 'Approve') {
             if(c.approverSignature) {
