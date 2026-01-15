@@ -350,9 +350,12 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
+// --- UPDATE LOGOUT SUPAYA PERGI KE PAGE ANIMASI ---
 document.getElementById("logout").onclick = () => {
+    // Kita sign out dulu dari firebase siap-siap
     auth.signOut().then(() => {
-        window.location.replace("login.html");
+        // Lepas tu baru kita pergi layan animasi tu
+        window.location.href = "logout.html";
     });
 };
 
