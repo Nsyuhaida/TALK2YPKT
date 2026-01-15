@@ -211,7 +211,7 @@ togglePassword.addEventListener('click', function (e) {
 // --- 3. FUNCTION CHECK DOMAIN ---
 function checkAccess(user) {
     if (user.email.endsWith(allowedDomain) || user.email === myAdminEmail) {
-        window.location.href = "dashboard.html";
+        window.location.href = "welcome.html";
     } else {
         auth.signOut();
         alert("ACCESS DENIED: Only authorized YPKT personnel allowed.");
@@ -251,3 +251,4 @@ async function forgotPassword() {
 
 </body>
 </html>
+
