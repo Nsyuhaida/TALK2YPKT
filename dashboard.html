@@ -11,7 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&family=Courier+New:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
 /* --- DESIGN SYSTEM (KEKAL 100%) --- */
@@ -43,60 +43,22 @@ body::before {
 
 /* --- SECURITY LAYER: Hide App Initially --- */
 .app { 
-    display: none; /* RAHSIA: Sorok dulu sebelum animasi intro habis */
+    display: none; /* RAHSIA: Sorok dulu sebelum login confirm */
     min-height: 100vh; position: relative; z-index: 1; 
 }
 
-/* --- INTRO SEQUENCE (GAYA JARVIS/HACKER) --- */
-#boot-screen {
+/* Loading Screen (Sementara tunggu security check) */
+#security-loader {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; z-index: 9999;
+    background: #020617; z-index: 9999;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-family: 'Courier New', monospace;
 }
-
-/* Kotak untuk tulisan menaip */
-.terminal-text {
-    color: var(--neon-green);
-    font-size: 14px;
-    margin-bottom: 8px;
-    opacity: 0; /* Mula-mula halimunan */
-    width: 320px;
-    border-right: 2px solid transparent; 
-    white-space: nowrap;
-    overflow: hidden;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    text-shadow: 0 0 5px var(--neon-green);
+.spinner {
+    width: 50px; height: 50px; border: 3px solid rgba(0, 243, 255, 0.3);
+    border-radius: 50%; border-top-color: var(--neon-blue);
+    animation: spin 1s ease-in-out infinite; margin-bottom: 20px;
 }
-
-/* Progress Bar yang lagi canggih */
-.boot-progress-container {
-    width: 320px; height: 4px; background: #111; margin-top: 30px;
-    position: relative; overflow: hidden; border: 1px solid #333;
-}
-.boot-progress-bar {
-    width: 0%; height: 100%; background: var(--neon-blue);
-    box-shadow: 0 0 15px var(--neon-blue);
-    transition: width 0.3s ease;
-}
-
-/* Effect bila intro dah habis (Fade Out) */
-.fade-out-screen {
-    animation: fadeOutOp 0.8s forwards;
-    pointer-events: none;
-}
-@keyframes fadeOutOp {
-    to { opacity: 0; visibility: hidden; }
-}
-
-/* Animasi menaip (Typewriter) */
-.typing {
-    animation: type 0.8s steps(40, end) forwards, blink .5s step-end infinite;
-    opacity: 1 !important;
-}
-@keyframes type { from { width: 0; } to { width: 100%; } }
-@keyframes blink { 50% { border-color: var(--neon-green); } }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* SIDEBAR */
 .sidebar {
@@ -188,18 +150,9 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 
 <body>
 
-<div id="boot-screen">
-    <div style="margin-bottom: 20px; animation: fadeIn 2s ease;">
-        <i class="fa-solid fa-shield-halved" style="font-size: 40px; color: var(--neon-blue); text-shadow: 0 0 15px var(--neon-blue);"></i>
-    </div>
-    
-    <div id="line1" class="terminal-text">> SYSTEM BOOT SEQUENCE...</div>
-    <div id="line2" class="terminal-text">> VERIFYING ENCRYPTED ID...</div>
-    <div id="line3" class="terminal-text">> ACCESS GRANTED. WELCOME ADMIN.</div>
-
-    <div class="boot-progress-container">
-        <div class="boot-progress-bar" id="bootBar"></div>
-    </div>
+<div id="security-loader">
+    <div class="spinner"></div>
+    <div style="font-family:'Orbitron'; color:var(--neon-blue); letter-spacing:2px; font-size:12px;">VERIFYING SECURITY TOKEN...</div>
 </div>
 
 <div class="app">
@@ -327,11 +280,13 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 
 <script>
 // --- ANTI-BACK BUTTON & CACHE BUSTER ---
+// Ini code paling penting untuk halang orang tekan back
 window.addEventListener( "pageshow", function ( event ) {
   var historyTraversal = event.persisted || 
                          ( typeof window.performance != "undefined" && 
                               window.performance.navigation.type === 2 );
   if ( historyTraversal ) {
+    // Kalau dia detect page ni dibuka dari "Memory/Cache" (tekan back), dia paksa reload
     window.location.reload();
   }
 });
@@ -365,37 +320,24 @@ function toggleMetadata() {
     }
 }
 
-// --- AUTH & INTRO SEQUENCE ---
+// --- AUTH & SECURITY CHECK ---
 auth.onAuthStateChanged((user) => {
   if (user && user.email.endsWith('@ypkt.gov.my')) {
-    
-    // 1. Load Data User (Senyap di belakang tabir)
-    document.getElementById("welcomeMsg").innerHTML = `System Ready. User: <span style="color:var(--neon-blue); font-weight:bold;">${user.email}</span>`;
+    // 1. User SAH: Hilangkan Loader, Tunjuk App
+    document.getElementById("security-loader").style.display = "none";
+    document.querySelector(".app").style.display = "flex"; // Baru tunjuk dashboard
+
+    // 2. Load Data
+    document.getElementById("welcomeMsg").innerHTML = `Welcome User ... <span style="color:var(--neon-blue); font-weight:bold;">${user.email}</span>`;
     document.getElementById("displayEmail").textContent = user.email;
     document.getElementById("displayUid").textContent = "UID: " + user.uid.substring(0,8) + "...";
     document.getElementById("displayJoined").textContent = new Date(user.metadata.creationTime).toLocaleDateString("en-GB");
     document.getElementById("displayLastLogin").textContent = new Date(user.metadata.lastSignInTime).toLocaleString("en-GB");
     
     listenToComplaints();
-
-    // 2. JALANKAN ANIMASI "WOW" (Boot Sequence)
-    const bootScreen = document.getElementById("boot-screen");
-    const bar = document.getElementById("bootBar");
-    const app = document.querySelector(".app");
-
-    // Sequence Animasi (Timeline)
-    setTimeout(() => { document.getElementById("line1").classList.add("typing"); bar.style.width = "20%"; }, 500);
-    setTimeout(() => { document.getElementById("line2").classList.add("typing"); bar.style.width = "60%"; }, 1500);
-    setTimeout(() => { document.getElementById("line3").classList.add("typing"); bar.style.width = "100%"; }, 2800);
-
-    // 3. Habis animasi, tunjuk dashboard
-    setTimeout(() => {
-        bootScreen.classList.add("fade-out-screen"); // Hilangkan skrin hitam
-        app.style.display = "flex"; // Tunjuk dashboard
-    }, 3800); // 3.8 saat total masa intro
-
   } else {
-    // Kalau tak valid, tendang keluar
+    // 3. User TAK SAH: Tendang Keluar
+    // Guna 'replace' supaya dia tak boleh tekan back
     window.location.replace("login.html"); 
   }
 });
@@ -414,6 +356,14 @@ function listenToComplaints() {
   db.collection("complaint").onSnapshot((snapshot) => {
         let temp = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         
+        const getTime = (doc) => {
+            if (doc.updatedAt && doc.updatedAt.seconds) return doc.updatedAt.seconds;
+            if (doc.createdAt && doc.createdAt.seconds) return doc.createdAt.seconds;
+            if (doc.timestamp && doc.timestamp.seconds) return doc.timestamp.seconds;
+            if (doc.date && doc.date.seconds) return doc.date.seconds; 
+            return 0;
+        };
+
         complaintsData = temp.sort((a, b) => {
             let timeA = Math.max(
                 a.updatedAt ? a.updatedAt.seconds : 0, 
