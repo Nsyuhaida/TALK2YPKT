@@ -3,89 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>System Initializing...</title>
+<title>System Initialization</title>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Courier+New:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
 <style>
+    :root {
+        --cyan: #00f3ff;
+        --green: #00ff9d;
+        --bg: #050a14;
+    }
+
     body {
-        background-color: #020617;
+        background-color: var(--bg);
         margin: 0; padding: 0;
-        height: 100vh;
+        height: 100vh; width: 100vw;
         display: flex; flex-direction: column;
         align-items: center; justify-content: center;
-        font-family: 'Courier New', monospace;
-        color: #00f3ff;
         overflow: hidden;
-    }
-
-    /* Icon Berdenyut */
-    .icon-container {
-        font-size: 60px; margin-bottom: 30px;
-        color: #00f3ff;
-        text-shadow: 0 0 20px #00f3ff;
-        animation: pulse 2s infinite;
-    }
-
-    /* Text Center */
-    .status-text {
-        font-size: 18px; font-weight: bold;
-        letter-spacing: 2px;
-        margin-bottom: 10px;
-        opacity: 0; /* Halimunan mula-mula */
-        text-transform: uppercase;
-        text-align: center;
-    }
-
-    /* Text yang aktif */
-    .active-text {
-        animation: fadeInGlitch 0.3s forwards;
-    }
-
-    /* Progress Bar */
-    .loader-box {
-        width: 300px; height: 4px;
-        background: #111;
-        margin-top: 40px;
-        border: 1px solid #333;
+        font-family: 'Share Tech Mono', monospace;
+        color: var(--cyan);
         position: relative;
     }
-    .loader-bar {
+
+    /* --- BACKGROUND MATRIX EFFECT --- */
+    .bg-grid {
+        position: absolute; inset: 0;
+        background: 
+            linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+        background-size: 30px 30px;
+        perspective: 500px;
+        transform: scale(1.2);
+        z-index: 0;
+        animation: moveGrid 20s linear infinite;
+    }
+
+    /* --- CRT SCANLINE (EFFECT MONITOR LAMA) --- */
+    .scanlines {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+        background-size: 100% 4px;
+        z-index: 10; pointer-events: none;
+    }
+
+    /* --- HUD CIRCLE LOADER --- */
+    .hud-container {
+        position: relative;
+        width: 200px; height: 200px;
+        display: flex; justify-content: center; align-items: center;
+        margin-bottom: 40px;
+        z-index: 2;
+    }
+
+    .circle {
+        position: absolute; border-radius: 50%; border: 2px solid transparent;
+    }
+    
+    .c1 { width: 100%; height: 100%; border-top: 4px solid var(--cyan); border-bottom: 4px solid var(--cyan); animation: spin 4s linear infinite; box-shadow: 0 0 20px var(--cyan); }
+    .c2 { width: 80%; height: 80%; border-left: 2px solid var(--green); border-right: 2px solid var(--green); animation: spinReverse 3s linear infinite; }
+    .c3 { width: 60%; height: 60%; border: 1px dashed rgba(255,255,255,0.5); animation: spin 10s linear infinite; }
+    
+    .center-text { font-family: 'Orbitron'; font-weight: 900; font-size: 24px; color: #fff; animation: pulse 1s infinite alternate; text-shadow: 0 0 10px #fff; }
+
+    /* --- TYPING TEXT --- */
+    .msg-box {
+        z-index: 2; text-align: center; height: 60px;
+    }
+    .main-text {
+        font-size: 20px; letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        text-shadow: 0 0 10px var(--cyan);
+    }
+    .sub-text {
+        font-size: 12px; color: rgba(255,255,255,0.5);
+    }
+
+    /* --- PROGRESS BAR --- */
+    .progress-wrapper {
+        width: 300px; height: 6px;
+        background: #111; border: 1px solid #333;
+        margin-top: 20px; position: relative; z-index: 2;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+    }
+    .bar {
         height: 100%; width: 0%;
-        background: #00ff9d;
-        box-shadow: 0 0 10px #00ff9d;
-        transition: width 0.3s ease;
+        background: var(--cyan);
+        box-shadow: 0 0 20px var(--cyan);
+        transition: width 0.3s ease-out;
+        position: relative;
+    }
+    .bar::after {
+        content: ''; position: absolute; top: 0; right: 0; width: 5px; height: 100%;
+        background: #fff; box-shadow: 0 0 10px #fff;
     }
 
-    .user-id-display {
-        position: absolute; bottom: 20px;
-        font-size: 10px; color: #555;
+    /* --- GLITCH EFFECT --- */
+    .glitch { animation: glitchAnim 0.3s infinite; color: var(--green) !important; text-shadow: 2px 0 red, -2px 0 blue; }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spinReverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+    @keyframes pulse { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+    @keyframes moveGrid { 0% { transform: scale(1.5) translateY(0); } 100% { transform: scale(1.5) translateY(50px); } }
+    @keyframes glitchAnim {
+        0% { transform: translate(0); }
+        20% { transform: translate(-2px, 2px); }
+        40% { transform: translate(-2px, -2px); }
+        60% { transform: translate(2px, 2px); }
+        80% { transform: translate(2px, -2px); }
+        100% { transform: translate(0); }
     }
 
-    @keyframes pulse { 0%{opacity:0.6; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} 100%{opacity:0.6; transform:scale(1);} }
-    @keyframes fadeInGlitch { 0%{opacity:0; transform:translateY(5px);} 100%{opacity:1; transform:translateY(0);} }
 </style>
 </head>
 <body>
 
-    <div class="icon-container">
-        <i class="fa-solid fa-fingerprint"></i>
+    <div class="scanlines"></div>
+    <div class="bg-grid"></div>
+
+    <div class="hud-container">
+        <div class="circle c1"></div>
+        <div class="circle c2"></div>
+        <div class="circle c3"></div>
+        <div class="center-text" id="percent">0%</div>
     </div>
 
-    <div id="text1" class="status-text">> ESTABLISHING SECURE LINK...</div>
-    <div id="text2" class="status-text">> VERIFYING BIOMETRICS...</div>
-    <div id="text3" class="status-text" style="color:#fff;">> ACCESS GRANTED. WELCOME.</div>
-
-    <div class="loader-box">
-        <div class="loader-bar" id="progressBar"></div>
+    <div class="msg-box">
+        <div class="main-text" id="statusMsg">INITIALIZING...</div>
+        <div class="sub-text" id="detailMsg">CONNECTING TO YPKT SECURE SERVER</div>
     </div>
 
-    <div class="user-id-display" id="uidDisplay">ID: CHECKING...</div>
+    <div class="progress-wrapper">
+        <div class="bar" id="progressBar"></div>
+    </div>
+
+    <div style="position: absolute; bottom: 10px; font-size: 10px; color: #444; z-index: 2;">
+        SECURE CONNECTION // ENCRYPTED: AES-256
+    </div>
 
 <script>
-    // --- SETUP FIREBASE (GUNA CONFIG SAMA MACAM DASHBOARD) ---
+    // --- FIREBASE CONFIG ---
     const firebaseConfig = {
       apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
       authDomain:"e-complaint-8nu9kp.firebaseapp.com",
@@ -94,33 +153,60 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // --- LOGIC ANIMASI ---
+    // --- ANIMATION SEQUENCE ---
     auth.onAuthStateChanged((user) => {
         if (user) {
-            document.getElementById("uidDisplay").innerText = "ID: " + user.uid;
-            runSequence();
+            startSequence(user.email);
         } else {
-            // Kalau tak login, tendang balik login
             window.location.replace("login.html");
         }
     });
 
-    function runSequence() {
+    function startSequence(email) {
         const bar = document.getElementById("progressBar");
-        
-        // Timeline Animasi (Total masa: 3.5 saat)
-        setTimeout(() => { document.getElementById("text1").classList.add("active-text"); bar.style.width = "30%"; }, 500);
-        setTimeout(() => { document.getElementById("text2").classList.add("active-text"); bar.style.width = "70%"; }, 1500);
-        setTimeout(() => { 
-            document.getElementById("text3").classList.add("active-text"); 
-            bar.style.width = "100%"; 
-            bar.style.backgroundColor = "#00f3ff"; // Tukar warna biru bila siap
-        }, 2500);
+        const status = document.getElementById("statusMsg");
+        const detail = document.getElementById("detailMsg");
+        const percent = document.getElementById("percent");
 
-        // Pindah ke Dashboard
-        setTimeout(() => {
-            window.location.replace("dashboard.html");
-        }, 3800);
+        let width = 0;
+        
+        // Function update progress manual supaya nampak real
+        const interval = setInterval(() => {
+            width += Math.floor(Math.random() * 5) + 1; // Naik random
+            if(width > 100) width = 100;
+
+            bar.style.width = width + "%";
+            percent.innerText = width + "%";
+
+            // TUKAR TEKS BERDASARKAN PERATUS
+            if(width > 20 && width < 50) {
+                status.innerText = "AUTHENTICATING";
+                detail.innerText = "VERIFYING USER ID: " + email;
+            }
+            if(width > 50 && width < 80) {
+                status.innerText = "LOADING MODULES";
+                detail.innerText = "RETRIEVING ENCRYPTED ASSETS...";
+                status.classList.remove("glitch"); // Hilangkan glitch sekejap
+            }
+            if(width > 80) {
+                status.innerText = "ACCESS GRANTED";
+                status.style.color = "#00ff9d";
+                status.classList.add("glitch"); // Tambah glitch effect bila berjaya
+                detail.innerText = "WELCOME, ADMIN.";
+                document.querySelector('.c1').style.borderColor = "#00ff9d";
+                document.querySelector('.c1').style.boxShadow = "0 0 20px #00ff9d";
+                bar.style.background = "#00ff9d";
+                bar.style.boxShadow = "0 0 20px #00ff9d";
+            }
+
+            if(width === 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    window.location.replace("dashboard.html");
+                }, 800);
+            }
+
+        }, 50); // Speed loading
     }
 </script>
 
