@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Initializing...</title>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Courier+New:wght@700&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        background-color: #020617;
+        margin: 0; padding: 0;
+        height: 100vh;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        font-family: 'Courier New', monospace;
+        color: #00f3ff;
+        overflow: hidden;
+    }
+
+    /* Icon Berdenyut */
+    .icon-container {
+        font-size: 60px; margin-bottom: 30px;
+        color: #00f3ff;
+        text-shadow: 0 0 20px #00f3ff;
+        animation: pulse 2s infinite;
+    }
+
+    /* Text Center */
+    .status-text {
+        font-size: 18px; font-weight: bold;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+        opacity: 0; /* Halimunan mula-mula */
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    /* Text yang aktif */
+    .active-text {
+        animation: fadeInGlitch 0.3s forwards;
+    }
+
+    /* Progress Bar */
+    .loader-box {
+        width: 300px; height: 4px;
+        background: #111;
+        margin-top: 40px;
+        border: 1px solid #333;
+        position: relative;
+    }
+    .loader-bar {
+        height: 100%; width: 0%;
+        background: #00ff9d;
+        box-shadow: 0 0 10px #00ff9d;
+        transition: width 0.3s ease;
+    }
+
+    .user-id-display {
+        position: absolute; bottom: 20px;
+        font-size: 10px; color: #555;
+    }
+
+    @keyframes pulse { 0%{opacity:0.6; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} 100%{opacity:0.6; transform:scale(1);} }
+    @keyframes fadeInGlitch { 0%{opacity:0; transform:translateY(5px);} 100%{opacity:1; transform:translateY(0);} }
+</style>
+</head>
+<body>
+
+    <div class="icon-container">
+        <i class="fa-solid fa-fingerprint"></i>
+    </div>
+
+    <div id="text1" class="status-text">> ESTABLISHING SECURE LINK...</div>
+    <div id="text2" class="status-text">> VERIFYING BIOMETRICS...</div>
+    <div id="text3" class="status-text" style="color:#fff;">> ACCESS GRANTED. WELCOME.</div>
+
+    <div class="loader-box">
+        <div class="loader-bar" id="progressBar"></div>
+    </div>
+
+    <div class="user-id-display" id="uidDisplay">ID: CHECKING...</div>
+
+<script>
+    // --- SETUP FIREBASE (GUNA CONFIG SAMA MACAM DASHBOARD) ---
+    const firebaseConfig = {
+      apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
+      authDomain:"e-complaint-8nu9kp.firebaseapp.com",
+      projectId:"e-complaint-8nu9kp"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // --- LOGIC ANIMASI ---
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            document.getElementById("uidDisplay").innerText = "ID: " + user.uid;
+            runSequence();
+        } else {
+            // Kalau tak login, tendang balik login
+            window.location.replace("login.html");
+        }
+    });
+
+    function runSequence() {
+        const bar = document.getElementById("progressBar");
+        
+        // Timeline Animasi (Total masa: 3.5 saat)
+        setTimeout(() => { document.getElementById("text1").classList.add("active-text"); bar.style.width = "30%"; }, 500);
+        setTimeout(() => { document.getElementById("text2").classList.add("active-text"); bar.style.width = "70%"; }, 1500);
+        setTimeout(() => { 
+            document.getElementById("text3").classList.add("active-text"); 
+            bar.style.width = "100%"; 
+            bar.style.backgroundColor = "#00f3ff"; // Tukar warna biru bila siap
+        }, 2500);
+
+        // Pindah ke Dashboard
+        setTimeout(() => {
+            window.location.replace("dashboard.html");
+        }, 3800);
+    }
+</script>
+
+</body>
+</html>
