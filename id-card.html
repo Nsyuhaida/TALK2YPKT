@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>YPKT DIGITAL ID</title>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -22,7 +22,8 @@
         font-family: 'Rajdhani', sans-serif;
         color: white;
         overflow: hidden;
-        perspective: 1000px; /* Penting untuk effect 3D */
+        perspective: 1000px;
+        touch-action: none; /* Halang scroll bila drag kad */
     }
 
     /* GRID BACKGROUND */
@@ -37,19 +38,21 @@
         z-index: -1;
     }
 
-    /* KAD HOLOGRAM (Bekas Utama) */
+    /* KAD HOLOGRAM */
     .card-container {
         width: 400px;
         height: 250px;
         position: relative;
         transform-style: preserve-3d;
         transition: transform 0.1s;
+        /* Default Animation (Idle Floating) */
+        animation: floatIdle 6s ease-in-out infinite; 
     }
 
     .holo-card {
         width: 100%; height: 100%;
         background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px); /* Effect Kaca */
+        backdrop-filter: blur(10px);
         border: 1px solid rgba(0, 243, 255, 0.3);
         border-radius: 15px;
         box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
@@ -60,9 +63,10 @@
         justify-content: space-between;
         position: relative;
         overflow: hidden;
+        /* Supaya teks tak blur masa rotate */
+        backface-visibility: hidden; 
     }
 
-    /* GARISAN IMBASAN (Laser Scanner) */
     .scanner-line {
         position: absolute; top: 0; left: 0; width: 100%; height: 5px;
         background: #00f3ff;
@@ -72,7 +76,6 @@
         z-index: 10;
     }
 
-    /* CONTENT DALAM KAD */
     .card-header {
         display: flex; justify-content: space-between; align-items: center;
         border-bottom: 1px solid rgba(255,255,255,0.2);
@@ -84,9 +87,9 @@
         display: flex; gap: 20px; align-items: center; margin-top: 10px;
     }
 
-    /* AVATAR KOTAK */
     .avatar-box {
         width: 80px; height: 80px;
+        min-width: 80px; /* Fix size jangan lari */
         border: 2px solid #00f3ff;
         display: flex; align-items: center; justify-content: center;
         font-size: 40px; color: #00f3ff;
@@ -94,14 +97,13 @@
         box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
     }
 
-    .info-box h2 { margin: 0; font-size: 20px; text-transform: uppercase; }
+    .info-box h2 { margin: 0; font-size: 20px; text-transform: uppercase; word-break: break-all; }
     .info-box p { margin: 5px 0 0; color: #aaa; font-family: 'Share Tech Mono'; font-size: 12px; }
     .rank-badge {
         background: #00f3ff; color: #000; padding: 2px 8px; font-size: 10px; font-weight: bold;
         display: inline-block; margin-top: 5px;
     }
 
-    /* QR CODE DECO */
     .qr-deco {
         position: absolute; bottom: 20px; right: 20px;
         width: 50px; height: 50px;
@@ -110,27 +112,59 @@
     }
 
     .footer {
-        font-size: 10px; color: #555; text-align: center; margin-top: 30px;
+        font-size: 10px; color: #555; text-align: center; 
         font-family: 'Share Tech Mono';
+        position: absolute; bottom: 20px; width: 100%;
     }
 
-    /* BUTTON BALIK */
     .btn-back {
         position: absolute; top: 20px; left: 20px;
-        color: #fff; text-decoration: none; border: 1px solid #fff; padding: 5px 15px;
+        color: #fff; text-decoration: none; border: 1px solid #fff; padding: 8px 20px;
         font-family: 'Share Tech Mono'; transition: 0.3s;
+        z-index: 99; background: rgba(0,0,0,0.5);
     }
     .btn-back:hover { background: #fff; color: #000; }
 
+    /* --- MOBILE RESPONSIVE TWEAKS --- */
+    @media (max-width: 600px) {
+        .card-container {
+            width: 90%; /* Ikut lebar phone */
+            max-width: 350px;
+            height: auto;
+            min-height: 220px;
+        }
+        .logo-text { font-size: 20px; }
+        .avatar-box { width: 60px; height: 60px; min-width: 60px; font-size: 28px; }
+        .info-box h2 { font-size: 16px; }
+        .qr-deco { width: 40px; height: 40px; }
+        
+        /* Button letak bawah untuk phone supaya senang tekan */
+        .btn-back {
+            top: auto; bottom: 40px; left: 50%;
+            transform: translateX(-50%);
+            width: 80%; text-align: center;
+            border-color: #00f3ff; color: #00f3ff;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+        .footer { display: none; } /* Sorok footer text kat phone */
+    }
+
     @keyframes scan { 0% { top: -10%; opacity: 0; } 50% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
     @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px) translateZ(-200px); } }
+    
+    /* Animation Terapung bila tak gerak mouse */
+    @keyframes floatIdle {
+        0% { transform: rotateY(0deg) rotateX(0deg) translateY(0px); }
+        50% { transform: rotateY(2deg) rotateX(-2deg) translateY(-10px); }
+        100% { transform: rotateY(0deg) rotateX(0deg) translateY(0px); }
+    }
 
 </style>
 </head>
 <body>
 
     <div class="grid-bg"></div>
-    <a href="dashboard.html" class="btn-back">< BACK TO DASHBOARD</a>
+    <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> DASHBOARD</a>
 
     <div class="card-container" id="card3D">
         <div class="holo-card">
@@ -155,15 +189,15 @@
 
             <div class="qr-deco"></div>
             
-            <div style="font-size: 9px; margin-top: 15px; color: rgba(255,255,255,0.4);">
+            <div style="font-size: 9px; margin-top: 15px; color: rgba(255,255,255,0.4); line-height: 1.4;">
                 PROPERTY OF YAYASAN PEMBANGUNAN KELUARGA TERENGGANU.<br>
-                UNAUTHORIZED POSSESSION IS A CRIME.
+                SECURE ASSET.
             </div>
         </div>
     </div>
 
     <div class="footer">
-        MOVE MOUSE TO INSPECT HOLOGRAPH
+        MOVE CURSOR / DRAG TO INSPECT
     </div>
 
 <script>
@@ -176,14 +210,10 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // --- ISI MAKLUMAT USER ---
     auth.onAuthStateChanged((user) => {
         if (user) {
-            // Kita ambil email user sebenar
             document.getElementById("uEmail").innerText = user.email;
             document.getElementById("uID").innerText = "ID: " + user.uid.substring(0, 8).toUpperCase();
-            
-            // Nama user (Kalau tak ada displayName, kita ambil dari email depan)
             let name = user.displayName ? user.displayName : user.email.split('@')[0];
             document.getElementById("uName").innerText = name.toUpperCase();
         } else {
@@ -191,26 +221,49 @@
         }
     });
 
-    // --- LOGIC 3D TILT EFFECT (Gempak ni!) ---
+    // --- LOGIC 3D TILT (MOUSE + TOUCH) ---
     const card = document.getElementById("card3D");
 
-    document.addEventListener("mousemove", (e) => {
-        const x = (window.innerWidth / 2 - e.pageX) / 20; // Ubah nombor 20 utk sensitiviti
-        const y = (window.innerHeight / 2 - e.pageY) / 20;
+    // Function untuk kira rotation
+    function rotateCard(xPos, yPos) {
+        // Matikan animasi 'floating' bila user control
+        card.style.animation = "none";
+        
+        const x = (window.innerWidth / 2 - xPos) / 20; 
+        const y = (window.innerHeight / 2 - yPos) / 20;
+        
+        // Limit rotation supaya tak pusing gila sangat kat phone
+        const limit = 20; 
+        const finalX = Math.max(Math.min(x, limit), -limit);
+        const finalY = Math.max(Math.min(y, limit), -limit);
 
-        // Pusingkan kad ikut mouse
-        card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-    });
+        card.style.transform = `rotateY(${finalX}deg) rotateX(${finalY}deg)`;
+    }
 
-    // Bila mouse keluar, kad balik asal
-    document.addEventListener("mouseleave", () => {
+    // Function reset
+    function resetCard() {
         card.style.transition = "transform 0.5s ease";
         card.style.transform = `rotateY(0deg) rotateX(0deg)`;
         
+        // Hidupkan balik animasi floating lepas 500ms
         setTimeout(() => {
-            card.style.transition = "transform 0.1s"; // Reset transition supaya laju balik
+            card.style.transition = "transform 0.1s"; 
+            card.style.animation = "floatIdle 6s ease-in-out infinite"; 
         }, 500);
+    }
+
+    // 1. MOUSE (Desktop)
+    document.addEventListener("mousemove", (e) => {
+        rotateCard(e.pageX, e.pageY);
     });
+    document.addEventListener("mouseleave", resetCard);
+
+    // 2. TOUCH (Mobile) - Guna jari untuk pusing
+    document.addEventListener("touchmove", (e) => {
+        const touch = e.touches[0];
+        rotateCard(touch.clientX, touch.clientY);
+    });
+    document.addEventListener("touchend", resetCard);
 
 </script>
 
