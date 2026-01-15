@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YPKT DIGITAL ID</title>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    body {
+        background-color: #050505;
+        background-image: 
+            radial-gradient(circle at 50% 50%, #1a2a3a 0%, #000 70%);
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Rajdhani', sans-serif;
+        color: white;
+        overflow: hidden;
+        perspective: 1000px; /* Penting untuk effect 3D */
+    }
+
+    /* GRID BACKGROUND */
+    .grid-bg {
+        position: absolute; width: 200%; height: 200%;
+        background-image: 
+            linear-gradient(rgba(0, 243, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+        animation: gridMove 20s linear infinite;
+        z-index: -1;
+    }
+
+    /* KAD HOLOGRAM (Bekas Utama) */
+    .card-container {
+        width: 400px;
+        height: 250px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.1s;
+    }
+
+    .holo-card {
+        width: 100%; height: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px); /* Effect Kaca */
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 15px;
+        box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* GARISAN IMBASAN (Laser Scanner) */
+    .scanner-line {
+        position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+        background: #00f3ff;
+        box-shadow: 0 0 15px #00f3ff;
+        opacity: 0.5;
+        animation: scan 3s linear infinite;
+        z-index: 10;
+    }
+
+    /* CONTENT DALAM KAD */
+    .card-header {
+        display: flex; justify-content: space-between; align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding-bottom: 10px;
+    }
+    .logo-text { font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #00f3ff; text-shadow: 0 0 10px #00f3ff; }
+    
+    .card-body {
+        display: flex; gap: 20px; align-items: center; margin-top: 10px;
+    }
+
+    /* AVATAR KOTAK */
+    .avatar-box {
+        width: 80px; height: 80px;
+        border: 2px solid #00f3ff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 40px; color: #00f3ff;
+        background: rgba(0, 243, 255, 0.1);
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    }
+
+    .info-box h2 { margin: 0; font-size: 20px; text-transform: uppercase; }
+    .info-box p { margin: 5px 0 0; color: #aaa; font-family: 'Share Tech Mono'; font-size: 12px; }
+    .rank-badge {
+        background: #00f3ff; color: #000; padding: 2px 8px; font-size: 10px; font-weight: bold;
+        display: inline-block; margin-top: 5px;
+    }
+
+    /* QR CODE DECO */
+    .qr-deco {
+        position: absolute; bottom: 20px; right: 20px;
+        width: 50px; height: 50px;
+        background-image: repeating-linear-gradient(45deg, #fff 0, #fff 2px, transparent 2px, transparent 4px);
+        opacity: 0.3; border: 1px solid #fff;
+    }
+
+    .footer {
+        font-size: 10px; color: #555; text-align: center; margin-top: 30px;
+        font-family: 'Share Tech Mono';
+    }
+
+    /* BUTTON BALIK */
+    .btn-back {
+        position: absolute; top: 20px; left: 20px;
+        color: #fff; text-decoration: none; border: 1px solid #fff; padding: 5px 15px;
+        font-family: 'Share Tech Mono'; transition: 0.3s;
+    }
+    .btn-back:hover { background: #fff; color: #000; }
+
+    @keyframes scan { 0% { top: -10%; opacity: 0; } 50% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
+    @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px) translateZ(-200px); } }
+
+</style>
+</head>
+<body>
+
+    <div class="grid-bg"></div>
+    <a href="dashboard.html" class="btn-back">< BACK TO DASHBOARD</a>
+
+    <div class="card-container" id="card3D">
+        <div class="holo-card">
+            <div class="scanner-line"></div>
+            
+            <div class="card-header">
+                <div class="logo-text">YPKT ACCESS</div>
+                <i class="fa-solid fa-wifi" style="color: #00f3ff;"></i>
+            </div>
+
+            <div class="card-body">
+                <div class="avatar-box">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <div class="info-box">
+                    <h2 id="uName">LOADING...</h2>
+                    <p id="uEmail">VERIFYING...</p>
+                    <p id="uID">ID: --------</p>
+                    <div class="rank-badge">LEVEL 5 CLEARANCE</div>
+                </div>
+            </div>
+
+            <div class="qr-deco"></div>
+            
+            <div style="font-size: 9px; margin-top: 15px; color: rgba(255,255,255,0.4);">
+                PROPERTY OF YAYASAN PEMBANGUNAN KELUARGA TERENGGANU.<br>
+                UNAUTHORIZED POSSESSION IS A CRIME.
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        MOVE MOUSE TO INSPECT HOLOGRAPH
+    </div>
+
+<script>
+    // --- SETUP FIREBASE ---
+    const firebaseConfig = {
+      apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
+      authDomain:"e-complaint-8nu9kp.firebaseapp.com",
+      projectId:"e-complaint-8nu9kp"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // --- ISI MAKLUMAT USER ---
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            // Kita ambil email user sebenar
+            document.getElementById("uEmail").innerText = user.email;
+            document.getElementById("uID").innerText = "ID: " + user.uid.substring(0, 8).toUpperCase();
+            
+            // Nama user (Kalau tak ada displayName, kita ambil dari email depan)
+            let name = user.displayName ? user.displayName : user.email.split('@')[0];
+            document.getElementById("uName").innerText = name.toUpperCase();
+        } else {
+            window.location.replace("login.html");
+        }
+    });
+
+    // --- LOGIC 3D TILT EFFECT (Gempak ni!) ---
+    const card = document.getElementById("card3D");
+
+    document.addEventListener("mousemove", (e) => {
+        const x = (window.innerWidth / 2 - e.pageX) / 20; // Ubah nombor 20 utk sensitiviti
+        const y = (window.innerHeight / 2 - e.pageY) / 20;
+
+        // Pusingkan kad ikut mouse
+        card.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+    });
+
+    // Bila mouse keluar, kad balik asal
+    document.addEventListener("mouseleave", () => {
+        card.style.transition = "transform 0.5s ease";
+        card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        
+        setTimeout(() => {
+            card.style.transition = "transform 0.1s"; // Reset transition supaya laju balik
+        }, 500);
+    });
+
+</script>
+
+</body>
+</html>
