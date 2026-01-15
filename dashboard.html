@@ -41,7 +41,24 @@ body::before {
   background-size: 40px 40px; pointer-events: none; z-index: 0;
 }
 
-.app { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+/* --- SECURITY LAYER: Hide App Initially --- */
+.app { 
+    display: none; /* RAHSIA: Sorok dulu sebelum login confirm */
+    min-height: 100vh; position: relative; z-index: 1; 
+}
+
+/* Loading Screen (Sementara tunggu security check) */
+#security-loader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #020617; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.spinner {
+    width: 50px; height: 50px; border: 3px solid rgba(0, 243, 255, 0.3);
+    border-radius: 50%; border-top-color: var(--neon-blue);
+    animation: spin 1s ease-in-out infinite; margin-bottom: 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* SIDEBAR */
 .sidebar {
@@ -132,6 +149,11 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 </head>
 
 <body>
+
+<div id="security-loader">
+    <div class="spinner"></div>
+    <div style="font-family:'Orbitron'; color:var(--neon-blue); letter-spacing:2px; font-size:12px;">VERIFYING SECURITY TOKEN...</div>
+</div>
 
 <div class="app">
   <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
@@ -257,6 +279,18 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 </div>
 
 <script>
+// --- ANTI-BACK BUTTON & CACHE BUSTER ---
+// Ini code paling penting untuk halang orang tekan back
+window.addEventListener( "pageshow", function ( event ) {
+  var historyTraversal = event.persisted || 
+                         ( typeof window.performance != "undefined" && 
+                              window.performance.navigation.type === 2 );
+  if ( historyTraversal ) {
+    // Kalau dia detect page ni dibuka dari "Memory/Cache" (tekan back), dia paksa reload
+    window.location.reload();
+  }
+});
+
 // --- CONFIG FIREBASE ---
 const firebaseConfig = {
   apiKey:"AIzaSyDjsNiteoay79tpavm_dfCcKHhRvBfU0Tk",
@@ -286,23 +320,33 @@ function toggleMetadata() {
     }
 }
 
-// --- AUTH ---
+// --- AUTH & SECURITY CHECK ---
 auth.onAuthStateChanged((user) => {
   if (user && user.email.endsWith('@ypkt.gov.my')) {
+    // 1. User SAH: Hilangkan Loader, Tunjuk App
+    document.getElementById("security-loader").style.display = "none";
+    document.querySelector(".app").style.display = "flex"; // Baru tunjuk dashboard
+
+    // 2. Load Data
     document.getElementById("welcomeMsg").innerHTML = `Welcome User ... <span style="color:var(--neon-blue); font-weight:bold;">${user.email}</span>`;
     document.getElementById("displayEmail").textContent = user.email;
     document.getElementById("displayUid").textContent = "UID: " + user.uid.substring(0,8) + "...";
     document.getElementById("displayJoined").textContent = new Date(user.metadata.creationTime).toLocaleDateString("en-GB");
-    
-    // --- DI SINI SAYA UBAH UNTUK MASUKKAN MASA ---
     document.getElementById("displayLastLogin").textContent = new Date(user.metadata.lastSignInTime).toLocaleString("en-GB");
     
     listenToComplaints();
   } else {
-    window.location.href = "login.html";
+    // 3. User TAK SAH: Tendang Keluar
+    // Guna 'replace' supaya dia tak boleh tekan back
+    window.location.replace("login.html"); 
   }
 });
-document.getElementById("logout").onclick = () => auth.signOut();
+
+document.getElementById("logout").onclick = () => {
+    auth.signOut().then(() => {
+        window.location.replace("login.html");
+    });
+};
 
 // --- LOGIC UTAMA (KEKAL) ---
 let complaintsData = [];
