@@ -203,9 +203,17 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
                     </div>
                 </div>
             </div>
-            <button class="btn-toggle-compact" onclick="toggleMetadata()" id="btnToggleMeta">
-                DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>
-            </button>
+
+            <div style="display: flex; gap: 10px;">
+                <a href="id-card.html" class="btn-toggle-compact" style="text-decoration: none; display: flex; align-items: center; color: var(--neon-green); border-color: var(--neon-green);">
+                    ID BADGE <i class="fa-solid fa-id-card" style="margin-left: 5px;"></i>
+                </a>
+
+                <button class="btn-toggle-compact" onclick="toggleMetadata()" id="btnToggleMeta">
+                    DETAILS <i class="fa-solid fa-chevron-down" style="margin-left:5px;"></i>
+                </button>
+            </div>
+
         </div>
         <div id="metadataPanel" style="display: none; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
             <div>
@@ -283,7 +291,7 @@ tr:hover td { background: rgba(0, 243, 255, 0.1); cursor: pointer; }
 // Ini code paling penting untuk halang orang tekan back
 window.addEventListener( "pageshow", function ( event ) {
   var historyTraversal = event.persisted || 
-                         ( typeof window.performance != "undefined" && 
+                          ( typeof window.performance != "undefined" && 
                               window.performance.navigation.type === 2 );
   if ( historyTraversal ) {
     // Kalau dia detect page ni dibuka dari "Memory/Cache" (tekan back), dia paksa reload
