@@ -332,7 +332,7 @@ function checkPin() {
             loadPendingList();
             setupCanvas();
         }).catch(e => {
-            btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> MASUK';
+            btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> SIGN IN';
             Swal.fire("Login Error", "System failed to log in.", "error");
         });
     } else {
