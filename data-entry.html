@@ -187,10 +187,10 @@ div:where(.swal2-confirm) { background-color: var(--neon-green) !important; colo
                 SEC.3: TECHNICAL ASSESSMENT (ADMIN IT)
             </h3>
             <div class="form-grid">
-                <div><label>Previous Cost (RM)</label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
-                <div><label>Cost Estimate (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
-                <div class="full-width"><label>Technical Action / Review</label><textarea class="input" id="recommendsection3" placeholder="Masukkan ulasan teknikal..."></textarea></div>
-                <div><label>Name of IT Officer</label><input class="input" id="section3nameposition"></div>
+                <div><label>Previous Cost (RM) <span style="color:var(--neon-red)">*</span></label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00" required></div>
+                <div><label>Cost Estimate (RM) <span style="color:var(--neon-red)">*</span></label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00" required></div>
+                <div class="full-width"><label>Technical Action / Review <span style="color:var(--neon-red)">*</span></label><textarea class="input" id="recommendsection3" placeholder="Masukkan ulasan teknikal..." required></textarea></div>
+                <div><label>Name of IT Officer <span style="color:var(--neon-red)">*</span></label><input class="input" id="section3nameposition" required></div>
                 <div><label>Date</label><input class="input" type="datetime-local" id="section3date"></div>
 
                 <div class="decision-box">
@@ -360,6 +360,32 @@ document.getElementById("saveComplaint").onclick = async () => {
     const id = document.getElementById("complaintDetail").dataset.id;
     if(!id) return;
 
+    // --- BARU: VALIDATION LOGIC (WAJIB ISI) ---
+    const valPrevCost = document.getElementById('previousmaintenancecost').value.trim();
+    const valEstCost = document.getElementById('estimatedmaintenancecost').value.trim();
+    const valAction = document.getElementById('recommendsection3').value.trim();
+    const valOfficer = document.getElementById('section3nameposition').value.trim();
+
+    if (!valPrevCost || !valEstCost || !valAction || !valOfficer) {
+        Swal.fire({
+            title: 'REQUIRED FIELDS EMPTY',
+            html: `Sila lengkapkan semua maklumat di <b>SEC.3 (Technical Assessment)</b>:<br><br>
+            <ul style="text-align:left; font-size:13px; color:#ff4d4d;">
+                <li>Previous Cost</li>
+                <li>Estimated Cost</li>
+                <li>Technical Action / Review</li>
+                <li>Name of IT Officer</li>
+            </ul>`,
+            icon: 'warning',
+            confirmButtonColor: '#fbbf24', // Neon Gold color
+            confirmButtonText: 'OK, I WILL FILL IT',
+            background: 'rgba(2, 6, 23, 0.95)',
+            color: '#e2e8f0'
+        });
+        return; // Hentikan proses simpan jika data tak lengkap
+    }
+    // --- TAMAT VALIDATION LOGIC ---
+
     const getVal = (id) => document.getElementById(id).value;
     const mode = document.getElementById("approvalMode").value;
 
@@ -416,5 +442,3 @@ document.getElementById("saveComplaint").onclick = async () => {
 
 </body>
 </html>
-
-
