@@ -364,7 +364,7 @@ function logoutApp() {
                 
                 // Reset Inputs
                 document.getElementById('secretPin').value = "";
-                document.querySelector('.pin-box button').innerHTML = '<i class="fa-solid fa-lock-open"></i> MASUK';
+                document.querySelector('.pin-box button').innerHTML = '<i class="fa-solid fa-lock-open"></i> SIGN IN';
             });
         }
     });
@@ -423,7 +423,7 @@ function loadPendingList() {
         });
 
         if(count === 0) {
-            msg.innerHTML = "Tiada permohonan yang menunggu kelulusan.";
+            msg.innerHTML = "No applications are pending approval.";
             msg.style.display = 'block';
             container.innerHTML = "";
         } else {
