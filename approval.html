@@ -23,7 +23,7 @@
         --text-muted: #94a3b8;
         --border: #334155;
         --green: #10b981;
-        --red: #ef4444; /* Added Red for Logout */
+        --red: #ef4444; /* Added Red for Logout & Errors */
     }
 
     * { box-sizing: border-box; }
@@ -261,16 +261,16 @@
             <div class="section-ribbon">SEC 4: DIRECTOR'S APPROVAL</div>
             <div class="grid-container">
                 <div class="full-width">
-                    <label style="color:var(--gold);">decision</label>
+                    <label style="color:var(--gold);">DECISION <span style="color:var(--red)">*</span></label>
                     <select id="app_status" style="font-size:16px; font-weight:bold;">
                         <option value="Pending">-- PLEASE CHOOSE A RESULT --</option>
                         <option value="Approve">✅ APPROVE</option>
-                        <option value="Reject">❌REJECT</option>
+                        <option value="Reject">❌ REJECT</option>
                     </select>
                 </div>
                 
-                <div class="data-group"><label>Name</label><input type="text" id="app_name" placeholder="Nama Penuh"></div>
-                <div class="data-group"><label>Position</label><input type="text" id="app_pos" placeholder="Jawatan"></div>
+                <div class="data-group"><label>NAME <span style="color:var(--red)">*</span></label><input type="text" id="app_name" placeholder="Nama Penuh"></div>
+                <div class="data-group"><label>POSITION <span style="color:var(--red)">*</span></label><input type="text" id="app_pos" placeholder="Jawatan"></div>
                 
                 <div class="full-width">
                     <label>Comments / Notes</label>
@@ -279,7 +279,7 @@
 
                 <div class="full-width" style="margin-top:15px; border-top:1px solid #334155; padding-top:15px;">
                     <label style="color:var(--gold); display:flex; justify-content:space-between;">
-                        <span>SIGNATURE</span>
+                        <span>SIGNATURE <span style="color:var(--red)">*</span></span>
                         <span style="font-size:10px; cursor:pointer; color:#ef4444;" onclick="clearSignature()"><i class="fa fa-trash"></i> DELETE</span>
                     </label>
                     
@@ -341,7 +341,7 @@ function checkPin() {
     }
 }
 
-// === LOGOUT SYSTEM (New) ===
+// === LOGOUT SYSTEM ===
 function logoutApp() {
     Swal.fire({
         title: 'Log out?',
@@ -356,13 +356,10 @@ function logoutApp() {
     }).then((result) => {
         if (result.isConfirmed) {
             auth.signOut().then(() => {
-                // Reset View
                 document.getElementById('mainApp').classList.add('hidden');
                 document.getElementById('approvalForm').classList.add('hidden');
                 document.getElementById('dashboardView').classList.remove('hidden');
                 document.getElementById('pinScreen').style.display = 'flex';
-                
-                // Reset Inputs
                 document.getElementById('secretPin').value = "";
                 document.querySelector('.pin-box button').innerHTML = '<i class="fa-solid fa-lock-open"></i> SIGN IN';
             });
@@ -381,19 +378,13 @@ function loadPendingList() {
 
         snapshot.forEach(doc => {
             const d = doc.data();
-            
-            // --- LOGIC: (Lowercase field names) ---
             const status = d.approvalstatus || "Pending"; 
             const statusLower = status.toLowerCase().trim();
             const isNotDecided = (statusLower !== "approve" && statusLower !== "reject");
-            
-            // Cek section3date untuk pastikan IT dah siap
             const isTechDone = (d.section3date != null); 
 
             if(isNotDecided && isTechDone) {
                 count++;
-                
-                // MAPPING DATABASE FIELDS (Strictly match data entry)
                 const type = d.assettype || "Umum"; 
                 const name = d.lastUser || "Tanpa Nama"; 
                 const dateVal = d.damagedate;
@@ -448,34 +439,28 @@ async function openDetail(id) {
         document.getElementById('dashboardView').classList.add('hidden');
         document.getElementById('approvalForm').classList.remove('hidden');
 
-        // --- MAPPING DATA (Strictly using requested fields) ---
-        
-        // SECTION 1
+        // SEC 1
         setText('v_lastUser', d.lastUser || "-"); 
         setText('v_damagedate', formatDate(d.damagedate)); 
         setText('v_assettype', d.assettype || "-");
-        setText('v_serialNumber', d.serialNumber || "-"); // CamelCase
+        setText('v_serialNumber', d.serialNumber || "-");
         setText('v_damagedescription', d.damagedescription || "-");
 
-        // SECTION 2
+        // SEC 2
         setText('v_section2nameposition', d.section2nameposition || "-");
         setText('v_section2date', formatDate(d.section2date));
         setText('v_recommendationsection2', d.recommendationsection2 || "-");
 
-        // SECTION 3
+        // SEC 3
         setText('v_section3nameposition', d.section3nameposition || "-");
         setText('v_section3date', formatDate(d.section3date));
-        
-        // Kos (Dua jenis)
         let prevCost = d.previousmaintenancecost || "0";
         setText('v_previousmaintenancecost', "RM " + prevCost);
-
         let estCost = d.estimatedmaintenancecost || "0";
         setText('v_estimatedmaintenancecost', "RM " + estCost);
-        
         setText('v_recommendsection3', d.recommendsection3 || "-");
 
-        // --- SECTION 4 (FORM PENGARAH) ---
+        // SEC 4
         document.getElementById('app_name').value = d.approvername || "ENCIK ASHRI";
         document.getElementById('app_pos').value = d.approverposition || "TIMBALAN PENGARAH";
         document.getElementById('app_comment').value = d.approvalcomment || "";
@@ -486,7 +471,6 @@ async function openDetail(id) {
 
     } catch(e) {
         Swal.fire("Ralat", "Gagal data: " + e.message, "error");
-        console.error(e);
     }
 }
 
@@ -499,11 +483,7 @@ function formatDate(timestamp) {
     if(!timestamp) return "-";
     let dateObj = timestamp;
     if(timestamp.toDate) dateObj = timestamp.toDate();
-    try {
-        return new Date(dateObj).toLocaleDateString('en-GB'); 
-    } catch(e) {
-        return timestamp; 
-    }
+    try { return new Date(dateObj).toLocaleDateString('en-GB'); } catch(e) { return timestamp; }
 }
 
 function showDashboard() {
@@ -552,12 +532,46 @@ function previewSig(input){
     }
 }
 
-// === 5. SUBMIT (Save to Database) ===
+// === 5. SUBMIT (Save to Database) - WITH VALIDATION ===
 async function submitApproval() {
+    // 1. Get Values
     const status = document.getElementById('app_status').value;
-    if(status === "Pending") return Swal.fire("Please Select", "Please select the result approve or reject.", "warning");
+    const name = document.getElementById('app_name').value.trim();
+    const position = document.getElementById('app_pos').value.trim();
+    
+    // 2. Validate Decision
+    if(status === "Pending") {
+        return Swal.fire("Required Field", "Please select a DECISION (Approve/Reject).", "warning");
+    }
 
-    let finalSig = (currentSigMode === 'draw') ? canvas.toDataURL("image/png") : uploadedSigData;
+    // 3. Validate Name
+    if(name === "") {
+        return Swal.fire("Required Field", "Please enter the NAME.", "warning");
+    }
+
+    // 4. Validate Position
+    if(position === "") {
+        return Swal.fire("Required Field", "Please enter the POSITION.", "warning");
+    }
+
+    // 5. Validate Signature
+    let finalSig = null;
+    if(currentSigMode === 'draw') {
+        // Create blank canvas for comparison
+        const blank = document.createElement('canvas');
+        blank.width = canvas.width;
+        blank.height = canvas.height;
+        if(canvas.toDataURL() === blank.toDataURL()) {
+            return Swal.fire("Required Field", "Please DRAW your signature.", "warning");
+        }
+        finalSig = canvas.toDataURL("image/png");
+    } else {
+        // Upload check
+        if(!uploadedSigData) {
+            return Swal.fire("Required Field", "Please UPLOAD your signature.", "warning");
+        }
+        finalSig = uploadedSigData;
+    }
 
     const result = await Swal.fire({
         title: 'Confirm Results?',
@@ -569,14 +583,13 @@ async function submitApproval() {
         try {
             Swal.fire({title:'Menyimpan...', didOpen:()=>{Swal.showLoading()}});
             
-            // UPDATE: Gunakan nama field yang sama dengan Data Entry (Section 4)
             await db.collection("complaint").doc(currentId).update({
                 approvalstatus: status, 
-                approvername: document.getElementById('app_name').value,
-                approverposition: document.getElementById('app_pos').value,
+                approvername: name,
+                approverposition: position,
                 approvalcomment: document.getElementById('app_comment').value,
                 approvaldate: firebase.firestore.FieldValue.serverTimestamp(),
-                approverSignature: finalSig // camelCase (sama dgn data entry)
+                approverSignature: finalSig
             });
             
             await Swal.fire("Successful", "The results have been recorded.", "success");
