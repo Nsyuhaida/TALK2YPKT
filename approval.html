@@ -560,9 +560,9 @@ async function submitApproval() {
     let finalSig = (currentSigMode === 'draw') ? canvas.toDataURL("image/png") : uploadedSigData;
 
     const result = await Swal.fire({
-        title: 'Sahkan Keputusan?',
-        text: `Anda pasti ingin ${status === "Approve" ? "MELULUSKAN" : "MENOLAK"} permohonan ini?`,
-        icon: 'question', showCancelButton: true, confirmButtonColor: '#fbbf24', cancelButtonColor: '#334155', confirmButtonText: 'Ya, Sahkan', background: '#1e293b', color: '#fff'
+        title: 'Confirm Results?',
+        text: `You definitely want to ${status === "Approve" ? "APPROVE" : "REJECT"} this application?`,
+        icon: 'question', showCancelButton: true, confirmButtonColor: '#fbbf24', cancelButtonColor: '#334155', confirmButtonText: 'Yes, Confirm', background: '#1e293b', color: '#fff'
     });
 
     if(result.isConfirmed) {
@@ -579,7 +579,7 @@ async function submitApproval() {
                 approverSignature: finalSig // camelCase (sama dgn data entry)
             });
             
-            await Swal.fire("Berjaya", "Keputusan telah direkodkan.", "success");
+            await Swal.fire("Successful", "The results have been recorded.", "success");
             showDashboard(); 
         } catch(e) { Swal.fire("Ralat", e.message, "error"); }
     }
