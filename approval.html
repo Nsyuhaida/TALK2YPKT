@@ -174,12 +174,12 @@
     <div class="pin-box">
         <img src="Asset/Logo-Yayasan-Pembangunan-Keluarga-Terengganu (1).png" width="90" style="margin-bottom:20px;">
         <h2 style="color:var(--gold); font-family:'Orbitron'; margin:0;">EXECUTIVE ACCESS</h2>
-        <p style="color:#64748b; font-size:12px; margin-top:5px;">SILA MASUKKAN KOD KESELAMATAN</p>
+        <p style="color:#64748b; font-size:12px; margin-top:5px;">PLEASE ENTER SECURITY CODE</p>
         
         <input type="password" id="secretPin" class="pin-input" placeholder="••••" maxlength="4">
         
         <button onclick="checkPin()" class="btn-submit" style="margin-top:10px;">
-            <i class="fa-solid fa-lock-open"></i> MASUK
+            <i class="fa-solid fa-lock-open"></i> SIGN IN
         </button>
     </div>
 </div>
@@ -197,21 +197,21 @@
         
         <div class="header-right">
             <div class="user-badge">
-                <i class="fa-solid fa-user-tie"></i> TIMB. PENGARAH
+                <i class="fa-solid fa-user-tie"></i> DIPUTY DIRECTOR
             </div>
             <button class="btn-logout" onclick="logoutApp()">
-                <i class="fa-solid fa-power-off"></i> KELUAR
+                <i class="fa-solid fa-power-off"></i> SIGN OUT
             </button>
         </div>
     </div>
 
     <div id="dashboardView">
         <div class="dashboard-title">
-            <i class="fa-solid fa-clipboard-list" style="color:var(--gold)"></i> SENARAI MENUNGGU KELULUSAN
+            <i class="fa-solid fa-clipboard-list" style="color:var(--gold)"></i> APPROVAL WAITING LIST
         </div>
         
         <div id="loadingMsg" style="text-align:center; color:#64748b; padding:40px; border:1px dashed #334155; border-radius:10px;">
-            <i class="fa-solid fa-circle-notch fa-spin"></i> Memeriksa Pangkalan Data...
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Checking the Database...
         </div>
         
         <div id="pendingList" class="pending-list">
@@ -221,71 +221,71 @@
     <div id="approvalForm" class="hidden">
         
         <button class="btn-back" onclick="showDashboard()">
-            <i class="fa-solid fa-arrow-left"></i> KEMBALI KE SENARAI
+            <i class="fa-solid fa-arrow-left"></i> BACK TO LIST
         </button>
 
         <div class="section-card">
-            <div class="section-ribbon">SEC 1: BUTIRAN ASET & PENGADU</div>
+            <div class="section-ribbon">SEC 1: DETAILS OF ASSETS & COMPLAINANTS</div>
             <div class="grid-container">
-                <div class="data-group"><label>Nama Pengadu (Last User)</label><div class="data-value highlight" id="v_lastUser"></div></div>
-                <div class="data-group"><label>Tarikh Kerosakan</label><div class="data-value" id="v_damagedate"></div></div>
-                <div class="data-group"><label>Jenis Aset</label><div class="data-value" id="v_assettype"></div></div>
-                <div class="data-group"><label>No. Siri</label><div class="data-value" id="v_serialNumber"></div></div>
-                <div class="data-group full-width"><label>Keterangan Kerosakan</label><div class="data-value" id="v_damagedescription"></div></div>
+                <div class="data-group"><label>Complainant's Name (Last User)</label><div class="data-value highlight" id="v_lastUser"></div></div>
+                <div class="data-group"><label>Damage Date</label><div class="data-value" id="v_damagedate"></div></div>
+                <div class="data-group"><label>Asset Type</label><div class="data-value" id="v_assettype"></div></div>
+                <div class="data-group"><label>Serial Number</label><div class="data-value" id="v_serialNumber"></div></div>
+                <div class="data-group full-width"><label>Description of Damage</label><div class="data-value" id="v_damagedescription"></div></div>
             </div>
         </div>
 
         <div class="section-card">
-            <div class="section-ribbon">SEC 2: PEGAWAI ASET</div>
+            <div class="section-ribbon">SEC 2: ASSET OFFICER AREA OFFICER</div>
             <div class="grid-container">
-                <div class="data-group"><label>Nama Pegawai</label><div class="data-value" id="v_section2nameposition"></div></div>
-                <div class="data-group"><label>Tarikh Pemeriksaan</label><div class="data-value" id="v_section2date"></div></div>
-                <div class="data-group full-width"><label>Ulasan / Syor</label><div class="data-value" id="v_recommendationsection2"></div></div>
+                <div class="data-group"><label>Officer Name</label><div class="data-value" id="v_section2nameposition"></div></div>
+                <div class="data-group"><label>Inspection Date</label><div class="data-value" id="v_section2date"></div></div>
+                <div class="data-group full-width"><label>Reviews / Recommendations</label><div class="data-value" id="v_recommendationsection2"></div></div>
             </div>
         </div>
 
         <div class="section-card">
-            <div class="section-ribbon">SEC 3: ULASAN TEKNIKAL</div>
+            <div class="section-ribbon">SEC 3: TECHNICAL REVIEW</div>
             <div class="grid-container">
-                <div class="data-group"><label>Pegawai Teknikal</label><div class="data-value" id="v_section3nameposition"></div></div>
-                <div class="data-group"><label>Tarikh Semakan</label><div class="data-value" id="v_section3date"></div></div>
+                <div class="data-group"><label>Technical Officer</label><div class="data-value" id="v_section3nameposition"></div></div>
+                <div class="data-group"><label>Review Date</label><div class="data-value" id="v_section3date"></div></div>
                 
-                <div class="data-group"><label>Kos Terdahulu</label><div class="data-value" id="v_previousmaintenancecost"></div></div>
-                <div class="data-group"><label>Anggaran Kos</label><div class="data-value highlight" style="color:var(--green);" id="v_estimatedmaintenancecost"></div></div>
+                <div class="data-group"><label>Previous Cost</label><div class="data-value" id="v_previousmaintenancecost"></div></div>
+                <div class="data-group"><label>Cost Estimate</label><div class="data-value highlight" style="color:var(--green);" id="v_estimatedmaintenancecost"></div></div>
                 
-                <div class="data-group full-width"><label>Syor Teknikal</label><div class="data-value" id="v_recommendsection3"></div></div>
+                <div class="data-group full-width"><label>Technical Recommendations</label><div class="data-value" id="v_recommendsection3"></div></div>
             </div>
         </div>
 
         <div class="section-card active-section">
-            <div class="section-ribbon">SEC 4: KELULUSAN PENGARAH</div>
+            <div class="section-ribbon">SEC 4: DIRECTOR'S APPROVAL</div>
             <div class="grid-container">
                 <div class="full-width">
-                    <label style="color:var(--gold);">KEPUTUSAN</label>
+                    <label style="color:var(--gold);">decision</label>
                     <select id="app_status" style="font-size:16px; font-weight:bold;">
-                        <option value="Pending">-- SILA PILIH KEPUTUSAN --</option>
-                        <option value="Approve">✅ LULUS (APPROVE)</option>
-                        <option value="Reject">❌ TIDAK LULUS (REJECT)</option>
+                        <option value="Pending">-- PLEASE CHOOSE A RESULT --</option>
+                        <option value="Approve">✅ APPROVE</option>
+                        <option value="Reject">❌REJECT</option>
                     </select>
                 </div>
                 
-                <div class="data-group"><label>Nama</label><input type="text" id="app_name" placeholder="Nama Penuh"></div>
-                <div class="data-group"><label>Jawatan</label><input type="text" id="app_pos" placeholder="Jawatan"></div>
+                <div class="data-group"><label>Name</label><input type="text" id="app_name" placeholder="Nama Penuh"></div>
+                <div class="data-group"><label>Position</label><input type="text" id="app_pos" placeholder="Jawatan"></div>
                 
                 <div class="full-width">
-                    <label>Ulasan / Catatan</label>
-                    <textarea id="app_comment" rows="3" placeholder="Sila masukkan ulasan jika ada..."></textarea>
+                    <label>Comments / Notes</label>
+                    <textarea id="app_comment" rows="3" placeholder="Please enter a comment if you have any..."></textarea>
                 </div>
 
                 <div class="full-width" style="margin-top:15px; border-top:1px solid #334155; padding-top:15px;">
                     <label style="color:var(--gold); display:flex; justify-content:space-between;">
-                        <span>TANDATANGAN</span>
-                        <span style="font-size:10px; cursor:pointer; color:#ef4444;" onclick="clearSignature()"><i class="fa fa-trash"></i> PADAM</span>
+                        <span>SIGNATURE</span>
+                        <span style="font-size:10px; cursor:pointer; color:#ef4444;" onclick="clearSignature()"><i class="fa fa-trash"></i> DELETE</span>
                     </label>
                     
                     <div class="sig-tabs">
-                        <button class="tab-btn active" id="btnDraw" onclick="switchSigMode('draw')">LUKIS PADA SKRIN</button>
-                        <button class="tab-btn" id="btnUpload" onclick="switchSigMode('upload')">MUAT NAIK COP</button>
+                        <button class="tab-btn active" id="btnDraw" onclick="switchSigMode('draw')">DRAW ON THE SCREEN</button>
+                        <button class="tab-btn" id="btnUpload" onclick="switchSigMode('upload')">UPLOAD SIGNATURE</button>
                     </div>
                     
                     <div id="areaDraw">
@@ -302,7 +302,7 @@
             </div>
 
             <button class="btn-submit" onclick="submitApproval()">
-                <i class="fa-solid fa-file-signature"></i> SAHKAN KEPUTUSAN
+                <i class="fa-solid fa-file-signature"></i> CONFIRM THE DECISION
             </button>
         </div>
     </div>
@@ -333,10 +333,10 @@ function checkPin() {
             setupCanvas();
         }).catch(e => {
             btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> MASUK';
-            Swal.fire("Ralat Login", "Sistem gagal log masuk.", "error");
+            Swal.fire("Login Error", "System failed to log in.", "error");
         });
     } else {
-        Swal.fire({icon: 'error', title: 'PIN Salah', text: 'Sila masukkan kod yang betul.', background: '#1e293b', color: '#fff'});
+        Swal.fire({icon: 'error', title: 'PIN Salah', text: 'Please enter the correct code.', background: '#1e293b', color: '#fff'});
         document.getElementById('secretPin').value = "";
     }
 }
@@ -344,13 +344,13 @@ function checkPin() {
 // === LOGOUT SYSTEM (New) ===
 function logoutApp() {
     Swal.fire({
-        title: 'Log Keluar?',
-        text: "Anda pasti ingin keluar dari sistem?",
+        title: 'Log out?',
+        text: "You will definitely want to log out?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#334155',
-        confirmButtonText: 'Ya, Keluar',
+        confirmButtonText: 'Yes, sign out',
         background: '#1e293b',
         color: '#fff'
     }).then((result) => {
@@ -555,7 +555,7 @@ function previewSig(input){
 // === 5. SUBMIT (Save to Database) ===
 async function submitApproval() {
     const status = document.getElementById('app_status').value;
-    if(status === "Pending") return Swal.fire("Sila Pilih", "Sila pilih keputusan Lulus atau Tidak.", "warning");
+    if(status === "Pending") return Swal.fire("Please Select", "Please select the result approve or reject.", "warning");
 
     let finalSig = (currentSigMode === 'draw') ? canvas.toDataURL("image/png") : uploadedSigData;
 
