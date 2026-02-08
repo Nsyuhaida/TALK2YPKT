@@ -369,7 +369,7 @@ document.getElementById("saveComplaint").onclick = async () => {
     if (!valPrevCost || !valEstCost || !valAction || !valOfficer) {
         Swal.fire({
             title: 'REQUIRED FIELDS EMPTY',
-            html: `Sila lengkapkan semua maklumat di <b>SEC.3 (Technical Assessment)</b>:<br><br>
+            html: `Please complete all information in <b>SEC.3 (Technical Assessment)</b>:<br><br>
             <ul style="text-align:left; font-size:13px; color:#ff4d4d;">
                 <li>Previous Cost</li>
                 <li>Estimated Cost</li>
@@ -378,7 +378,7 @@ document.getElementById("saveComplaint").onclick = async () => {
             </ul>`,
             icon: 'warning',
             confirmButtonColor: '#fbbf24', // Neon Gold color
-            confirmButtonText: 'OK, I WILL FILL IT',
+            confirmButtonText: 'OK, NOTED',
             background: 'rgba(2, 6, 23, 0.95)',
             color: '#e2e8f0'
         });
@@ -442,3 +442,4 @@ document.getElementById("saveComplaint").onclick = async () => {
 
 </body>
 </html>
+
