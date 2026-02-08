@@ -167,51 +167,51 @@ div:where(.swal2-confirm) { background-color: var(--neon-green) !important; colo
         <div id="complaintDetail" class="card">
             <h2>UPDATE RECORD</h2>
 
-            <h3>SEC.1: MAKLUMAT PENGADU (READ ONLY)</h3>
+            <h3>SEC.1: COMPLAINANT INFORMATION (READ ONLY)</h3>
             <div class="form-grid">
-                <div><label>Jenis Aset</label><input class="input" id="assettype" readonly></div>
-                <div><label>No. Siri</label><input class="input" id="SerialNumber" readonly></div>
-                <div><label>Dilapor Oleh</label><input class="input" id="lastUser" readonly></div>
-                <div><label>Tarikh Rosak</label><input class="input" id="damagedate" readonly></div>
-                <div class="full-width"><label>Kerosakan</label><textarea class="input" id="damagedescription" readonly></textarea></div>
+                <div><label>Asset Type</label><input class="input" id="assettype" readonly></div>
+                <div><label>SERIAL NUMBER</label><input class="input" id="SerialNumber" readonly></div>
+                <div><label>Reported By</label><input class="input" id="lastUser" readonly></div>
+                <div><label>Damaged Date</label><input class="input" id="damagedate" readonly></div>
+                <div class="full-width"><label>Damage description</label><textarea class="input" id="damagedescription" readonly></textarea></div>
             </div>
 
-            <h3>SEC.2: ULASAN PEGAWAI (READ ONLY)</h3>
+            <h3>SEC.2: OFFICER'S REVIEW AREA OFFICER (READ ONLY)</h3>
             <div class="form-grid">
-                <div class="full-width"><label>Ulasan Pegawai Penyiasat</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
-                <div><label>Nama Pegawai</label><input class="input" id="section2nameposition" readonly></div>
-                <div><label>Tarikh</label><input class="input" id="section2date" readonly></div>
+                <div class="full-width"><label>Investigating Officer's Review</label><textarea class="input" id="recommendationsection2" readonly></textarea></div>
+                <div><label>Officer Name</label><input class="input" id="section2nameposition" readonly></div>
+                <div><label>Date</label><input class="input" id="section2date" readonly></div>
             </div>
 
             <h3 style="color:var(--neon-green); border-color: var(--neon-green);">
-                SEC.3: PENILAIAN TEKNIKAL (ADMIN IT)
+                SEC.3: TECHNICAL ASSESSMENT (ADMIN IT)
             </h3>
             <div class="form-grid">
-                <div><label>Kos Terdahulu (RM)</label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
-                <div><label>Anggaran Kos (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
-                <div class="full-width"><label>Tindakan Teknikal / Ulasan</label><textarea class="input" id="recommendsection3" placeholder="Masukkan ulasan teknikal..."></textarea></div>
-                <div><label>Nama Pegawai IT</label><input class="input" id="section3nameposition"></div>
-                <div><label>Tarikh</label><input class="input" type="datetime-local" id="section3date"></div>
+                <div><label>Previous Cost (RM)</label><input class="input" type="number" id="previousmaintenancecost" placeholder="0.00"></div>
+                <div><label>Cost Estimate (RM)</label><input class="input" type="number" id="estimatedmaintenancecost" placeholder="0.00"></div>
+                <div class="full-width"><label>Technical Action / Review</label><textarea class="input" id="recommendsection3" placeholder="Masukkan ulasan teknikal..."></textarea></div>
+                <div><label>Name of IT Officer</label><input class="input" id="section3nameposition"></div>
+                <div><label>Date</label><input class="input" type="datetime-local" id="section3date"></div>
 
                 <div class="decision-box">
-                    <div class="decision-title"><i class="fa-solid fa-gavel"></i> TINDAKAN KELULUSAN (SECTION 4)</div>
-                    <p style="font-size:12px; color:#ccc; margin-bottom:10px;">Sila pilih kaedah kelulusan seterusnya:</p>
+                    <div class="decision-title"><i class="fa-solid fa-gavel"></i> APPROVAL ACTION (SECTION 4)</div>
+                    <p style="font-size:12px; color:#ccc; margin-bottom:10px;">Please select the next approval method:</p>
                     
                     <select id="approvalMode" class="input decision-select">
-                        <option value="Pending">1. PROSES ONLINE (Hantar ke Dashboard Pengarah)</option>
-                        <option value="Hardcopy">2. PROSES HARDCOPY (Borang Fizikal Selesai)</option>
+                        <option value="Pending">1. ONLINE PROCESS (Send to Deputy Director's Dashboard)</option>
+                        <option value="Hardcopy">2. HARDCOPY PROCESS (Completed Physical Form)</option>
                     </select>
                     
                     <div class="info-text">
-                        <i class="fa-solid fa-circle-info"></i> <b>Nota:</b><br>
-                        • <b>Online:</b> Status kekal "Pending". Pengarah perlu sign digital.<br>
-                        • <b>Hardcopy:</b> Status jadi "Approve" automatik. Tandatangan digital dikosongkan.
+                        <i class="fa-solid fa-circle-info"></i> <b>Note:</b><br>
+                        • <b>Online:</b> Status remains "Pending". Director needs to sign digitally.<br>
+                        • <b>Hardcopy:</b>Status automatically becomes "Approve". Digital signature is blanked.
                     </div>
                 </div>
             </div>
 
             <button class="btn-primary" id="saveComplaint">
-                <i class="fa-solid fa-floppy-disk"></i> KEMASKINI & SIMPAN
+                <i class="fa-solid fa-floppy-disk"></i> UPDATE & SAVE
             </button>
         </div>
     </main>
@@ -285,7 +285,7 @@ function renderTable(list){
     const div = document.getElementById("complaintList");
     if(list.length === 0) { div.innerHTML = "<div style='padding:20px;text-align:center; color:#888;'>Tiada rekod dijumpai.</div>"; return; }
     
-    let h = "<table><thead><tr><th>ID</th><th>PENGADU</th><th>ASET</th><th>STATUS</th></tr></thead><tbody>";
+    let h = "<table><thead><tr><th>ID</th><th>REPORTED BY</th><th>ASET</th><th>STATUS</th></tr></thead><tbody>";
     list.forEach(c => {
         let s = c.approvalstatus || "Pending";
         let color = (s === 'Approve') ? '#00ff9d' : (s === 'Reject' ? '#ff4d4d' : '#ccc');
@@ -416,3 +416,4 @@ document.getElementById("saveComplaint").onclick = async () => {
 
 </body>
 </html>
+
