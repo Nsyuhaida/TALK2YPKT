@@ -152,6 +152,12 @@ label {
   background: rgba(0, 6, 20, 0.9);
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
 }
+.input[readonly] {
+    background: rgba(255,255,255,0.05);
+    color: #aaa;
+    cursor: not-allowed;
+    border-color: rgba(255,255,255,0.1);
+}
 select.input option { background: #020617; color: #fff; }
 textarea.input { resize: vertical; min-height: 100px; }
 
@@ -256,11 +262,11 @@ textarea.input { resize: vertical; min-height: 100px; }
     <h3><i class="fa-solid fa-bullseye"></i> TARGET INFORMATION</h3>
     <div class="form-grid">
         <div>
-            <label>User Email (Target)</label>
+            <label>User Email (Target) *</label>
             <input id="userEmail" class="input" placeholder="user@email.com" />
         </div>
         <div>
-            <label>Complaint Reference ID</label>
+            <label>Complaint Reference ID *</label>
             <input id="complaintId" class="input" placeholder="#001" />
         </div>
     </div>
@@ -268,7 +274,7 @@ textarea.input { resize: vertical; min-height: 100px; }
     <h3><i class="fa-solid fa-list-check"></i> STATUS PROTOCOL</h3>
     <div class="form-grid">
         <div>
-            <label>Current Status</label>
+            <label>Current Status *</label>
             <select id="status" class="input">
               <option value="">-- Initiate Status --</option>
               <option value="Pending">Pending</option>
@@ -277,19 +283,19 @@ textarea.input { resize: vertical; min-height: 100px; }
             </select>
         </div>
         <div>
-            <label>Estimated Completion</label>
+            <label>Estimated Completion *</label>
             <input id="willCompleteWhen" class="input" placeholder="e.g. 24 Hours" />
         </div>
         <div>
-            <label>Officer In Charge</label>
-            <input id="handledBy" class="input" />
+            <label>Officer In Charge (Auto)</label>
+            <input id="handledBy" class="input" readonly placeholder="Detecting Admin..." />
         </div>
         <div>
-            <label>Contact Line</label>
+            <label>Contact Line *</label>
             <input id="contactNumber" class="input" placeholder="+60..." />
         </div>
         <div class="full-width">
-            <label>Remarks / Comments</label>
+            <label>Remarks / Comments *</label>
             <textarea id="comment" class="input" placeholder="Enter system remarks here..."></textarea>
         </div>
     </div>
@@ -297,12 +303,12 @@ textarea.input { resize: vertical; min-height: 100px; }
     <h3><i class="fa-solid fa-pen-to-square"></i> UPDATE LOG</h3>
     <div class="form-grid">
         <div>
-            <label>Last User</label>
+            <label>Last User *</label>
             <input id="lastuser" class="input" placeholder="Admin Name" />
         </div>
         <div>
-            <label>Timestamp</label>
-            <input id="Datetime" class="input" placeholder="DD.MM.YYYY 00:00" />
+            <label>Timestamp (Auto)</label>
+            <input id="Datetime" class="input" readonly placeholder="Will generate on send..." />
         </div>
     </div>
 
@@ -344,13 +350,15 @@ const db = firebase.firestore();
 
 /* AUTH CHECK */
 auth.onAuthStateChanged(user => {
-  if (!user) {
-    // Optional: Auto login anonymously or redirect
-    auth.signInAnonymously().catch(console.error);
+  if (user) {
+    // 1. AUTO FILL OFFICER IN CHARGE (Admin Email)
+    document.getElementById("handledBy").value = user.email;
+  } else {
+    window.location.href = "login.html"; 
   }
 });
 
-/* LOGOUT (FIXED) */
+/* LOGOUT */
 document.getElementById("logout").onclick = () => {
   auth.signOut().then(() => {
     localStorage.removeItem("admin_logged_in");
@@ -378,22 +386,33 @@ document.getElementById("sendNotif").onclick = async () => {
   const lastuser = document.getElementById("lastuser");
   const Datetime = document.getElementById("Datetime");
 
-  // Validasi
-  if (!status.value) { toast("Please select a status protocol", true); return; }
-  if (!Datetime.value.trim()) { toast("Timestamp is required", true); return; }
-  if (!lastuser.value.trim()) { toast("Admin identity is required", true); return; }
+  // 2. GENERATE TIMESTAMP (Current Time)
+  const now = new Date();
+  const currentTimestamp = now.toLocaleString('en-GB'); // Format: DD/MM/YYYY, HH:MM:SS
+  Datetime.value = currentTimestamp; // Show to user
+
+  // 3. VALIDATION (WAJIB ISI SEMUA)
+  if (!userEmail.value.trim()) { toast("User Email is required!", true); return; }
+  if (!complaintId.value.trim()) { toast("Complaint ID is required!", true); return; }
+  if (!status.value) { toast("Current Status is required!", true); return; }
+  if (!willCompleteWhen.value.trim()) { toast("Estimated Completion is required!", true); return; }
+  if (!contactNumber.value.trim()) { toast("Contact Line is required!", true); return; }
+  if (!comment.value.trim()) { toast("Remarks / Comments are required!", true); return; }
+  if (!lastuser.value.trim()) { toast("Last User Name is required!", true); return; }
+  
+  // Note: handledBy & Datetime are auto-filled and read-only, so assumed present.
 
   const payload = {
-    userEmail: userEmail.value.trim() || "",
-    complaintId: complaintId.value.trim() || "",
+    userEmail: userEmail.value.trim(),
+    complaintId: complaintId.value.trim(),
     status: status.value,
-    willCompleteWhen: willCompleteWhen.value.trim() || "",
-    handledBy: handledBy.value.trim() || "",
-    contactNumber: contactNumber.value.trim() || "",
-    comment: comment.value.trim() || "",
+    willCompleteWhen: willCompleteWhen.value.trim(),
+    handledBy: handledBy.value, // Taken from Auto-fill
+    contactNumber: contactNumber.value.trim(),
+    comment: comment.value.trim(),
     lastuser: lastuser.value.trim(),
-    Datetime: Datetime.value.trim(),
-    createdAt: firebase.firestore.FieldValue.serverTimestamp() // Tambahan untuk sorting
+    Datetime: currentTimestamp, // Taken from generated time
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
   const btn = document.getElementById("sendNotif");
@@ -406,14 +425,15 @@ document.getElementById("sendNotif").onclick = async () => {
     
     toast("Notification Broadcasted Successfully");
     
-    // Clear Input
+    // Clear Input (Except Auto fields)
     userEmail.value = "";
     complaintId.value = "";
     status.value = "";
     willCompleteWhen.value = "";
-    handledBy.value = "";
     contactNumber.value = "";
     comment.value = "";
+    lastuser.value = "";
+    // Datetime stays until next send or refresh
     
   } catch (e) {
     console.error("Firestore error:", e);
@@ -427,4 +447,3 @@ document.getElementById("sendNotif").onclick = async () => {
 
 </body>
 </html>
-
